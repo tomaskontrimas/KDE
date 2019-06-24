@@ -4,7 +4,7 @@ import numpy as np
 
 
 def load_and_prepare_data(pathfilenames):
-    data = NPYFileLoader(pathfilenames)
+    data = NPYFileLoader(pathfilenames).load_data()
 
     #TODO prepare data by renaming fields.
 
