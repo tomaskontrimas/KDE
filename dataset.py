@@ -10,6 +10,8 @@ def load_and_prepare_data(pathfilenames):
 
     data_ra = DataFieldRecordArray(data)
 
+    return data_ra
+
 
 class NPYFileLoader(object):
     """The NPYFileLoader class provides the data loading functionality for
