@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import copy
 import numpy as np
 import os.path
+import sys
 
 def load_and_prepare_data(pathfilenames):
     data = NPYFileLoader(pathfilenames).load_data()
 
     #TODO prepare data by renaming fields.
-
+    
     data_ra = DataFieldRecordArray(data)
 
     return data_ra
@@ -210,7 +212,7 @@ class DataFieldRecordArray(object):
                 np.max(field))
             return s
 
-        indent_str = ' '*dsp.INDENTATION_WIDTH
+        indent_str = ' '*4
         s = '%s: %d fields, %d entries, %.0f %sbytes '%(
             classname(self), len(self._field_name_list), self.__len__(),
             np.round(size, 0), prefix)
@@ -460,3 +462,69 @@ def issequenceof(obj, T):
         if(not isinstance(item, T)):
             return False
     return True
+
+def get_byte_size_prefix(size):
+    """Determines the biggest size prefix for the given size in bytes such that
+    the new size is still greater one.
+
+    Parameters
+    ----------
+    size : int
+        The size in bytes.
+
+    Returns
+    -------
+    newsize : float
+        The new byte size accounting for the byte prefix.
+    prefix : str
+        The biggest byte size prefix.
+    """
+    prefix_factor_list = [
+        ('', 1), ('K', 1024), ('M', 1024**2), ('G', 1024**3), ('T', 1024**4)]
+
+    prefix_idx = 0
+    for (prefix, factor) in prefix_factor_list[1:]:
+        if(size / factor < 1):
+            break
+        prefix_idx += 1
+
+    (prefix, factor) = prefix_factor_list[prefix_idx]
+    newsize = size / factor
+
+    return (newsize, prefix)
+
+def getsizeof(objects):
+    """Determines the size in bytes the given objects have in memory.
+    If an object is a sequence, the size of the elements of the sequence will
+    be estimated as well and added to the result. This does not account for the
+    multiple occurence of the same object.
+
+    Parameters
+    ----------
+    objects : sequence of instances of object | instance of object.
+
+    Returns
+    -------
+    memsize : int
+        The memory size in bytes of the given objects.
+    """
+    if(not issequence(objects)):
+        objects = [objects]
+
+    memsize = 0
+    for obj in objects:
+        if(issequence(obj)):
+            memsize += getsizeof(obj)
+        else:
+            memsize += sys.getsizeof(obj)
+    return memsize
+
+def typename(t):
+    """Returns the name of the given type ``t``.
+    """
+    return t.__name__
+
+def classname(obj):
+    """Returns the name of the class of the class instance ``obj``.
+    """
+    return typename(type(obj))
