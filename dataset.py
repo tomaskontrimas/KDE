@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-
+import os.path
 
 def load_and_prepare_data(pathfilenames):
     data = NPYFileLoader(pathfilenames).load_data()
@@ -417,6 +417,13 @@ class DataFieldRecordArray(object):
             if(fname not in keep_fields):
                 self.remove_field(fname)
 
+
+def assert_file_exists(pathfilename):
+    """Checks if the given file exists and raises a RuntimeError if it does
+    not exist.
+    """
+    if(not os.path.isfile(pathfilename)):
+        raise RuntimeError('The data file "%s" does not exist!'%(pathfilename))
 
 def issequence(obj):
     """Checks if the given object ``obj`` is a sequence or not. The definition of
