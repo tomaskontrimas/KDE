@@ -12,13 +12,13 @@ CFG = {
     },
     'MC_keys': {
         'ow': 'generator_ow',
-        'trueE': 'true_e',
+        'trueE': 'true_e', # Used in code.
         'conv': 'conv',
         'astro': 'astro',
         'logEr': 'loge_muex',
         'sigma': 'lgb_sigma_psimu',
-        'trueDec': 'true_dec',
-        'sigmaOK': 'sigmaok',
+        'trueDec': 'true_dec', # Used in code.
+        'sigmaOK': 'sigmaok', # Used in code.
         'psi': 'psi_mu'
     }
 }
