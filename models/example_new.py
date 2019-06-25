@@ -14,7 +14,7 @@ settings = {
     'sinDec': {
         'name': 'sinDec',
         'variable': 'mu_zenith',
-        'function': -np.cos
+        'function': np.cos,
         'bandwidth': 0.1,
         'nbins': 100,
         'range': [-1.0, 1.0]
@@ -23,7 +23,7 @@ settings = {
     'logEr': {
         'name': 'logEr',
         'variable': 'loge_muex',
-        'function': None
+        'function': None,
         'bandwidth': 0.1,
         'nbins': 100,
         'range': [0.0, 1.0]
