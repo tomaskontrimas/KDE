@@ -61,16 +61,30 @@ class KDE(object):
 
 
     def generate_binned_kernel_density(self):
-        self.binned_kernel = BinnedKernelDensity(
+        args = []
+        args.extend([
             "BinnedKernelDensity",
-            self.model.space,  # Phase space
-            self.model.tree,  # Input ntuple
-            *self.model.var_names,  # Variables to use
-            "weight",      # weights
-            *self.model.nbins,  # Numbers of bins
-            *self.model.bandwidths,  # Kernel widths
-            self.model.approx_pdf,  # Approximation PDF (0 for flat approximation)
-            0)  # Sample size for MC convolution (0 for binned convolution)
+            self.model.space,
+            self.model.tree
+        ])
+        args.extend(self.model.var_names)
+        args.append("weight")
+        args.extend(self.model.nbins)
+        args.extend(self.model.bandwidths)
+        args.extend([self.model.approx_pdf, 0])
+
+        self.binned_kernel = BinnedKernelDensity(args)
+
+        # self.binned_kernel = BinnedKernelDensity(
+        #     "BinnedKernelDensity",
+        #     self.model.space,  # Phase space
+        #     self.model.tree,  # Input ntuple
+        #     *self.model.var_names,  # Variables to use
+        #     "weight",      # weights
+        #     *self.model.nbins,  # Numbers of bins
+        #     *self.model.bandwidths,  # Kernel widths
+        #     self.model.approx_pdf,  # Approximation PDF (0 for flat approximation)
+        #     0)  # Sample size for MC convolution (0 for binned convolution)
 
         return self.binned_kernel
 
