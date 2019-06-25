@@ -9,6 +9,7 @@ import sys
 def load_and_prepare_data(pathfilenames):
     """Loads the data and renames fields.
     """
+    pathfilenames = [pathfilenames]
     pathfilename = pathfilenames[0]
     assert_file_exists(pathfilename)
     data = np.load(pathfilename)
