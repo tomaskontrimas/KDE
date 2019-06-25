@@ -88,27 +88,27 @@ class KDE(object):
 
         return self.binned_kernel
 
-    def generate_adaptive_kernel_density(self, pdf_seed=None):
-        # Set or generate pdf_seed if not provided.
-        if not pdf_seed:
-            if not self.binned_kernel:
-                self.generate_binned_kernel_density()
-            else:
-                pdf_seed = self.binned_kernel
+    # def generate_adaptive_kernel_density(self, pdf_seed=None):
+    #     # Set or generate pdf_seed if not provided.
+    #     if not pdf_seed:
+    #         if not self.binned_kernel:
+    #             self.generate_binned_kernel_density()
+    #         else:
+    #             pdf_seed = self.binned_kernel
 
-        self.adaptive_kernel = AdaptiveKernelDensity(
-            "AdaptiveKernelDensity",
-            self.model.space,  # Phase space
-            self.model.tree,  # Input ntuple
-            *self.model.var_names,  # Variables to use
-            "weight",      # weights
-            *self.model.nbins,  # Numbers of bins
-            *self.model.bandwidths,  # Kernel widths
-            pdf_seed,  # PDF for width scaling
-            0,  # Approximation PDF (0 for flat approximation)
-            0)  # Sample size for MC convolution (0 for binned convolution)
+    #     self.adaptive_kernel = AdaptiveKernelDensity(
+    #         "AdaptiveKernelDensity",
+    #         self.model.space,  # Phase space
+    #         self.model.tree,  # Input ntuple
+    #         *self.model.var_names,  # Variables to use
+    #         "weight",      # weights
+    #         *self.model.nbins,  # Numbers of bins
+    #         *self.model.bandwidths,  # Kernel widths
+    #         pdf_seed,  # PDF for width scaling
+    #         0,  # Approximation PDF (0 for flat approximation)
+    #         0)  # Sample size for MC convolution (0 for binned convolution)
 
-        return self.adaptive_kernel
+    #     return self.adaptive_kernel
 
     #@staticmethod
     def eval_point(self, point):
