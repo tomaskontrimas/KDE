@@ -2,7 +2,7 @@
 
 CFG = {
     'paths': {
-        'root_path': 'home/ge56lag/Software/Meerkat/inc',
+        'meerkat_root_path': 'home/ge56lag/Software/Meerkat/inc',
         'meerkat_path': '/home/ge56lag/Software/Meerkat/lib/libMeerkat.so',
         'IC_mc': '/home/ge56lag/Data/diffuse_mc_wBDT.npy'
     },
