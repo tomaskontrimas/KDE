@@ -94,10 +94,10 @@ class KDE(object):
     def generate_adaptive_kernel_density(self, pdf_seed=None):
         # Set or generate pdf_seed if not provided.
         if not pdf_seed:
-            if not self.binned_kernel:
-                self.generate_binned_kernel_density()
-            else:
+            if self.binned_kernel:
                 pdf_seed = self.binned_kernel
+            else:
+                pdf_seed = self.generate_binned_kernel_density()
 
         args = []
         args.extend([
