@@ -9,7 +9,7 @@ settings = {
         'function': None,
         'bandwidth': 0.3,
         'nbins': 100,
-        'range': [-5, 5]
+        'range': [-2, 2]
         },
     'y': {
         'name': 'y',
@@ -17,7 +17,7 @@ settings = {
         'function': None,
         'bandwidth': 0.3,
         'nbins': 100,
-        'range': [-5, 5]
+        'range': [-2, 2]
         }
 }
 
