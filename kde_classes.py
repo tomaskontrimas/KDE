@@ -52,9 +52,9 @@ class Model(object):
             self.spaces.append(OneDimPhaseSpace(settings[key]['name'], *settings[key]['range']))
 
             if not self.tree:
-                self.tree = array2tree(np.array(value, dtype=[(settings[key]['name'], np.float64)]))
+                self.tree = array2tree(np.array(value, dtype=[(settings[key]['name'], np.float32)]))
             else:
-                array2tree(np.array(value, dtype=[(settings[key]['name'], np.float64)]), tree=self.tree)
+                array2tree(np.array(value, dtype=[(settings[key]['name'], np.float32)]), tree=self.tree)
 
             # calculate normalization
             self.kde_norm /= settings[key]['range'][1] - settings[key]['range'][0]
