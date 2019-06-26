@@ -8,7 +8,7 @@ settings = {
         'variable': 'x',
         'function': None,
         'bandwidth': 0.3,
-        'nbins': 10,
+        'nbins': 100,
         'range': [-5, 5]
         },
     'y': {
@@ -16,7 +16,7 @@ settings = {
         'variable': 'y',
         'function': None,
         'bandwidth': 0.3,
-        'nbins': 10,
+        'nbins': 100,
         'range': [-5, 5]
         }
 }
