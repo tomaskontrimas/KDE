@@ -89,40 +89,33 @@ class KDE(object):
 
         self.binned_kernel = BinnedKernelDensity(*args)
 
-        # self.binned_kernel = BinnedKernelDensity(
-        #     "BinnedKernelDensity",
-        #     self.model.space,  # Phase space
-        #     self.model.tree,  # Input ntuple
-        #     *self.model.var_names,  # Variables to use
-        #     "weight",      # weights
-        #     *self.model.nbins,  # Numbers of bins
-        #     *self.model.bandwidths,  # Kernel widths
-        #     self.model.approx_pdf,  # Approximation PDF (0 for flat approximation)
-        #     0)  # Sample size for MC convolution (0 for binned convolution)
-
         return self.binned_kernel
 
-    # def generate_adaptive_kernel_density(self, pdf_seed=None):
-    #     # Set or generate pdf_seed if not provided.
-    #     if not pdf_seed:
-    #         if not self.binned_kernel:
-    #             self.generate_binned_kernel_density()
-    #         else:
-    #             pdf_seed = self.binned_kernel
+    def generate_adaptive_kernel_density(self, pdf_seed=None):
+        # Set or generate pdf_seed if not provided.
+        if not pdf_seed:
+            if not self.binned_kernel:
+                self.generate_binned_kernel_density()
+            else:
+                pdf_seed = self.binned_kernel
 
-    #     self.adaptive_kernel = AdaptiveKernelDensity(
-    #         "AdaptiveKernelDensity",
-    #         self.model.space,  # Phase space
-    #         self.model.tree,  # Input ntuple
-    #         *self.model.var_names,  # Variables to use
-    #         "weight",      # weights
-    #         *self.model.nbins,  # Numbers of bins
-    #         *self.model.bandwidths,  # Kernel widths
-    #         pdf_seed,  # PDF for width scaling
-    #         0,  # Approximation PDF (0 for flat approximation)
-    #         0)  # Sample size for MC convolution (0 for binned convolution)
+        args = []
+        args.extend([
+            "AdaptiveKernelDensity",
+            self.model.space,
+            self.model.tree
+        ])
+        args.extend(self.model.var_names)
+        #args.append("weight")
+        args.extend(self.model.nbins)
+        args.extend(self.model.bandwidths)
+        args.extend([pdf_seed,
+                     self.model.approx_pdf,
+                     0])
 
-    #     return self.adaptive_kernel
+        self.adaptive_kernel = AdaptiveKernelDensity(*args)
+
+        return self.adaptive_kernel
 
     #@staticmethod
     def eval_point(self, point):
@@ -130,9 +123,9 @@ class KDE(object):
         v = std.vector(Double)(l)
         for i in range(l):
             v[i] = point[i]
-        # if self.adaptive_kernel:
-        #     return self.adaptive_kernel.density(v)*self.model.kde_norm
-        # elif self.binned_kernel:
-        return self.binned_kernel.density(v)*self.model.kde_norm
-        # else:
-        #     print('No kernel found.')
+        if self.adaptive_kernel:
+            return self.adaptive_kernel.density(v)*self.model.kde_norm
+        elif self.binned_kernel:
+            return self.binned_kernel.density(v)*self.model.kde_norm
+        else:
+            print('No kernel found.')
