@@ -6,21 +6,15 @@ import os
 from config import CFG
 
 os.environ["ROOT_INCLUDE_PATH"] = os.pathsep + CFG['paths']['meerkat_root_path']
-from ROOT import gSystem, gStyle, RooRealVar
-from ROOT import std, Double
+from ROOT import gSystem, gStyle, RooRealVar, std, Double
 gSystem.Load(CFG['paths']['meerkat_path'])
 
-# from ROOT import (
-#     OneDimPhaseSpace,
-#     CombinedPhaseSpace,
-#     BinnedKernelDensity,
-#     AdaptiveKernelDensity
-# )
-
-from ROOT import OneDimPhaseSpace, CombinedPhaseSpace, BinnedKernelDensity,\
-                 FactorisedDensity, FormulaDensity, ParametricPhaseSpace,\
-                 AdaptiveKernelDensity, KernelDensity
-
+from ROOT import (
+    OneDimPhaseSpace,
+    CombinedPhaseSpace,
+    BinnedKernelDensity,
+    AdaptiveKernelDensity
+)
 
 from root_numpy import array2tree
 
