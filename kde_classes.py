@@ -35,29 +35,27 @@ class Model(object):
 
 
         for key in settings:
-            print(key)
-            print(key['nbins'])
             # Generate lists of needed variables.
             self.var_names.append(key)
-            self.nbins.append(key['nbins'])
-            self.bandwidths.append(key['bandwidth'])
+            self.nbins.append(settings[key]['nbins'])
+            self.bandwidths.append(settings[key]['bandwidth'])
 
             # Calculate values.
-            if callable(key['function']):
-                #self.values.append(key['function'](mc[key['variable']]))
-                value = key['function'](mc[key['variable']])
+            if callable(settings[key]['function']):
+                #self.values.append(settings[key]['function'](mc[settings[key]['variable']]))
+                value = settings[key]['function'](mc[settings[key]['variable']])
             else:
-                #self.values.append(mc[key['variable']])
-                value = mc[key['variable']]
+                #self.values.append(mc[settings[key]['variable']])
+                value = mc[settings[key]['variable']]
 
             # Name or just the key?
-            self.spaces.append(OneDimPhaseSpace(key['name'], *key['range']))
+            self.spaces.append(OneDimPhaseSpace(settings[key]['name'], *settings[key]['range']))
 
-            array2tree(np.array(value, dtype=[(key['name'], np.float32)]),
+            array2tree(np.array(value, dtype=[(settings[key]['name'], np.float32)]),
                        tree=self.tree)
 
             # calculate normalization
-            self.kde_norm /= key['range'][1] - key['range'][0]
+            self.kde_norm /= settings[key]['range'][1] - settings[key]['range'][0]
 
         #array2tree(np.array(self.weights, dtype=[("weight", np.float32)]),
         #           tree=self.tree)
