@@ -86,7 +86,7 @@ class KDE(object):
         args.extend(self.model.bandwidths)
         args.extend([self.model.approx_pdf, 0])
 
-        self.binned_kernel = BinnedKernelDensity(args)
+        self.binned_kernel = BinnedKernelDensity(*args)
 
         # self.binned_kernel = BinnedKernelDensity(
         #     "BinnedKernelDensity",
