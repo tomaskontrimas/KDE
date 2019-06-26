@@ -30,7 +30,7 @@ class Model(object):
         self.spaces = []
         self.approx_pdf = 0
         self.var_names = []
-        self.tree = array2tree(np.array([]))
+        self.tree = array2tree(np.array([], dtype=['empty', np.float32]))
         self.kde_norm = 1.0
 
 
