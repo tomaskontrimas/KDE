@@ -124,12 +124,13 @@ class KDE(object):
     #@staticmethod
     def eval_point(self, point):
         l = len(point)
+        print(l)
         v = std.vector(Double)(l)
         for i in range(l):
             v[i] = point[i]
-        if self.adaptive_kernel:
-            return self.adaptive_kernel.density(v)*self.model.kde_norm
-        elif self.binned_kernel:
-            return self.binned_kernel.density(v)*self.model.kde_norm
-        else:
-            print('No kernel found.')
+        # if self.adaptive_kernel:
+        #     return self.adaptive_kernel.density(v)*self.model.kde_norm
+        # elif self.binned_kernel:
+        return self.binned_kernel.density(v)*self.model.kde_norm
+        # else:
+        #     print('No kernel found.')
