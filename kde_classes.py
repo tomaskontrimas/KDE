@@ -69,9 +69,7 @@ class KDE(object):
         super(KDE, self).__init__()
         self.model = model
         self.binned_kernel = None
-
-
-
+        self.adaptive_kernel = None
 
     def generate_binned_kernel_density(self):
         args = []
