@@ -26,9 +26,9 @@ print(kde.eval_point([0, 0]))
 
 out_bins = []
 for key in settings:
-    out_bins.append([np.linspace(settings[key]['range'][0],
-                                 settings[key]['range'][1],
-                                 settings[key]['nbins'])])
+    out_bins.append(np.linspace(settings[key]['range'][0],
+                                settings[key]['range'][1],
+                                settings[key]['nbins']))
 
 print(out_bins)
 
