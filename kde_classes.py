@@ -35,6 +35,8 @@ class Model(object):
 
 
         for key in settings:
+            print(key)
+            print(key['nbins'])
             # Generate lists of needed variables.
             self.var_names.append(key)
             self.nbins.append(key['nbins'])
