@@ -124,7 +124,6 @@ class KDE(object):
     #@staticmethod
     def eval_point(self, point):
         l = len(point)
-        print(l)
         v = std.vector(Double)(l)
         for i in range(l):
             v[i] = point[i]
