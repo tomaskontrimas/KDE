@@ -60,8 +60,7 @@ class Model(object):
         #array2tree(np.array(self.weights, dtype=[("weight", np.float32)]),
         #           tree=self.tree)
 
-        self.space = CombinedPhaseSpace(
-                "PhspCombined", self.spaces[0], self.spaces[1])
+        self.space = CombinedPhaseSpace("PhspCombined", *self.spaces)
 
 
 class KDE(object):
