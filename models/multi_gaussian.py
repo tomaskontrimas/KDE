@@ -7,17 +7,17 @@ settings = {
         'name': 'x',
         'variable': 'x',
         'function': None,
-        'bandwidth': 0.3,
+        'bandwidth': 0.5,
         'nbins': 100,
-        'range': [-2, 2]
+        'range': [-5, 5]
         },
     'y': {
         'name': 'y',
         'variable': 'y',
         'function': None,
-        'bandwidth': 0.3,
+        'bandwidth': 0.5,
         'nbins': 100,
-        'range': [-2, 2]
+        'range': [-5, 5]
         }
 }
 
