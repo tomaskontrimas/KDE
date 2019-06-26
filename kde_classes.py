@@ -79,7 +79,7 @@ class KDE(object):
             self.model.tree
         ])
         args.extend(self.model.var_names)
-        args.append("weight")
+        #args.append("weight")
         args.extend(self.model.nbins)
         args.extend(self.model.bandwidths)
         args.extend([self.model.approx_pdf, 0])

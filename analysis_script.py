@@ -36,9 +36,11 @@ coords = np.array(list(itertools.product(*out_bins)))
 
 print(coords)
 
+nbins = 100
+
 print('Evaluate KDEs:')
 pdf_vals = np.asarray([kde.eval_point(coord) for coord in coords])
-shpe = np.ones(len(settings.keys()), dtype=int) * nbins
-pdf_vals = pdf_vals.reshape(*shpe)
+shape = np.ones(len(settings.keys()), dtype=int)*nbins
+pdf_vals = pdf_vals.reshape(*shape)
 
 print(pdf_vals)
