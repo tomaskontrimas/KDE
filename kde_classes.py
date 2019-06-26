@@ -30,7 +30,7 @@ class Model(object):
         self.spaces = []
         self.approx_pdf = 0
         self.var_names = []
-        self.tree = array2tree(np.array([], dtype=[('empty', np.float32)]))
+        self.tree = None
         self.kde_norm = 1.0
 
 
@@ -51,11 +51,14 @@ class Model(object):
             # Name or just the key?
             self.spaces.append(OneDimPhaseSpace(settings[key]['name'], *settings[key]['range']))
 
-            array2tree(np.array(value, dtype=[(settings[key]['name'], np.float32)]),
-                       tree=self.tree)
+            if not self.tree:
+                self.tree = array2tree(np.array(value, dtype=[(settings[key]['name'], np.float64)]))
+            else:
+                array2tree(np.array(value, dtype=[(settings[key]['name'], np.float64)]), tree=self.tree)
 
             # calculate normalization
             self.kde_norm /= settings[key]['range'][1] - settings[key]['range'][0]
+
 
         #array2tree(np.array(self.weights, dtype=[("weight", np.float32)]),
         #           tree=self.tree)
