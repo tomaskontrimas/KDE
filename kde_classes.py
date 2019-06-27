@@ -65,7 +65,7 @@ class Model(object):
             # calculate normalization
             self.kde_norm /= settings[key]['range'][1] - settings[key]['range'][0]
 
-        _generate_weights(weight=None, gamma=2.0, phi0=1)
+        self._generate_weights(weight=None, gamma=2.0, phi0=1)
 
         array2tree(np.array(self.weights, dtype=[("weight", np.float32)]),
                    tree=self.tree)
