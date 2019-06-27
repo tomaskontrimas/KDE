@@ -72,24 +72,24 @@ class Model(object):
 
         self.space = CombinedPhaseSpace("PhspCombined", *self.spaces)
 
-        def _generate_weights(self, weight=None, gamma=2.0, phi0=1):
-            # phi0 in units of 1e-18 1/GeV/cm^2/sr/s
-            phi0 *= 1e-18
-            if weight == 'pl':
-                self.weights = self.mc['orig_OW']*powerlaw(
-                    self.mc['trueE'], phi0=args['phi0'], gamma=gamma)
-            elif weight == 'conv':
-                self.weights = self.mc['conv']
-            elif weight == 'conv+pl':
-                diff_weight = self.mc['orig_OW']*powerlaw(
-                    self.mc['trueE'], phi0=args['phi0'], gamma=gamma)
-                self.weights = self.mc['conv'] + diff_weight
-                # print('Rates [1/yr]:')
-                # print(np.sum(self.mc['conv']) * np.pi * 1e7)
-                # print(np.sum(diff_weight) * np.pi * 1e7)
-            else:
-                self.weights = np.ones(len(self.mc))
-                print('Using ones as weight.')
+    def _generate_weights(self, weight=None, gamma=2.0, phi0=1):
+        # phi0 in units of 1e-18 1/GeV/cm^2/sr/s
+        phi0 *= 1e-18
+        if weight == 'pl':
+            self.weights = self.mc['orig_OW']*powerlaw(
+                self.mc['trueE'], phi0=args['phi0'], gamma=gamma)
+        elif weight == 'conv':
+            self.weights = self.mc['conv']
+        elif weight == 'conv+pl':
+            diff_weight = self.mc['orig_OW']*powerlaw(
+                self.mc['trueE'], phi0=args['phi0'], gamma=gamma)
+            self.weights = self.mc['conv'] + diff_weight
+            # print('Rates [1/yr]:')
+            # print(np.sum(self.mc['conv']) * np.pi * 1e7)
+            # print(np.sum(diff_weight) * np.pi * 1e7)
+        else:
+            self.weights = np.ones(len(self.mc))
+            print('Using ones as weight.')
 
 
 class KDE(object):
