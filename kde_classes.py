@@ -88,10 +88,8 @@ class Model(object):
             # print(np.sum(self.mc['conv']) * np.pi * 1e7)
             # print(np.sum(diff_weight) * np.pi * 1e7)
         else:
-            # self.weights = np.ones(len(self.mc))*range(len(self.mc))
-            # print('Using ones as weight. Multiply by range.')
-            self.weights = np.sqrt(self.mc['x']**2 + self.mc['y']**2)
-            print('Using weigts of distance')
+            self.weights = np.ones(len(self.mc))
+            print('Using ones as weight.')
 
 
 class KDE(object):
