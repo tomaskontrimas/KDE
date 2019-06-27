@@ -4,7 +4,7 @@ import numpy as np
 import os
 
 from config import CFG
-from functions impot powerlaw
+from functions import powerlaw
 
 os.environ["ROOT_INCLUDE_PATH"] = os.pathsep + CFG['paths']['meerkat_root']
 from ROOT import gSystem, gStyle, RooRealVar, std, Double
