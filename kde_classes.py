@@ -22,9 +22,9 @@ from root_numpy import array2tree
 
 class Model(object):
     """docstring for Model"""
-    def __init__(self, mc, settings, weight=None, gamma=2.0, phi0=1):
+    def __init__(self, mc, settings, index=None, weight=None, gamma=2.0, phi0=1):
         super(Model, self).__init__()
-        #self.settings = settings
+        self.settings = settings
         #self.values = []
         self.nbins = []
         self.bandwidths = []
@@ -35,61 +35,74 @@ class Model(object):
         self.kde_norm = 1.0
         self.mc = mc
         self.weights = None
+        self.phi0 = phi0
+        self.gamma = gamma
 
-        for key in settings:
+        if index is not None:
+            mc = self.mc[index]
+        self._initialize_model(mc)
+
+    def _initialize_model(self, mc):
+        for key in self.settings:
             # Generate lists of needed variables.
             self.var_names.append(key)
-            self.nbins.append(settings[key]['nbins'])
-            self.bandwidths.append(settings[key]['bandwidth'])
+            self.nbins.append(self.settings[key]['nbins'])
+            self.bandwidths.append(self.settings[key]['bandwidth'])
 
             # Calculate values.
-            if callable(settings[key]['function']):
-                #self.values.append(settings[key]['function'](mc[settings[key]['variable']]))
-                value = settings[key]['function'](mc[settings[key]['variable']])
+            if callable(self.settings[key]['function']):
+                #self.values.append(self.settings[key]['function'](mc[self.settings[key]['variable']]))
+                value = self.settings[key]['function'](mc[self.settings[key]['variable']])
             else:
-                #self.values.append(mc[settings[key]['variable']])
-                value = mc[settings[key]['variable']]
+                #self.values.append(mc[self.settings[key]['variable']])
+                value = mc[self.settings[key]['variable']]
 
             # Name or just the key?
-            self.spaces.append(OneDimPhaseSpace(settings[key]['name'], *settings[key]['range']))
+            self.spaces.append(OneDimPhaseSpace(self.settings[key]['name'], *self.settings[key]['range']))
 
             if not self.tree:
-                value_array = np.array(value, dtype=[(settings[key]['name'],
+                value_array = np.array(value, dtype=[(self.settings[key]['name'],
                                        np.float32)])
                 self.tree = array2tree(value_array)
             else:
-                value_array = np.array(value, dtype=[(settings[key]['name'],
+                value_array = np.array(value, dtype=[(self.settings[key]['name'],
                                        np.float32)])
                 array2tree(value_array, tree=self.tree)
 
             # calculate normalization
-            self.kde_norm /= settings[key]['range'][1] - settings[key]['range'][0]
+            self.kde_norm /= self.settings[key]['range'][1] - self.settings[key]['range'][0]
 
-        self._generate_weights(weight=None, gamma=2.0, phi0=1)
+        self._generate_weights(mc, weight)
 
         array2tree(np.array(self.weights, dtype=[("weight", np.float32)]),
                    tree=self.tree)
 
         self.space = CombinedPhaseSpace("PhspCombined", *self.spaces)
 
-    def _generate_weights(self, weight=None, gamma=2.0, phi0=1):
+
+    def _generate_weights(self, mc, weight=None):
         # phi0 in units of 1e-18 1/GeV/cm^2/sr/s
-        phi0 *= 1e-18
+        self.phi0 *= 1e-18
         if weight == 'pl':
-            self.weights = self.mc['orig_OW']*powerlaw(
-                self.mc['trueE'], phi0=args['phi0'], gamma=gamma)
+            self.weights = mc['orig_OW']*powerlaw(
+                mc['trueE'], phi0=self.phi0, gamma=self.gamma)
         elif weight == 'conv':
-            self.weights = self.mc['conv']
+            self.weights = mc['conv']
         elif weight == 'conv+pl':
-            diff_weight = self.mc['orig_OW']*powerlaw(
-                self.mc['trueE'], phi0=args['phi0'], gamma=gamma)
-            self.weights = self.mc['conv'] + diff_weight
+            diff_weight = mc['orig_OW']*powerlaw(
+                mc['trueE'], phi0=self.phi0, gamma=self.gamma)
+            self.weights = mc['conv'] + diff_weight
             # print('Rates [1/yr]:')
             # print(np.sum(self.mc['conv']) * np.pi * 1e7)
             # print(np.sum(diff_weight) * np.pi * 1e7)
         else:
-            self.weights = np.ones(len(self.mc))
+            self.weights = np.ones(len(mc))
             print('Using ones as weight.')
+
+    def update_model(self, mc, settings=None):
+        if settings is not None:
+            self.settings = settings
+        self._initialize_model(mc)
 
 
 class KDE(object):
