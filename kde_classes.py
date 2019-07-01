@@ -28,7 +28,7 @@ class Model(object):
         #self.values = []
         self.nbins = []
         self.bandwidths = []
-        self.spaces = []
+
         self.approx_pdf = 0
         self.var_names = []
         self.tree = None
@@ -38,43 +38,59 @@ class Model(object):
         self.phi0 = phi0
         self.gamma = gamma
 
-        if index is not None:
-            mc = self.mc[index]
-        self._initialize_model(mc)
 
-    def _initialize_model(self, mc):
-        for key in self.settings:
+class KDE(object):
+    """docstring for KDE"""
+    def __init__(self, model, index=None, adaptive=False):
+        super(KDE, self).__init__()
+        self.model = model
+        self.binned_kernel = None
+        self.adaptive_kernel = None
+
+        self.tree = None
+        self.spaces = []
+
+        if index is not None:
+            mc = self.model.mc[index]
+        else:
+            mc = self.model.mc
+
+        _generate_tree_and_space(mc)
+
+    def _generate_tree_and_space(self, mc, weights):
+
+        for key in self.model.settings:
             # Generate lists of needed variables.
-            self.var_names.append(key)
-            self.nbins.append(self.settings[key]['nbins'])
-            self.bandwidths.append(self.settings[key]['bandwidth'])
+            self.model.var_names.append(key)
+            self.model.nbins.append(self.model.settings[key]['nbins'])
+            self.bandwidths.append(self.model.settings[key]['bandwidth'])
 
             # Calculate values.
-            if callable(self.settings[key]['function']):
+            if callable(self.model.settings[key]['function']):
                 #self.values.append(self.settings[key]['function'](mc[self.settings[key]['variable']]))
-                value = self.settings[key]['function'](mc[self.settings[key]['variable']])
+                value = self.model.settings[key]['function'](mc[self.model.settings[key]['variable']])
             else:
                 #self.values.append(mc[self.settings[key]['variable']])
-                value = mc[self.settings[key]['variable']]
+                value = mc[self.model.settings[key]['variable']]
 
             # Name or just the key?
-            self.spaces.append(OneDimPhaseSpace(self.settings[key]['name'], *self.settings[key]['range']))
+            self.spaces.append(OneDimPhaseSpace(self.model.settings[key]['name'], *self.model.settings[key]['range']))
 
             if not self.tree:
-                value_array = np.array(value, dtype=[(self.settings[key]['name'],
+                value_array = np.array(value, dtype=[(self.model.settings[key]['name'],
                                        np.float32)])
                 self.tree = array2tree(value_array)
             else:
-                value_array = np.array(value, dtype=[(self.settings[key]['name'],
+                value_array = np.array(value, dtype=[(self.model.settings[key]['name'],
                                        np.float32)])
                 array2tree(value_array, tree=self.tree)
 
             # calculate normalization
-            self.kde_norm /= self.settings[key]['range'][1] - self.settings[key]['range'][0]
+            self.kde_norm /= self.model.settings[key]['range'][1] - self.model.settings[key]['range'][0]
 
-        self._generate_weights(mc, weight)
+        weight = self._generate_weights(mc, weights)
 
-        array2tree(np.array(self.weights, dtype=[("weight", np.float32)]),
+        array2tree(np.array(weight, dtype=[("weight", np.float32)]),
                    tree=self.tree)
 
         self.space = CombinedPhaseSpace("PhspCombined", *self.spaces)
@@ -99,26 +115,14 @@ class Model(object):
             self.weights = np.ones(len(mc))
             print('Using ones as weight.')
 
-    def update_model(self, mc, settings=None):
-        if settings is not None:
-            self.settings = settings
-        self._initialize_model(mc)
 
-
-class KDE(object):
-    """docstring for KDE"""
-    def __init__(self, model, adaptive=False):
-        super(KDE, self).__init__()
-        self.model = model
-        self.binned_kernel = None
-        self.adaptive_kernel = None
 
     def generate_binned_kernel_density(self):
         args = []
         args.extend([
             "BinnedKernelDensity",
-            self.model.space,
-            self.model.tree
+            self.space,
+            self.tree
         ])
         args.extend(self.model.var_names)
         args.append("weight")
@@ -141,8 +145,8 @@ class KDE(object):
         args = []
         args.extend([
             "AdaptiveKernelDensity",
-            self.model.space,
-            self.model.tree
+            self.space,
+            self.tree
         ])
         args.extend(self.model.var_names)
         args.append("weight")
@@ -163,8 +167,8 @@ class KDE(object):
         for i in range(l):
             v[i] = point[i]
         if self.adaptive_kernel:
-            return self.adaptive_kernel.density(v)*self.model.kde_norm
+            return self.adaptive_kernel.density(v)*self.kde_norm
         elif self.binned_kernel:
-            return self.binned_kernel.density(v)*self.model.kde_norm
+            return self.binned_kernel.density(v)*self.kde_norm
         else:
             print('No kernel found.')
