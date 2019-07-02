@@ -24,19 +24,21 @@ class Model(object):
     """docstring for Model"""
     def __init__(self, mc, settings, index=None, weight=None, gamma=2.0, phi0=1):
         super(Model, self).__init__()
-        self.settings = settings
+        # self.settings = settings
         #self.values = []
-        self.nbins = []
-        self.bandwidths = []
-
-        self.approx_pdf = 0
-        self.var_names = []
-        self.tree = None
-        self.kde_norm = 1.0
+        self.variables = [key for key in settings]
+        self.nbins = [settings[key]['nbins'] for key in settings]
+        self.bandwidths = [settings[key]['bandwidth'] for key in settings]
+        self.functions = 
+        
         self.mc = mc
         self.weights = None
         self.phi0 = phi0
         self.gamma = gamma
+
+        # calculate normalization
+        ranges = [1.0] + [settings[key]['range'][1] - settings[key]['range'][0] for key in settings]
+        self.kde_norm = reduce((lambda x, y : x/y), ranges)
 
 
 class KDE(object):
@@ -46,7 +48,9 @@ class KDE(object):
         self.model = model
         self.binned_kernel = None
         self.adaptive_kernel = None
+        self.approx_pdf = 0
 
+        
         self.tree = None
         self.spaces = []
 
@@ -59,18 +63,11 @@ class KDE(object):
 
     def _generate_tree_and_space(self, mc, weights):
 
-        for key in self.model.settings:
-            # Generate lists of needed variables.
-            self.model.var_names.append(key)
-            self.model.nbins.append(self.model.settings[key]['nbins'])
-            self.bandwidths.append(self.model.settings[key]['bandwidth'])
-
+        for key in self.model.variables:
             # Calculate values.
             if callable(self.model.settings[key]['function']):
-                #self.values.append(self.settings[key]['function'](mc[self.settings[key]['variable']]))
                 value = self.model.settings[key]['function'](mc[self.model.settings[key]['variable']])
             else:
-                #self.values.append(mc[self.settings[key]['variable']])
                 value = mc[self.model.settings[key]['variable']]
 
             # Name or just the key?
@@ -85,8 +82,7 @@ class KDE(object):
                                        np.float32)])
                 array2tree(value_array, tree=self.tree)
 
-            # calculate normalization
-            self.kde_norm /= self.model.settings[key]['range'][1] - self.model.settings[key]['range'][0]
+            
 
         weight = self._generate_weights(mc, weights)
 
