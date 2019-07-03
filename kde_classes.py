@@ -198,6 +198,23 @@ class KDE(object):
 
             rgi_pdf = RegularGridInterpolator(tuple(out_bins), training_pdf_vals)
 
+
+            #VALIDATION
+            mc_validation = self.model.mc[validation_index]
+            mc_validation_values = []
+
+            # Calculate values.
+            for i, var in enumerate(self.model.vars):
+                if callable(self.model.functions[i]):
+                    mc_validation_values.append(self.model.functions[i](mc_validation[var]))
+                else:
+                    mc_validation_values.append(mc_validation[var])
+
+            mc_validation_values = np.array(list(itertools.product(*mc_validation_values)))
+            print(mc_validation_values)
+
+            print("rgi_pdf calls:")
+            rgi_pdf(mc_validation_values)
     # #         shape = np.ones(len(self.model.vars), dtype=int)*nbins
     # #         adaptive_pdf_vals = adaptive_pdf_vals.reshape(*shape)
 
