@@ -34,7 +34,8 @@ class Model(object):
         self.ranges = [settings[key]['range'] for key in settings]
         self.mc = mc
         self.weights = None
-        self.phi0 = phi0
+        # phi0 in units of 1e-18 1/GeV/cm^2/sr/s
+        self.phi0 = phi0*1e-18
         self.gamma = gamma
 
         # calculate normalization
@@ -88,8 +89,6 @@ class KDE(object):
         self.space = CombinedPhaseSpace("PhspCombined", *self.spaces)
 
     def _generate_weights(self, mc, weight='pl'):
-        # phi0 in units of 1e-18 1/GeV/cm^2/sr/s
-        self.phi0 *= 1e-18
         if weight == 'pl':
             self.weights = mc['orig_OW']*powerlaw(
                 mc['trueE'], phi0=self.model.phi0, gamma=self.model.gamma)
