@@ -60,7 +60,7 @@ class KDE(object):
         else:
             mc = self.model.mc
 
-        _generate_tree_and_space(mc)
+        self._generate_tree_and_space(mc)
 
     def _generate_tree_and_space(self, mc):
         for i, var in enumerate(self.model.vars):
