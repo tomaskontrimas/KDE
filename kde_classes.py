@@ -210,9 +210,11 @@ class KDE(object):
                 else:
                     mc_validation_values.append(mc_validation[var])
 
-            mc_validation_values = np.array(list(itertools.product(*mc_validation_values)))
+            #mc_validation_values = np.array(list(itertools.product(*mc_validation_values)))
+            print("mc val")
             print(mc_validation_values)
-
+            print("mc val zipped")
+            print(zip(mc_validation_values))
             print("rgi_pdf calls:")
             print(rgi_pdf(mc_validation_values))
             print(len(rgi_pdf(mc_validation_values)))
