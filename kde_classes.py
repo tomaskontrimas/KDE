@@ -52,7 +52,7 @@ class KDE(object):
         self.binned_kernel = None
         self.adaptive_kernel = None
         self.approx_pdf = 0
-        self.weights = None
+        #self.weights = None
 
         self.tree = None
         self.spaces = []
@@ -82,29 +82,30 @@ class KDE(object):
                 value_array = np.array(mc_values, dtype=[(var, np.float32)])
                 array2tree(value_array, tree=self.tree)
 
-        weight = self._generate_weights(mc)
+        weights = self._generate_weights(mc)
 
-        array2tree(np.array(weight, dtype=[("weight", np.float32)]),
+        array2tree(np.array(weights, dtype=[("weight", np.float32)]),
                    tree=self.tree)
 
         self.space = CombinedPhaseSpace("PhspCombined", *self.spaces)
 
-    def _generate_weights(self, mc, weight=None):
-        if weight == 'pl':
-            self.weights = mc['orig_OW']*powerlaw(
+    def _generate_weights(self, mc, weight_type=None):
+        if weight_type == 'pl':
+            weights = mc['orig_OW']*powerlaw(
                 mc['trueE'], phi0=self.model.phi0, gamma=self.model.gamma)
-        elif weight == 'conv':
-            self.weights = mc['conv']
-        elif weight == 'conv+pl':
+        elif weight_type == 'conv':
+            weights = mc['conv']
+        elif weight_type == 'conv+pl':
             diff_weight = mc['orig_OW']*powerlaw(
                 mc['trueE'], phi0=self.model.phi0, gamma=self.model.gamma)
-            self.weights = mc['conv'] + diff_weight
+            weights = mc['conv'] + diff_weight
             # print('Rates [1/yr]:')
             # print(np.sum(self.mc['conv']) * np.pi * 1e7)
             # print(np.sum(diff_weight) * np.pi * 1e7)
         else:
-            self.weights = np.ones(len(mc))
+            weights = np.ones(len(mc))
             print('Using ones as weight.')
+        return weights
 
     def generate_binned_kernel_density(self):
         args = []
