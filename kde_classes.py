@@ -172,8 +172,8 @@ class KDE(object):
         kfold = KFold(n_splits=5, random_state=0, shuffle=True)
 
         for training_index, validation_index in kfold.split(self.model.mc):
-            print(training_index)
-            print(validation_index)
+            print("training_index", training_index)
+            print("validation_index", validation_index)
 
             self._generate_tree_and_space(self.model.mc[training_index])
             binned_kernel_density = self.generate_binned_kernel_density()
@@ -188,7 +188,7 @@ class KDE(object):
             coords = np.array(list(itertools.product(*out_bins)))
             training_pdf_vals = np.asarray([self.eval_point(coord) for coord in coords])
 
-            print("Coords: " coords)
+            print("Coords: ", coords)
             print("training_pdf_vals: ", training_pdf_vals)
 
     # #         shape = np.ones(len(self.model.vars), dtype=int)*nbins
