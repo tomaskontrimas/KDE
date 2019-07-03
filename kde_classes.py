@@ -214,7 +214,7 @@ class KDE(object):
             print("mc val")
             print(mc_validation_values)
             print("mc val zipped")
-            print(zip(mc_validation_values))
+            print(zip(*mc_validation_values))
             print("rgi_pdf calls:")
             print(rgi_pdf(mc_validation_values))
             print(len(rgi_pdf(mc_validation_values)))
