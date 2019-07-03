@@ -216,8 +216,7 @@ class KDE(object):
             print("mc val zipped")
             print(zip(*mc_validation_values))
             print("rgi_pdf calls:")
-            print(rgi_pdf(mc_validation_values))
-            print(len(rgi_pdf(mc_validation_values)))
+            print(rgi_pdf(zip(*mc_validation_values)))
     # #         shape = np.ones(len(self.model.vars), dtype=int)*nbins
     # #         adaptive_pdf_vals = adaptive_pdf_vals.reshape(*shape)
 
