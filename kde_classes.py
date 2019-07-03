@@ -112,7 +112,7 @@ class KDE(object):
             print('Using ones as weight.')
         return weights
 
-    def generate_binned_kernel_density(self):
+    def generate_binned_kernel_density(self, bandwidth):
         args = []
         args.extend([
             "BinnedKernelDensity",
@@ -122,7 +122,7 @@ class KDE(object):
         args.extend(self.model.vars)
         args.append("weight")
         args.extend(self.model.nbins)
-        args.extend(self.model.bandwidths)
+        args.extend(bandwidth)
         args.extend([self.model.approx_pdf, 0])
 
         self.binned_kernel = BinnedKernelDensity(*args)
@@ -173,14 +173,10 @@ class KDE(object):
         llh = []
         zeros = []
         for training_index, validation_index in kfold.split(self.model.mc):
-            print("training_index", training_index)
-            print("validation_index", validation_index)
-
             self.tree = None
             self.spaces = []
             self._generate_tree_and_space(self.model.mc[training_index])
             binned_kernel_density = self.generate_binned_kernel_density()
-
 
             out_bins = []
             for i, key in enumerate(self.model.vars):
@@ -193,14 +189,9 @@ class KDE(object):
             shape = np.ones(len(self.model.vars), dtype=int)*nbins
             training_pdf_vals = training_pdf_vals.reshape(*shape)
 
-
-            print("Coords: ", coords)
-            print("training_pdf_vals: ", training_pdf_vals)
-
+            # Validation
             rgi_pdf = RegularGridInterpolator(tuple(out_bins), training_pdf_vals, method='linear', bounds_error=False, fill_value=0)
 
-
-            #VALIDATION
             mc_validation = self.model.mc[validation_index]
             mc_validation_values = []
 
@@ -218,3 +209,9 @@ class KDE(object):
             zeros.append(len(likelihood) - len(inds))
         print("llh, zeros:", llh, zeros)
         return np.average(llh), np.average(zeros)
+
+    def cross_validate_bandwidths(self):
+
+        print(self.model.bandwidths)
+
+        print(itertools.product(*self.model.bandwidths))
