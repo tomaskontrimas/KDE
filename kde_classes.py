@@ -217,7 +217,7 @@ class KDE(object):
 
         for bandwidth in itertools.product(*self.model.bandwidths):
             llh, zeros = self.cross_validate(bandwidth)
-            np.append(result, [str(bandwidth), llh, zeros], axis=0)
+            result = np.append(result, [str(bandwidth), llh, zeros], axis=0)
             print(result)
 
 
