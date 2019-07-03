@@ -2,6 +2,8 @@
 
 import numpy as np
 import os
+import itertools
+
 
 from config import CFG
 from functions import powerlaw
