@@ -213,11 +213,11 @@ class KDE(object):
     def cross_validate_bandwidths(self):
 
         print(self.model.bandwidths)
-        result = np.array(['bandwidth', 0, 0])
+        result = np.array([['bandwidth', 0, 0]])
 
         for bandwidth in itertools.product(*self.model.bandwidths):
             llh, zeros = self.cross_validate(bandwidth)
-            result = np.append(result, [str(bandwidth), llh, zeros], axis=0)
+            result = np.append(result, [[str(bandwidth), llh, zeros]], axis=0)
             print(result)
 
 
