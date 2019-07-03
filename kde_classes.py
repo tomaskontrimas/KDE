@@ -188,6 +188,10 @@ class KDE(object):
                                         self.model.nbins[i]))
             coords = np.array(list(itertools.product(*out_bins)))
             training_pdf_vals = np.asarray([self.eval_point(coord) for coord in coords])
+            nbins = 100
+            shape = np.ones(len(self.model.vars), dtype=int)*nbins
+            training_pdf_vals = training_pdf_vals.reshape(*shape)
+
 
             print("Coords: ", coords)
             print("training_pdf_vals: ", training_pdf_vals)
