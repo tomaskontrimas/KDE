@@ -26,11 +26,12 @@ class Model(object):
         super(Model, self).__init__()
         # self.settings = settings
         #self.values = []
-        self.variables = [key for key in settings]
+        self.vars = [key for key in settings]
+        self.mc_vars = [settings[key]['mc_var'] for key in settings]
         self.nbins = [settings[key]['nbins'] for key in settings]
         self.bandwidths = [settings[key]['bandwidth'] for key in settings]
-        self.functions = 
-        
+        self.functions = [settings[key]['function'] for key in settings]
+        self.ranges = [settings[key]['range'] for key in settings]
         self.mc = mc
         self.weights = None
         self.phi0 = phi0
@@ -49,8 +50,8 @@ class KDE(object):
         self.binned_kernel = None
         self.adaptive_kernel = None
         self.approx_pdf = 0
+        self.weights = None
 
-        
         self.tree = None
         self.spaces = []
 
@@ -61,48 +62,42 @@ class KDE(object):
 
         _generate_tree_and_space(mc)
 
-    def _generate_tree_and_space(self, mc, weights):
-
-        for key in self.model.variables:
+    def _generate_tree_and_space(self, mc):
+        for i, var in enumerate(self.model.vars):
             # Calculate values.
-            if callable(self.model.settings[key]['function']):
-                value = self.model.settings[key]['function'](mc[self.model.settings[key]['variable']])
+            if callable(self.model.functions[i]):
+                mc_values = self.model.functions[i](mc[self.model.mc_vars[i]])
             else:
-                value = mc[self.model.settings[key]['variable']]
+                mc_values = mc[self.model.mc_vars[i]]
 
             # Name or just the key?
-            self.spaces.append(OneDimPhaseSpace(self.model.settings[key]['name'], *self.model.settings[key]['range']))
+            self.spaces.append(OneDimPhaseSpace(var, *self.model.ranges[i]))
 
-            if not self.tree:
-                value_array = np.array(value, dtype=[(self.model.settings[key]['name'],
-                                       np.float32)])
+            if self.tree is None:
+                value_array = np.array(mc_values, dtype=[(var, np.float32)])
                 self.tree = array2tree(value_array)
             else:
-                value_array = np.array(value, dtype=[(self.model.settings[key]['name'],
-                                       np.float32)])
+                value_array = np.array(mc_values, dtype=[(var, np.float32)])
                 array2tree(value_array, tree=self.tree)
 
-            
-
-        weight = self._generate_weights(mc, weights)
+        weight = self._generate_weights(mc)
 
         array2tree(np.array(weight, dtype=[("weight", np.float32)]),
                    tree=self.tree)
 
         self.space = CombinedPhaseSpace("PhspCombined", *self.spaces)
 
-
-    def _generate_weights(self, mc, weight=None):
+    def _generate_weights(self, mc, weight='pl'):
         # phi0 in units of 1e-18 1/GeV/cm^2/sr/s
         self.phi0 *= 1e-18
         if weight == 'pl':
             self.weights = mc['orig_OW']*powerlaw(
-                mc['trueE'], phi0=self.phi0, gamma=self.gamma)
+                mc['trueE'], phi0=self.model.phi0, gamma=self.model.gamma)
         elif weight == 'conv':
             self.weights = mc['conv']
         elif weight == 'conv+pl':
             diff_weight = mc['orig_OW']*powerlaw(
-                mc['trueE'], phi0=self.phi0, gamma=self.gamma)
+                mc['trueE'], phi0=self.model.phi0, gamma=self.model.gamma)
             self.weights = mc['conv'] + diff_weight
             # print('Rates [1/yr]:')
             # print(np.sum(self.mc['conv']) * np.pi * 1e7)
@@ -111,8 +106,6 @@ class KDE(object):
             self.weights = np.ones(len(mc))
             print('Using ones as weight.')
 
-
-
     def generate_binned_kernel_density(self):
         args = []
         args.extend([
@@ -120,11 +113,11 @@ class KDE(object):
             self.space,
             self.tree
         ])
-        args.extend(self.model.var_names)
+        args.extend(self.model.vars)
         args.append("weight")
         args.extend(self.model.nbins)
         args.extend(self.model.bandwidths)
-        args.extend([self.model.approx_pdf, 0])
+        args.extend([self.approx_pdf, 0])
 
         self.binned_kernel = BinnedKernelDensity(*args)
 
@@ -144,7 +137,7 @@ class KDE(object):
             self.space,
             self.tree
         ])
-        args.extend(self.model.var_names)
+        args.extend(self.model.vars)
         args.append("weight")
         args.extend(self.model.nbins)
         args.extend(self.model.bandwidths)

@@ -4,16 +4,14 @@ import numpy as np
 
 settings = {
     'x': {
-        'name': 'x',
-        'variable': 'x',
+        'mc_var': 'x',
         'function': None,
         'bandwidth': 0.5,
         'nbins': 100,
         'range': [-5, 5]
         },
     'y': {
-        'name': 'y',
-        'variable': 'y',
+        'mc_var': 'y',
         'function': None,
         'bandwidth': 0.5,
         'nbins': 100,
