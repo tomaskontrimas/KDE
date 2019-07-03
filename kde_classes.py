@@ -215,6 +215,7 @@ class KDE(object):
 
             print("rgi_pdf calls:")
             print(rgi_pdf(mc_validation_values))
+            print(len(rgi_pdf(mc_validation_values)))
     # #         shape = np.ones(len(self.model.vars), dtype=int)*nbins
     # #         adaptive_pdf_vals = adaptive_pdf_vals.reshape(*shape)
 
