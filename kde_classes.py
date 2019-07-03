@@ -19,6 +19,8 @@ from ROOT import (
 
 from root_numpy import array2tree
 
+from sklearn.model_selection import KFold
+from scipy.interpolate import RegularGridInterpolator
 
 class Model(object):
     """docstring for Model"""
@@ -163,3 +165,66 @@ class KDE(object):
             return self.binned_kernel.density(v)*self.model.kde_norm
         else:
             print('No kernel found.')
+
+
+def cross_validate(self):
+    kfold = KFold(n_splits=5, random_state=0, shuffle=True)
+    lh_arr, zero_arr = [], []
+
+    out_bins = []
+    for i, key in enumerate(self.model.vars):
+        out_bins.append(np.linspace(self.model.ranges[i][0],
+                                self.model.ranges[i][1],
+                                self.model.nbins[i]))
+    coords = np.array(list(itertools.product(*out_bins)))
+
+    for training_index, validation_index in kfold.split(self.model.mc):
+        print('loop')
+        #kde = KDE(self.model, index=training_index, adaptive=False)
+        self._generate_tree_and_space(self.model.mc[training_index])
+        binned_kernel_density = self.generate_binned_kernel_density()
+        nbins = 100
+        adaptive_pdf_vals = np.asarray([self.eval_point(coord) for coord in coords])
+#         shape = np.ones(len(self.model.vars), dtype=int)*nbins
+#         adaptive_pdf_vals = adaptive_pdf_vals.reshape(*shape)
+
+        mc_validation = self.model.mc[validation_index]
+        mc_validation_values = []
+
+        # Calculate values.
+        for i, var in enumerate(self.model.vars):
+            if callable(self.model.functions[i]):
+                mc_validation_values.append(self.model.functions[i](mc_validation[var]))
+            else:
+                mc_validation_values.append(mc_validation[var])
+
+        mc_validation_values = np.array(list(itertools.product(*mc_validation_values)))
+        print(mc_validation_values)
+
+        coords = itertools.product(*out_bins)
+        print("Coords: ", coords)
+        #lh, zeros = do_validation(coords, adaptive_pdf_vals, mc_validation_values)
+        lh, zeros = self.do_validation(out_bins, adaptive_pdf_vals, mc_validation_values)
+        print('Number of zeros {}'.format(zeros))
+        print('Likelihood Value {}'.format(lh))
+        zero_arr.append(zeros)
+        lh_arr.append(lh)
+    fname = ''
+    for i in range(len(args['bw'])):
+        fname += '{}_{}_'.format(args['bw_key'][i], args['bw'][i])
+    fname = fname[:-1] + '.npy'
+    odict = {'zeros': zero_arr, 'lh': lh_arr}
+
+def do_validation(self, coords, adaptive_pdf_vals, mc_validation_values):
+    #old code:
+    print("test:")
+    print(coords)
+    print(adaptive_pdf_vals)
+    rgi_pdf = RegularGridInterpolator(coords, adaptive_pdf_vals,
+                                  method='linear',
+                                  bounds_error=False, fill_value=0)
+    #weights = weights / np.sum(weights)
+    likelihood = rgi_pdf(mc_validation_values)
+    inds = likelihood > 0.
+    #return np.sum(np.log(likelihood[inds]) * weights[inds]), len(likelihood) - len(inds)
+    return np.sum(np.log(likelihood[inds])), len(likelihood) - len(inds)
