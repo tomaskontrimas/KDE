@@ -175,6 +175,8 @@ class KDE(object):
             print("training_index", training_index)
             print("validation_index", validation_index)
 
+            self.tree = None
+            self.spaces = []
             self._generate_tree_and_space(self.model.mc[training_index])
             binned_kernel_density = self.generate_binned_kernel_density()
 
