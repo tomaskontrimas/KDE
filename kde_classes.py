@@ -88,7 +88,7 @@ class KDE(object):
 
         self.space = CombinedPhaseSpace("PhspCombined", *self.spaces)
 
-    def _generate_weights(self, mc, weight='pl'):
+    def _generate_weights(self, mc, weight=None):
         if weight == 'pl':
             self.weights = mc['orig_OW']*powerlaw(
                 mc['trueE'], phi0=self.model.phi0, gamma=self.model.gamma)
