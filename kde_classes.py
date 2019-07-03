@@ -39,8 +39,9 @@ class Model(object):
         self.gamma = gamma
 
         # calculate normalization
-        ranges = [1.0] + [settings[key]['range'][1] - settings[key]['range'][0] for key in settings]
-        self.kde_norm = reduce((lambda x, y : x/y), ranges)
+        range_norm = [1.0] + [settings[key]['range'][1]
+                              - settings[key]['range'][0] for key in settings]
+        self.kde_norm = reduce((lambda x, y : x/y), range_norm)
 
 
 class KDE(object):
