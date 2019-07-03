@@ -196,7 +196,7 @@ class KDE(object):
             print("Coords: ", coords)
             print("training_pdf_vals: ", training_pdf_vals)
 
-            rgi_pdf = RegularGridInterpolator(tuple(out_bins), training_pdf_vals)
+            rgi_pdf = RegularGridInterpolator(tuple(out_bins), training_pdf_vals, method='linear', bounds_error=False, fill_value=0)
 
 
             #VALIDATION
