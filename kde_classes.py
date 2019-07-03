@@ -211,11 +211,8 @@ class KDE(object):
                 else:
                     mc_validation_values.append(mc_validation[var])
 
-            pdf_validation_values = rgi_pdf(zip(*mc_validation_values))
-
-            likelihood = rgi_pdf(mc_validation_values)
+            likelihood = rgi_pdf(zip(*mc_validation_values))
             inds = likelihood > 0.
-
 
             llh.append(np.sum(np.log(likelihood[inds])))
             zeros.append(len(likelihood) - len(inds))
