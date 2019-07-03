@@ -214,4 +214,4 @@ class KDE(object):
 
         print(self.model.bandwidths)
 
-        print(itertools.product(*self.model.bandwidths))
+        print(list(itertools.product(*self.model.bandwidths)))
