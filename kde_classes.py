@@ -220,4 +220,4 @@ class KDE(object):
             llh, zeros = self.cross_validate(bandwidth)
             result = np.append(result, [[str(bandwidth), llh, zeros]], axis=0)
 
-            return result
+        return result
