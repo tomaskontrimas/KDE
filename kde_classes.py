@@ -182,7 +182,6 @@ class KDE(object):
 
 
             out_bins = []
-
             for i, key in enumerate(self.model.vars):
                 out_bins.append(np.linspace(self.model.ranges[i][0],
                                         self.model.ranges[i][1],
@@ -192,6 +191,8 @@ class KDE(object):
 
             print("Coords: ", coords)
             print("training_pdf_vals: ", training_pdf_vals)
+
+            rgi_pdf = RegularGridInterpolator((*out_bins), training_pdf_vals)
 
     # #         shape = np.ones(len(self.model.vars), dtype=int)*nbins
     # #         adaptive_pdf_vals = adaptive_pdf_vals.reshape(*shape)
