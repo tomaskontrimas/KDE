@@ -175,6 +175,24 @@ class KDE(object):
             print(training_index)
             print(validation_index)
 
+            self._generate_tree_and_space(self.model.mc[training_index])
+            binned_kernel_density = self.generate_binned_kernel_density()
+
+
+            out_bins = []
+
+            for i, key in enumerate(self.model.vars):
+                out_bins.append(np.linspace(self.model.ranges[i][0],
+                                        self.model.ranges[i][1],
+                                        self.model.nbins[i]))
+            coords = np.array(list(itertools.product(*out_bins)))
+            training_pdf_vals = np.asarray([self.eval_point(coord) for coord in coords])
+
+            print("Coords: " coords)
+            print("training_pdf_vals: ", training_pdf_vals)
+
+    # #         shape = np.ones(len(self.model.vars), dtype=int)*nbins
+    # #         adaptive_pdf_vals = adaptive_pdf_vals.reshape(*shape)
 
     # def cross_validate(self):
     #     kfold = KFold(n_splits=5, random_state=0, shuffle=True)
