@@ -168,7 +168,7 @@ class KDE(object):
         else:
             print('No kernel found.')
 
-    def cross_validate(self):
+    def cross_validate(self, bandwidth):
         kfold = KFold(n_splits=5, random_state=0, shuffle=True)
         llh = []
         zeros = []
@@ -176,7 +176,7 @@ class KDE(object):
             self.tree = None
             self.spaces = []
             self._generate_tree_and_space(self.model.mc[training_index])
-            binned_kernel_density = self.generate_binned_kernel_density()
+            binned_kernel_density = self.generate_binned_kernel_density(bandwidth)
 
             out_bins = []
             for i, key in enumerate(self.model.vars):
@@ -213,5 +213,11 @@ class KDE(object):
     def cross_validate_bandwidths(self):
 
         print(self.model.bandwidths)
+        result = np.array([])
 
-        print(list(itertools.product(*self.model.bandwidths)))
+        for bandwidth in itertools.product(*self.model.bandwidths):
+            llh, zeros = self.cross_validate(bandwidth)
+            np.append(result, [str(bandwidth), llh, zeros])
+            print(result)
+
+
