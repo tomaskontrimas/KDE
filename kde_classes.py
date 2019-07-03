@@ -37,6 +37,7 @@ class Model(object):
         # phi0 in units of 1e-18 1/GeV/cm^2/sr/s
         self.phi0 = phi0*1e-18
         self.gamma = gamma
+        self.approx_pdf = 0
 
         # calculate normalization
         range_norm = [1.0] + [settings[key]['range'][1]
@@ -51,7 +52,7 @@ class KDE(object):
         self.model = model
         self.binned_kernel = None
         self.adaptive_kernel = None
-        self.approx_pdf = 0
+
         #self.weights = None
 
         self.tree = None
@@ -118,7 +119,7 @@ class KDE(object):
         args.append("weight")
         args.extend(self.model.nbins)
         args.extend(self.model.bandwidths)
-        args.extend([self.approx_pdf, 0])
+        args.extend([self.model.approx_pdf, 0])
 
         self.binned_kernel = BinnedKernelDensity(*args)
 
