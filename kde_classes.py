@@ -30,13 +30,13 @@ class Model(object):
     def __init__(self, mc, settings, index=None, weight=None, gamma=2.0, phi0=1):
         super(Model, self).__init__()
         # self.settings = settings
-        #self.values = []
+        self.values = [settings[key]['values'] for key in settings]
         self.vars = [key for key in settings]
         self.bandwidth_vars = [key + '_bandwidth' for key in settings]
-        self.mc_vars = [settings[key]['mc_var'] for key in settings]
+        #self.mc_vars = [settings[key]['mc_var'] for key in settings]
         self.nbins = [settings[key]['nbins'] for key in settings]
         self.bandwidths = [settings[key]['bandwidth'] for key in settings]
-        self.functions = [settings[key]['function'] for key in settings]
+        #self.functions = [settings[key]['function'] for key in settings]
         self.ranges = [settings[key]['range'] for key in settings]
         self.mc = mc
         self.weights = None
@@ -77,10 +77,12 @@ class KDE(object):
     def _generate_tree_and_space(self, mc):
         for i, var in enumerate(self.model.vars):
             # Calculate values.
-            if callable(self.model.functions[i]):
-                mc_values = self.model.functions[i](mc[self.model.mc_vars[i]])
-            else:
-                mc_values = mc[self.model.mc_vars[i]]
+            # if callable(self.model.functions[i]):
+            #     mc_values = self.model.functions[i](mc[self.model.mc_vars[i]])
+            # else:
+            #     mc_values = mc[self.model.mc_vars[i]]
+            mc_values = eval(self.model.values)
+
 
             # Name or just the key?
             self.spaces.append(OneDimPhaseSpace(var, *self.model.ranges[i]))
@@ -197,15 +199,16 @@ class KDE(object):
             # Validation
             rgi_pdf = RegularGridInterpolator(tuple(out_bins), training_pdf_vals, method='linear', bounds_error=False, fill_value=0)
 
-            mc_validation = self.model.mc[validation_index]
+            mc = self.model.mc[validation_index]
             mc_validation_values = []
 
             # Calculate values.
             for i, var in enumerate(self.model.vars):
-                if callable(self.model.functions[i]):
-                    mc_validation_values.append(self.model.functions[i](mc_validation[var]))
-                else:
-                    mc_validation_values.append(mc_validation[var])
+            #     if callable(self.model.functions[i]):
+            #         mc_validation_values.append(self.model.functions[i](mc_validation[var]))
+            #     else:
+            #         mc_validation_values.append(mc_validation[var])
+                mc_validation_values.append(eval(self.model.values))
 
             likelihood = rgi_pdf(zip(*mc_validation_values))
             inds = likelihood > 0.
