@@ -202,6 +202,7 @@ class KDE(object):
             mc = self.model.mc[validation_index]
             mc_validation_values = []
 
+            print("Start value calculation")
             # Calculate values.
             for i, var in enumerate(self.model.vars):
             #     if callable(self.model.functions[i]):
@@ -209,6 +210,7 @@ class KDE(object):
             #     else:
             #         mc_validation_values.append(mc_validation[var])
                 mc_validation_values.append(eval(self.model.values[i]))
+            print("End value calculation")
 
             likelihood = rgi_pdf(zip(*mc_validation_values))
             inds = likelihood > 0.
