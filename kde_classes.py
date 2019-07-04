@@ -175,7 +175,7 @@ class KDE(object):
         llh = []
         zeros = []
         # Temporary check
-        i = 0
+        j = 0
         for training_index, validation_index in kfold.split(self.model.mc):
             self.tree = None
             self.spaces = []
@@ -210,13 +210,13 @@ class KDE(object):
             inds = likelihood > 0.
 
             # Temporary check
-            if i == 0:
+            if j == 0:
                 print('Adding to results.')
                 self.results = {
                     'mv_val': mc_validation_values,
                     'likelihood': likelihood
                 }
-            i += 1
+            j += 1
 
             llh.append(np.sum(np.log(likelihood[inds])))
             zeros.append(len(likelihood) - len(inds))
