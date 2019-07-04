@@ -69,8 +69,6 @@ class KDE(object):
 
         self._generate_tree_and_space(mc)
 
-        self.results = None
-
     def _generate_tree_and_space(self, mc):
         for i, var in enumerate(self.model.vars):
             # Calculate values.
@@ -174,8 +172,6 @@ class KDE(object):
         kfold = KFold(n_splits=5, random_state=0, shuffle=True)
         llh = []
         zeros = []
-        # Temporary check
-        j = 0
         for training_index, validation_index in kfold.split(self.model.mc):
             self.tree = None
             self.spaces = []
@@ -208,15 +204,6 @@ class KDE(object):
 
             likelihood = rgi_pdf(zip(*mc_validation_values))
             inds = likelihood > 0.
-
-            # Temporary check
-            if j == 0:
-                print('Adding to results.')
-                self.results = {
-                    'mv_val': mc_validation_values,
-                    'likelihood': likelihood
-                }
-            j += 1
 
             llh.append(np.sum(np.log(likelihood[inds])))
             zeros.append(len(likelihood) - len(inds))
