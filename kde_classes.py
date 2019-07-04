@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+from numpy.lib import recfunctions as np_rfn
 import os
 import itertools
 
@@ -31,6 +32,7 @@ class Model(object):
         # self.settings = settings
         #self.values = []
         self.vars = [key for key in settings]
+        self.bandwidth_vars = [key + '_bandwidth' for key in settings]
         self.mc_vars = [settings[key]['mc_var'] for key in settings]
         self.nbins = [settings[key]['nbins'] for key in settings]
         self.bandwidths = [settings[key]['bandwidth'] for key in settings]
@@ -47,7 +49,10 @@ class Model(object):
         range_norm = [1.0] + [settings[key]['range'][1]
                               - settings[key]['range'][0] for key in settings]
         self.kde_norm = reduce((lambda x, y : x/y), range_norm)
-
+        self.results = np.array([], dtype=[{
+                'names': self.bandwidth_vars + ['LLH', 'Zeros'],
+                'formats': ['f4', 'f4', 'f4', 'f4']
+            }])
 
 class KDE(object):
     """docstring for KDE"""
@@ -219,5 +224,7 @@ class KDE(object):
             print(bandwidth)
             llh, zeros = self.cross_validate(bandwidth)
             result = np.append(result, [[str(bandwidth), llh, zeros]], axis=0)
+
+            np_rfn(self.model.results, [bandwidth + llh, zeros])
 
         return result
