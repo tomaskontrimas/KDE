@@ -229,4 +229,4 @@ class KDE(object):
             result = np.array([result_tuple],
                               dtype=self.model.results.dtype)
             self.model.results = np.append(self.model.results, result)
-        return result
+        return self.model.results
