@@ -49,10 +49,10 @@ class Model(object):
         range_norm = [1.0] + [settings[key]['range'][1]
                               - settings[key]['range'][0] for key in settings]
         self.kde_norm = reduce((lambda x, y : x/y), range_norm)
-        self.results = np.array([], dtype=[{
+        self.results = np.array([], dtype={
                 'names': self.bandwidth_vars + ['LLH', 'Zeros'],
                 'formats': ['f4', 'f4', 'f4', 'f4']
-            }])
+            })
 
 class KDE(object):
     """docstring for KDE"""
