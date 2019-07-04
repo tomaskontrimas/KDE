@@ -212,7 +212,7 @@ class KDE(object):
 
             llh.append(np.sum(np.log(likelihood[inds])))
             zeros.append(len(likelihood) - len(inds))
-        print("llh, zeros:", llh, zeros)
+        #print("llh, zeros:", llh, zeros)
         return np.average(llh), np.average(zeros)
 
     def cross_validate_bandwidths(self):
