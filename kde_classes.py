@@ -172,6 +172,8 @@ class KDE(object):
         kfold = KFold(n_splits=5, random_state=0, shuffle=True)
         llh = []
         zeros = []
+        # Temporary check
+        i = 0
         for training_index, validation_index in kfold.split(self.model.mc):
             self.tree = None
             self.spaces = []
@@ -204,6 +206,14 @@ class KDE(object):
 
             likelihood = rgi_pdf(zip(*mc_validation_values))
             inds = likelihood > 0.
+
+            # Temporary check
+            if i == 0:
+                self.results = {
+                    'mv_val': mc_validation_values,
+                    'likelihood': likelihood
+                }
+            i += 1
 
             llh.append(np.sum(np.log(likelihood[inds])))
             zeros.append(len(likelihood) - len(inds))
