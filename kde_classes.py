@@ -81,7 +81,7 @@ class KDE(object):
             #     mc_values = self.model.functions[i](mc[self.model.mc_vars[i]])
             # else:
             #     mc_values = mc[self.model.mc_vars[i]]
-            mc_values = eval(self.model.values)
+            mc_values = eval(self.model.values[i])
 
 
             # Name or just the key?
@@ -208,7 +208,7 @@ class KDE(object):
             #         mc_validation_values.append(self.model.functions[i](mc_validation[var]))
             #     else:
             #         mc_validation_values.append(mc_validation[var])
-                mc_validation_values.append(eval(self.model.values))
+                mc_validation_values.append(eval(self.model.values[i]))
 
             likelihood = rgi_pdf(zip(*mc_validation_values))
             inds = likelihood > 0.
