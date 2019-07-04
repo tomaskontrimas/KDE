@@ -69,6 +69,8 @@ class KDE(object):
 
         self._generate_tree_and_space(mc)
 
+        self.results = None
+
     def _generate_tree_and_space(self, mc):
         for i, var in enumerate(self.model.vars):
             # Calculate values.
@@ -209,6 +211,7 @@ class KDE(object):
 
             # Temporary check
             if i == 0:
+                print('Adding to results.')
                 self.results = {
                     'mv_val': mc_validation_values,
                     'likelihood': likelihood
