@@ -114,7 +114,7 @@ class KDE(object):
             # print(np.sum(diff_weight) * np.pi * 1e7)
         else:
             weights = np.ones(len(mc))
-            print('Using ones as weight.')
+            #print('Using ones as weight.')
         return weights
 
     def generate_binned_kernel_density(self, bandwidth):
@@ -217,7 +217,7 @@ class KDE(object):
 
     def cross_validate_bandwidths(self):
 
-        print(self.model.bandwidths)
+        #print(self.model.bandwidths)
         result = np.array([['bandwidth', 0, 0]])
 
         for bandwidth in itertools.product(*self.model.bandwidths):
