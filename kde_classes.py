@@ -225,7 +225,8 @@ class KDE(object):
             llh, zeros = self.cross_validate(bandwidth)
             #result = np.append(result, [[str(bandwidth), llh, zeros]], axis=0)
 
-            result = np.array([tuple(bandwidth + [llh, zeros])],
+            result_tuple = tuple(list(bandwidth) + [llh, zeros])
+            result = np.array([result_tuple],
                               dtype=self.model.results.dtype)
             self.model.results = np.append(self.model.results, result)
         return result
