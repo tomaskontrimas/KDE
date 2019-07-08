@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 
+import itertools
+import logging
 import numpy as np
 from numpy.lib import recfunctions as np_rfn
 import os
-import itertools
 
+from sklearn.model_selection import KFold
+from scipy.interpolate import RegularGridInterpolator
 
 from config import CFG
 from functions import powerlaw
 
+# ROOT imports
 os.environ["ROOT_INCLUDE_PATH"] = os.pathsep + CFG['paths']['meerkat_root']
 from ROOT import gSystem, gStyle, RooRealVar, std, Double
 gSystem.Load(CFG['paths']['meerkat_lib'])
@@ -22,86 +26,32 @@ from ROOT import (
 
 from root_numpy import array2tree
 
-from sklearn.model_selection import KFold
-from scipy.interpolate import RegularGridInterpolator
 
 class Model(object):
-    """docstring for Model"""
-    def __init__(self, mc, settings, index=None, weight=None, gamma=2.0, phi0=1):
+    """The Model class initializes and stores variables based on the provided
+    model settings file. They are used for KDE instance generation.
+    """
+    def __init__(self, mc, settings, index=None, weighting=None, gamma=2.0,
+                 phi0=1):
         super(Model, self).__init__()
-        # self.settings = settings
-        self.values = [settings[key]['values'] for key in settings]
+        self.values = [eval(settings[key]['values']) for key in settings]
         self.vars = [key for key in settings]
         self.bandwidth_vars = [key + '_bandwidth' for key in settings]
-        #self.mc_vars = [settings[key]['mc_var'] for key in settings]
         self.nbins = [settings[key]['nbins'] for key in settings]
         self.bandwidths = [settings[key]['bandwidth'] for key in settings]
-        #self.functions = [settings[key]['function'] for key in settings]
         self.ranges = [settings[key]['range'] for key in settings]
         self.mc = mc
-        self.weights = None
-        # phi0 in units of 1e-18 1/GeV/cm^2/sr/s
-        self.phi0 = phi0*1e-18
+        self.weights = _generate_weights(weighting)
+        self.phi0 = phi0*1e-18  # Renormalize in units of 1e-18 1/GeV/cm^2/sr/s.
         self.gamma = gamma
         self.approx_pdf = 0
 
-        # calculate normalization
-        range_norm = [1.0] + [settings[key]['range'][1]
-                              - settings[key]['range'][0] for key in settings]
+        # Calculate KDE normalization.
+        range_norm = [1.0] + [bound[1] - bound[0] for bound in self.ranges]
         self.kde_norm = reduce((lambda x, y : x/y), range_norm)
-        self.results = np.array([], dtype={
-                'names': self.bandwidth_vars + ['LLH', 'Zeros'],
-                'formats': ['f4', 'f4', 'f4', 'f4']
-            })
+        self.logger = logging.getLogger(__name__ + 'Model')
 
-class KDE(object):
-    """docstring for KDE"""
-    def __init__(self, model, index=None, adaptive=False):
-        super(KDE, self).__init__()
-        self.model = model
-        self.binned_kernel = None
-        self.adaptive_kernel = None
-
-        #self.weights = None
-
-        self.tree = None
-        self.spaces = []
-
-        if index is not None:
-            mc = self.model.mc[index]
-        else:
-            mc = self.model.mc
-
-        self._generate_tree_and_space(mc)
-
-    def _generate_tree_and_space(self, mc):
-        for i, var in enumerate(self.model.vars):
-            # Calculate values.
-            # if callable(self.model.functions[i]):
-            #     mc_values = self.model.functions[i](mc[self.model.mc_vars[i]])
-            # else:
-            #     mc_values = mc[self.model.mc_vars[i]]
-            mc_values = eval(self.model.values[i])
-
-
-            # Name or just the key?
-            self.spaces.append(OneDimPhaseSpace(var, *self.model.ranges[i]))
-
-            if self.tree is None:
-                value_array = np.array(mc_values, dtype=[(var, np.float32)])
-                self.tree = array2tree(value_array)
-            else:
-                value_array = np.array(mc_values, dtype=[(var, np.float32)])
-                array2tree(value_array, tree=self.tree)
-
-        weights = self._generate_weights(mc)
-
-        array2tree(np.array(weights, dtype=[("weight", np.float32)]),
-                   tree=self.tree)
-
-        self.space = CombinedPhaseSpace("PhspCombined", *self.spaces)
-
-    def _generate_weights(self, mc, weight_type=None):
+    def _generate_weights(self, weighting):
         if weight_type == 'pl':
             weights = mc['orig_OW']*powerlaw(
                 mc['trueE'], phi0=self.model.phi0, gamma=self.model.gamma)
@@ -116,8 +66,60 @@ class KDE(object):
             # print(np.sum(diff_weight) * np.pi * 1e7)
         else:
             weights = np.ones(len(mc))
-            #print('Using ones as weight.')
+            self.logger.info('Using ones as weight.')
         return weights
+
+
+class KDE(object):
+    """docstring for KDE"""
+    def __init__(self, model, index=None, adaptive=False):
+        super(KDE, self).__init__()
+        self.model = model
+        self.binned_kernel = None
+        self.adaptive_kernel = None
+
+        #self.weights = None
+
+        self.tree = None
+        self.spaces = []
+
+        self.results = np.array([], dtype={
+            'names': self.bandwidth_vars + ['LLH', 'Zeros'],
+            'formats': ['f4', 'f4', 'f4', 'f4']
+        })
+
+        if index is not None:
+            mc = self.model.mc[index]
+        else:
+            mc = self.model.mc
+
+        self._generate_tree_and_space(index)
+
+    def _generate_tree_and_space(self, index):
+        for i, var in enumerate(self.model.vars):
+            # Calculate values.
+            # if callable(self.model.functions[i]):
+            #     mc_values = self.model.functions[i](mc[self.model.mc_vars[i]])
+            # else:
+            #     mc_values = mc[self.model.mc_vars[i]]
+            #mc_values = eval(self.model.values[i])
+
+
+            # Name or just the key?
+            self.spaces.append(OneDimPhaseSpace(var, *self.model.ranges[i]))
+
+            if self.tree is None:
+                value_array = np.array(self.model.values[i][index], dtype=[(var, np.float32)])
+                self.tree = array2tree(value_array)
+            else:
+                value_array = np.array(self.model.values[i][index], dtype=[(var, np.float32)])
+                array2tree(value_array, tree=self.tree)
+
+        array2tree(np.array(self.model.weights[index], dtype=[("weight", np.float32)]),
+                   tree=self.tree)
+
+        self.space = CombinedPhaseSpace("PhspCombined", *self.spaces)
+
 
     def generate_binned_kernel_density(self, bandwidth):
         args = []
