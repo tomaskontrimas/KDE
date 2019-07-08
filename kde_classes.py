@@ -97,6 +97,8 @@ class KDE(object):
         self._generate_tree_and_space(index)
 
     def _generate_tree_and_space(self, index):
+        if index is None:
+            index = slice(len(self.model.values[0])) # Index whole array.
         for i, var in enumerate(self.model.vars):
             self.spaces.append(OneDimPhaseSpace(var, *self.model.ranges[i]))
             if self.tree is None:
