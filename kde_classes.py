@@ -34,7 +34,7 @@ class Model(object):
     def __init__(self, mc, settings, index=None, weighting=None, gamma=2.0,
                  phi0=1):
         super(Model, self).__init__()
-        self.logger = logging.getLogger(__name__ + 'Model')
+        self.logger = logging.getLogger('KDE.' + __name__ + '.Model')
         self.values = [eval(settings[key]['values']) for key in settings]
         self.vars = [key for key in settings]
         self.bandwidth_vars = [key + '_bandwidth' for key in settings]
