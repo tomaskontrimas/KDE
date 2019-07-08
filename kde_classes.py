@@ -54,15 +54,15 @@ class Model(object):
     def _generate_weights(self, weighting):
         if weighting == 'pl':
             weights = self.mc['orig_OW']*powerlaw(
-                self.mc['true_energy'], phi0=self.model.phi0,
-                gamma=self.model.gamma
+                self.mc['true_energy'], phi0=self.phi0,
+                gamma=self.gamma
             )
         elif weighting == 'conv':
             weights = self.mc['conv']
         elif weighting == 'conv+pl':
             diff_weights = self.mc['orig_OW']*powerlaw(
-                self.mc['true_energy'], phi0=self.model.phi0,
-                gamma=self.model.gamma
+                self.mc['true_energy'], phi0=self.phi0,
+                gamma=self.gamma
             )
             weights = self.mc['conv'] + diff_weights
             # print('Rates [1/yr]:')
