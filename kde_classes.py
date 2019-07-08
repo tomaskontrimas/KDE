@@ -34,6 +34,7 @@ class Model(object):
     def __init__(self, mc, settings, index=None, weighting=None, gamma=2.0,
                  phi0=1):
         super(Model, self).__init__()
+        self.logger = logging.getLogger(__name__ + 'Model')
         self.values = [eval(settings[key]['values']) for key in settings]
         self.vars = [key for key in settings]
         self.bandwidth_vars = [key + '_bandwidth' for key in settings]
@@ -49,7 +50,6 @@ class Model(object):
         # Calculate KDE normalization.
         range_norm = [1.0] + [bound[1] - bound[0] for bound in self.ranges]
         self.kde_norm = reduce((lambda x, y : x/y), range_norm)
-        self.logger = logging.getLogger(__name__ + 'Model')
 
     def _generate_weights(self, weighting):
         if weighting == 'pl':
