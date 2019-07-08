@@ -87,8 +87,8 @@ class KDE(object):
         self.tree = None
         self.spaces = []
 
-        self.results = np.array([], dtype={
-            'names': self.bandwidth_vars + ['LLH', 'Zeros'],
+        self.cv_results = np.array([], dtype={
+            'names': self.model.bandwidth_vars + ['LLH', 'Zeros'],
             'formats': ['f4', 'f4', 'f4', 'f4']
         })
 
@@ -225,17 +225,11 @@ class KDE(object):
         return np.average(llh), np.average(zeros)
 
     def cross_validate_bandwidths(self):
-
-        #print(self.model.bandwidths)
-        result = np.array([['bandwidth', 0, 0]])
-
         for bandwidth in itertools.product(*self.model.bandwidths):
             print(bandwidth)
             llh, zeros = self.cross_validate(bandwidth)
-            #result = np.append(result, [[str(bandwidth), llh, zeros]], axis=0)
-
             result_tuple = tuple(list(bandwidth) + [llh, zeros])
             result = np.array([result_tuple],
-                              dtype=self.model.results.dtype)
-            self.model.results = np.append(self.model.results, result)
-        return self.model.results
+                              dtype=self.cv_results.dtype)
+            self.cv_results = np.append(self.cv_results, result)
+        return self.cv_results
