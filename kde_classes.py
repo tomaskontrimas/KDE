@@ -41,7 +41,7 @@ class Model(object):
         self.bandwidths = [settings[key]['bandwidth'] for key in settings]
         self.ranges = [settings[key]['range'] for key in settings]
         self.mc = mc
-        self.weights = _generate_weights(weighting)
+        self.weights = self._generate_weights(weighting)
         self.phi0 = phi0*1e-18  # Renormalize in units of 1e-18 1/GeV/cm^2/sr/s.
         self.gamma = gamma
         self.approx_pdf = 0
