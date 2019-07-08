@@ -76,7 +76,7 @@ class Model(object):
 
 class KDE(object):
     """docstring for KDE"""
-    def __init__(self, model, index=None, adaptive=False):
+    def __init__(self, model, index=None):
         super(KDE, self).__init__()
         self.model = model
         self.binned_kernel = None
@@ -98,17 +98,7 @@ class KDE(object):
 
     def _generate_tree_and_space(self, index):
         for i, var in enumerate(self.model.vars):
-            # Calculate values.
-            # if callable(self.model.functions[i]):
-            #     mc_values = self.model.functions[i](mc[self.model.mc_vars[i]])
-            # else:
-            #     mc_values = mc[self.model.mc_vars[i]]
-            #mc_values = eval(self.model.values[i])
-
-
-            # Name or just the key?
             self.spaces.append(OneDimPhaseSpace(var, *self.model.ranges[i]))
-
             if self.tree is None:
                 value_array = np.array(self.model.values[i][index], dtype=[(var, np.float32)])
                 self.tree = array2tree(value_array)
@@ -116,11 +106,10 @@ class KDE(object):
                 value_array = np.array(self.model.values[i][index], dtype=[(var, np.float32)])
                 array2tree(value_array, tree=self.tree)
 
-        array2tree(np.array(self.model.weights[index], dtype=[("weight", np.float32)]),
-                   tree=self.tree)
+        array2tree(np.array(self.model.weights[index],
+            dtype=[("weight", np.float32)]), tree=self.tree)
 
         self.space = CombinedPhaseSpace("PhspCombined", *self.spaces)
-
 
     def generate_binned_kd(self, bandwidth):
         args = []
