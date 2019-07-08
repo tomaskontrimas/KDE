@@ -81,9 +81,6 @@ class KDE(object):
         self.model = model
         self.binned_kernel = None
         self.adaptive_kernel = None
-
-        #self.weights = None
-
         self.tree = None
         self.spaces = []
 
@@ -125,7 +122,7 @@ class KDE(object):
         self.space = CombinedPhaseSpace("PhspCombined", *self.spaces)
 
 
-    def generate_binned_kernel_density(self, bandwidth):
+    def generate_binned_kd(self, bandwidth):
         args = []
         args.extend([
             "BinnedKernelDensity",
@@ -142,13 +139,10 @@ class KDE(object):
 
         return self.binned_kernel
 
-    def generate_adaptive_kernel_density(self, pdf_seed=None):
+    def generate_adaptive_kd(self, bandwidth, pdf_seed=None):
         # Set or generate pdf_seed if not provided.
-        if not pdf_seed:
-            if self.binned_kernel:
-                pdf_seed = self.binned_kernel
-            else:
-                pdf_seed = self.generate_binned_kernel_density()
+        if pdf_seed is None:
+            pdf_seed = self.generate_binned_kd(bandwidth)
 
         args = []
         args.extend([
@@ -159,7 +153,7 @@ class KDE(object):
         args.extend(self.model.vars)
         args.append("weight")
         args.extend(self.model.nbins)
-        args.extend(self.model.bandwidths)
+        args.extend(bandwidth)
         args.extend([pdf_seed,
                      self.model.approx_pdf,
                      0])
@@ -168,20 +162,14 @@ class KDE(object):
 
         return self.adaptive_kernel
 
-    #@staticmethod
-    def eval_point(self, point):
+    def eval_point(self, kernel_density, point):
         l = len(point)
         v = std.vector(Double)(l)
         for i in range(l):
             v[i] = point[i]
-        if self.adaptive_kernel:
-            return self.adaptive_kernel.density(v)*self.model.kde_norm
-        elif self.binned_kernel:
-            return self.binned_kernel.density(v)*self.model.kde_norm
-        else:
-            print('No kernel found.')
+        return kernel_density.density(v)*self.model.kde_norm
 
-    def cross_validate(self, bandwidth):
+    def cross_validate(self, bandwidth, adaptive=False):
         kfold = KFold(n_splits=5, random_state=0, shuffle=True)
         llh = []
         zeros = []
@@ -189,7 +177,11 @@ class KDE(object):
             self.tree = None
             self.spaces = []
             self._generate_tree_and_space(training_index)
-            binned_kernel_density = self.generate_binned_kernel_density(bandwidth)
+
+            if adaptive:
+                kernel_density = self.generate_adaptive_kd(bandwidth)
+            else:
+                kernel_density = self.generate_binned_kd(bandwidth)
 
             out_bins = []
             for i, key in enumerate(self.model.vars):
@@ -203,11 +195,11 @@ class KDE(object):
             training_pdf_vals = training_pdf_vals.reshape(*shape)
 
             # Validation
-            rgi_pdf = RegularGridInterpolator(tuple(out_bins), training_pdf_vals, method='linear', bounds_error=False, fill_value=0)
-
-            mc_validation_values = []
+            rgi_pdf = RegularGridInterpolator(tuple(out_bins), training_pdf_vals,
+                method='linear', bounds_error=False, fill_value=0)
 
             # Calculate validation values.
+            mc_validation_values = []
             for i, var in enumerate(self.model.vars):
                 mc_validation_values.append(
                     self.model.values[i][validation_index])
@@ -217,13 +209,12 @@ class KDE(object):
 
             llh.append(np.sum(np.log(likelihood[inds])))
             zeros.append(len(likelihood) - len(inds))
-        #print("llh, zeros:", llh, zeros)
         return np.average(llh), np.average(zeros)
 
-    def cross_validate_bandwidths(self):
+    def cross_validate_bandwidths(self, adaptive=False):
         for bandwidth in itertools.product(*self.model.bandwidths):
             print(bandwidth)
-            llh, zeros = self.cross_validate(bandwidth)
+            llh, zeros = self.cross_validate(bandwidth, adaptive)
             result_tuple = tuple(list(bandwidth) + [llh, zeros])
             result = np.array([result_tuple],
                               dtype=self.cv_results.dtype)
