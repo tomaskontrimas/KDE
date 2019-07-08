@@ -27,9 +27,9 @@ def load_and_prepare_data(pathfilenames):
     return data
 
 def diffuse_cuts(mc):
-    log_true_e = np.log10(mc['true_e'])
+    log_true_e = np.log10(mc['true_energy'])
     return mc[(mc['true_dec'] > np.radians(-5)) &
-              (np.log10(mc['true_e']) < 8.0) &
+              (np.log10(mc['true_energy']) < 8.0) &
               (mc['sigmaok'] == 0)]
 
 def assert_file_exists(pathfilename):

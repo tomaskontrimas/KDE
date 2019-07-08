@@ -52,14 +52,14 @@ class Model(object):
         self.logger = logging.getLogger(__name__ + 'Model')
 
     def _generate_weights(self, weighting):
-        if weight_type == 'pl':
+        if weighting == 'pl':
             weights = mc['orig_OW']*powerlaw(
-                mc['trueE'], phi0=self.model.phi0, gamma=self.model.gamma)
-        elif weight_type == 'conv':
+                mc['true_energy'], phi0=self.model.phi0, gamma=self.model.gamma)
+        elif weighting == 'conv':
             weights = mc['conv']
-        elif weight_type == 'conv+pl':
+        elif weighting == 'conv+pl':
             diff_weight = mc['orig_OW']*powerlaw(
-                mc['trueE'], phi0=self.model.phi0, gamma=self.model.gamma)
+                mc['true_energy'], phi0=self.model.phi0, gamma=self.model.gamma)
             weights = mc['conv'] + diff_weight
             # print('Rates [1/yr]:')
             # print(np.sum(self.mc['conv']) * np.pi * 1e7)

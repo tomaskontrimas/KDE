@@ -13,7 +13,7 @@ CFG = {
     },
     'MC_keys': {
         'ow': 'generator_ow',
-        'trueE': 'true_e', # Used in code.
+        'trueE': 'true_energy', # Used in code.
         'conv': 'conv', # Used in code.
         'astro': 'astro',
         'logEr': 'loge_muex',
