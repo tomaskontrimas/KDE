@@ -78,12 +78,12 @@ class KDE(object):
     """docstring for KDE"""
     def __init__(self, model, index=None):
         super(KDE, self).__init__()
+        self.logger = logging.getLogger('KDE.' + __name__ + '.KDE')
         self.model = model
         self.binned_kernel = None
         self.adaptive_kernel = None
         self.tree = None
         self.spaces = []
-
         self.cv_results = np.array([], dtype={
             'names': self.model.bandwidth_vars + ['LLH', 'Zeros'],
             'formats': ['f4', 'f4', 'f4', 'f4']
@@ -98,7 +98,7 @@ class KDE(object):
 
     def _generate_tree_and_space(self, index):
         if index is None:
-            index = slice(len(self.model.values[0])) # Index whole array.
+            index = slice(len(self.model.values[0])) # Index the whole array.
         for i, var in enumerate(self.model.vars):
             self.spaces.append(OneDimPhaseSpace(var, *self.model.ranges[i]))
             if self.tree is None:
@@ -182,15 +182,12 @@ class KDE(object):
             coords = np.array(list(itertools.product(*out_bins)))
             training_pdf_vals = np.asarray(
                 [self.eval_point(kernel_density, coord) for coord in coords])
-            # nbins = 100
-            # shape = np.ones(len(self.model.vars), dtype=int)*nbins
-            # training_pdf_vals = training_pdf_vals.reshape(*shape)
             training_pdf_vals = training_pdf_vals.reshape(self.model.nbins)
+
             # Validation
             rgi_pdf = RegularGridInterpolator(tuple(out_bins), training_pdf_vals,
                 method='linear', bounds_error=False, fill_value=0)
 
-            # Calculate validation values.
             mc_validation_values = []
             for i, var in enumerate(self.model.vars):
                 mc_validation_values.append(
@@ -205,7 +202,7 @@ class KDE(object):
 
     def cross_validate_bandwidths(self, adaptive=False):
         for bandwidth in itertools.product(*self.model.bandwidths):
-            print(bandwidth)
+            self.logger.info('Bandwidth: %s', bandwidth)
             llh, zeros = self.cross_validate(bandwidth, adaptive)
             result_tuple = tuple(list(bandwidth) + [llh, zeros])
             result = np.array([result_tuple],
