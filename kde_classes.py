@@ -53,19 +53,23 @@ class Model(object):
 
     def _generate_weights(self, weighting):
         if weighting == 'pl':
-            weights = mc['orig_OW']*powerlaw(
-                mc['true_energy'], phi0=self.model.phi0, gamma=self.model.gamma)
+            weights = self.mc['orig_OW']*powerlaw(
+                self.mc['true_energy'], phi0=self.model.phi0,
+                gamma=self.model.gamma
+            )
         elif weighting == 'conv':
-            weights = mc['conv']
+            weights = self.mc['conv']
         elif weighting == 'conv+pl':
-            diff_weight = mc['orig_OW']*powerlaw(
-                mc['true_energy'], phi0=self.model.phi0, gamma=self.model.gamma)
-            weights = mc['conv'] + diff_weight
+            diff_weights = self.mc['orig_OW']*powerlaw(
+                self.mc['true_energy'], phi0=self.model.phi0,
+                gamma=self.model.gamma
+            )
+            weights = self.mc['conv'] + diff_weights
             # print('Rates [1/yr]:')
             # print(np.sum(self.mc['conv']) * np.pi * 1e7)
-            # print(np.sum(diff_weight) * np.pi * 1e7)
+            # print(np.sum(diff_weights) * np.pi * 1e7)
         else:
-            weights = np.ones(len(mc))
+            weights = np.ones(len(self.mc))
             self.logger.info('Using ones as weight.')
         return weights
 
