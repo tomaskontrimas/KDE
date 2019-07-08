@@ -188,7 +188,7 @@ class KDE(object):
         for training_index, validation_index in kfold.split(self.model.mc):
             self.tree = None
             self.spaces = []
-            self._generate_tree_and_space(self.model.mc[training_index])
+            self._generate_tree_and_space(training_index)
             binned_kernel_density = self.generate_binned_kernel_density(bandwidth)
 
             out_bins = []
@@ -205,16 +205,12 @@ class KDE(object):
             # Validation
             rgi_pdf = RegularGridInterpolator(tuple(out_bins), training_pdf_vals, method='linear', bounds_error=False, fill_value=0)
 
-            mc = self.model.mc[validation_index]
             mc_validation_values = []
 
-            # Calculate values.
+            # Calculate validation values.
             for i, var in enumerate(self.model.vars):
-            #     if callable(self.model.functions[i]):
-            #         mc_validation_values.append(self.model.functions[i](mc_validation[var]))
-            #     else:
-            #         mc_validation_values.append(mc_validation[var])
-                mc_validation_values.append(eval(self.model.values[i]))
+                mc_validation_values.append(
+                    self.model.values[i][validation_index])
 
             likelihood = rgi_pdf(zip(*mc_validation_values))
             inds = likelihood > 0.
