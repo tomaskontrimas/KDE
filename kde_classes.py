@@ -162,11 +162,11 @@ class KDE(object):
 
         return self.adaptive_kernel
 
-    def eval_point(self, kernel_density, point):
-        l = len(point)
+    def eval_point(self, kernel_density, coord):
+        l = len(coord)
         v = std.vector(Double)(l)
         for i in range(l):
-            v[i] = point[i]
+            v[i] = coord[i]
         return kernel_density.density(v)*self.model.kde_norm
 
     def cross_validate(self, bandwidth, adaptive=False):
@@ -189,7 +189,8 @@ class KDE(object):
                                         self.model.ranges[i][1],
                                         self.model.nbins[i]))
             coords = np.array(list(itertools.product(*out_bins)))
-            training_pdf_vals = np.asarray([self.eval_point(coord) for coord in coords])
+            training_pdf_vals = np.asarray(
+                [self.eval_point(kernel_density, coord) for coord in coords])
             nbins = 100
             shape = np.ones(len(self.model.vars), dtype=int)*nbins
             training_pdf_vals = training_pdf_vals.reshape(*shape)
