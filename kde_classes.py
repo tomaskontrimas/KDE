@@ -191,10 +191,10 @@ class KDE(object):
             coords = np.array(list(itertools.product(*out_bins)))
             training_pdf_vals = np.asarray(
                 [self.eval_point(kernel_density, coord) for coord in coords])
-            nbins = 100
-            shape = np.ones(len(self.model.vars), dtype=int)*nbins
-            training_pdf_vals = training_pdf_vals.reshape(*shape)
-
+            # nbins = 100
+            # shape = np.ones(len(self.model.vars), dtype=int)*nbins
+            # training_pdf_vals = training_pdf_vals.reshape(*shape)
+            training_pdf_vals = training_pdf_vals.reshape(self.model.nbins)
             # Validation
             rgi_pdf = RegularGridInterpolator(tuple(out_bins), training_pdf_vals,
                 method='linear', bounds_error=False, fill_value=0)
