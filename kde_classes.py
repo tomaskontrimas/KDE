@@ -84,11 +84,11 @@ class KDE(object):
         self.adaptive_kernel = None
         self.tree = None
         self.spaces = []
-        self.cv_results = np.array([], dtype={
+        self.cv_result = np.array([], dtype={
             'names': self.model.bandwidth_vars + ['LLH', 'Zeros'],
             'formats': ['f4', 'f4', 'f4', 'f4']
         })
-
+        self.cv_results = np.array(self.cv_result)
         if index is not None:
             mc = self.model.mc[index]
         else:
@@ -196,16 +196,19 @@ class KDE(object):
             likelihood = rgi_pdf(zip(*mc_validation_values))
             inds = likelihood > 0.
 
-            llh.append(np.sum(np.log(likelihood[inds])))
+            weights = self.model.weights[validation_index]
+            weights /= np.sum(weigh)
+
+            llh.append(np.sum(np.log(likelihood[inds])*weights[inds]))
             zeros.append(len(likelihood) - len(inds))
-        return np.average(llh), np.average(zeros)
+        result_tuple = tuple(list(bandwidth)
+                             + [np.average(llh), np.average(zeros)])
+        self.cv_result = np.array([result_tuple], dtype=self.cv_result.dtype)
+        return self.cv_result
 
     def cross_validate_bandwidths(self, adaptive=False):
         for bandwidth in itertools.product(*self.model.bandwidths):
             self.logger.info('Bandwidth: %s', bandwidth)
-            llh, zeros = self.cross_validate(bandwidth, adaptive)
-            result_tuple = tuple(list(bandwidth) + [llh, zeros])
-            result = np.array([result_tuple],
-                              dtype=self.cv_results.dtype)
+            result = self.cross_validate(bandwidth, adaptive)
             self.cv_results = np.append(self.cv_results, result)
         return self.cv_results
