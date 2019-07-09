@@ -4,7 +4,7 @@ import os
 import importlib
 import sys
 
-def powerlaw(Et, phi0=1.01*1e-18, gamma = 2.19):
+def powerlaw(Et, phi0=1.01*1e-18, gamma=2.19):
     return phi0 * (Et / 1.e5) ** (-gamma)
 
 def load_model(model_path):

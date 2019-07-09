@@ -42,10 +42,10 @@ class Model(object):
         self.bandwidths = [settings[key]['bandwidth'] for key in settings]
         self.ranges = [settings[key]['range'] for key in settings]
         self.mc = mc
-        self.weights = self._generate_weights(weighting)
         self.phi0 = phi0*1e-18  # Renormalize in units of 1e-18 1/GeV/cm^2/sr/s.
         self.gamma = gamma
         self.approx_pdf = 0
+        self.weights = self._generate_weights(weighting)
 
         # Calculate KDE normalization.
         range_norm = [1.0] + [bound[1] - bound[0] for bound in self.ranges]
