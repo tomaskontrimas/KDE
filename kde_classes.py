@@ -12,7 +12,7 @@ from scipy.interpolate import RegularGridInterpolator
 from config import CFG
 from functions import powerlaw
 
-# ROOT imports
+# ROOT imports.
 os.environ["ROOT_INCLUDE_PATH"] = os.pathsep + CFG['paths']['meerkat_root']
 from ROOT import gSystem, gStyle, RooRealVar, std, Double
 gSystem.Load(CFG['paths']['meerkat_lib'])
@@ -82,8 +82,6 @@ class KDE(object):
         self.model = model
         self.binned_kernel = None
         self.adaptive_kernel = None
-        self.tree = None
-        self.spaces = []
         self.cv_result = np.array([], dtype={
             'names': self.model.bandwidth_vars + ['LLH', 'Zeros'],
             'formats': ['f4', 'f4', 'f4', 'f4']
@@ -97,10 +95,12 @@ class KDE(object):
         self._generate_tree_and_space(index)
 
     def _generate_tree_and_space(self, index):
+        self.tree = None
+        spaces = []
         if index is None:
             index = slice(len(self.model.values[0])) # Index the whole array.
         for i, var in enumerate(self.model.vars):
-            self.spaces.append(OneDimPhaseSpace(var, *self.model.ranges[i]))
+            spaces.append(OneDimPhaseSpace(var, *self.model.ranges[i]))
             if self.tree is None:
                 value_array = np.array(self.model.values[i][index], dtype=[(var, np.float32)])
                 self.tree = array2tree(value_array)
@@ -111,7 +111,7 @@ class KDE(object):
         array2tree(np.array(self.model.weights[index],
             dtype=[("weight", np.float32)]), tree=self.tree)
 
-        self.space = CombinedPhaseSpace("PhspCombined", *self.spaces)
+        self.space = CombinedPhaseSpace("PhspCombined", *spaces)
 
     def generate_binned_kd(self, bandwidth):
         args = []
@@ -165,8 +165,6 @@ class KDE(object):
         llh = []
         zeros = []
         for training_index, validation_index in kfold.split(self.model.mc):
-            self.tree = None
-            self.spaces = []
             self._generate_tree_and_space(training_index)
 
             if adaptive:
