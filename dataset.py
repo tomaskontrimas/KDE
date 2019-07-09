@@ -19,7 +19,9 @@ def load_and_prepare_data(pathfilenames):
         data = np.append(data, np.load(pathfilename))
 
     # Rename fields based on MC_keys dictionary.
+    print(data.dtype)
     np_rfn.rename_fields(data, CFG['MC_keys'])
+    print(data.dtype)
 
     # Apply diffuse dataset cut.
     data = diffuse_cuts(data)
