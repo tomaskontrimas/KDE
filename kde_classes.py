@@ -197,7 +197,7 @@ class KDE(object):
             inds = likelihood > 0.
 
             weights = self.model.weights[validation_index]
-            weights /= np.sum(weigh)
+            weights /= np.sum(weights)
 
             llh.append(np.sum(np.log(likelihood[inds])*weights[inds]))
             zeros.append(len(likelihood) - len(inds))
