@@ -12,10 +12,9 @@ from models.multi_gaussian import settings, grid
 
 #mc = load_and_prepare_data(CFG['paths']['IC_mc'])
 
-mg = np.load(CFG['paths']['mg_mc'])
+mc = np.load(CFG['paths']['mg_mc'])
 
-# model = Model(mc, settings)
-model = Model(mg, settings)
+model = Model(mc, settings)
 
 kde = KDE(model, adaptive=False)
 
