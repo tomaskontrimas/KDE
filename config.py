@@ -4,7 +4,8 @@ CFG = {
     'paths': {
         'meerkat_root': '/home/ge56lag/Software/Meerkat/inc',
         'meerkat_lib': '/home/ge56lag/Software/Meerkat/lib/libMeerkat.so',
-        'IC_mc': '/home/ge56lag/Data/diffuse_mc_wBDT.npy',
+        #'IC_mc': '/home/ge56lag/Data/diffuse_mc_wBDT.npy',
+        'IC_mc': '/home/ge56lag/Data/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy',
         'mg_mc': 'data/multi_gaussian.npy'
     },
     'project': {
