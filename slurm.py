@@ -46,7 +46,7 @@ f.close()
 
 for bandwidth in itertools.product(*kde.model.bandwidths):
     adaptive = False
-    ex_slurm = slurm_draft.format(bpath=outfolder, bandwidth=bandwidth,
+    ex_slurm = slurm_draft.format(bandwidth=bandwidth,
                                   adaptive=adaptive)
     temp_submit = 'temp_submit.sub'
     with open(temp_submit, "wc") as file:
