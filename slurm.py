@@ -29,7 +29,12 @@ kde_dump_file.close()
 # #SBATCH --output={bpath}/slurm.out \n\
 # bash ./env.sh {args}\n'
 
-slurm_draft = """# -*- coding: utf-8 -*-
+slurm_draft = """#!/usr/bin/env bash
+
+python temp_python.py
+"""
+
+python_draft = """# -*- coding: utf-8 -*-
 
 import dill as pickle
 
@@ -45,11 +50,15 @@ f.close()
 """
 
 for bandwidth in itertools.product(*kde.model.bandwidths):
-    adaptive = False
-    ex_slurm = slurm_draft.format(bandwidth=bandwidth,
-                                  adaptive=adaptive)
     temp_submit = 'temp_submit.sub'
+    python_submit = 'temp_python.py'
+
     with open(temp_submit, "wc") as file:
-        file.write(ex_slurm)
+        file.write(slurm_draft)
+
+    adaptive = False
+    with open(python_submit, "wc") as file:
+        file.write(python_draft.format(bandwidth=bandwidth,
+                                       adaptive=adaptive))
 
     os.system("sbatch {}".format(temp_submit))
