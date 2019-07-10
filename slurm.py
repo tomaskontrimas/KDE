@@ -44,7 +44,7 @@ f.write(str(result))
 f.close()
 """
 
-for bandwidth in itertools.product(*self.model.bandwidths):
+for bandwidth in itertools.product(*kde.model.bandwidths):
     adaptive = False
     ex_slurm = slurm_draft.format(bpath=outfolder, bandwidth=bandwidth,
                                   adaptive=adaptive)
