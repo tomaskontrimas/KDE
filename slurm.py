@@ -33,7 +33,7 @@ slurm_draft = """#!/usr/bin/env bash
 
 python temp_python.py
 
-cp /var/tmp/dict_test.txt /home/ge56lag
+cp /var/tmp/dict_test_{bw_str}.txt /home/ge56lag/Software/KDE/output
 """
 
 python_draft = """# -*- coding: utf-8 -*-
@@ -46,7 +46,7 @@ kde_dump_file.close()
 
 result = kde.cross_validate({bandwidth}, {adaptive})
 
-f = open("/var/tmp/dict_test.txt","w")
+f = open("/var/tmp/dict_test_{bw_str}.txt","w")
 f.write(str(result))
 f.close()
 """
@@ -56,11 +56,12 @@ for bandwidth in itertools.product(*kde.model.bandwidths):
     python_submit = 'temp_python.py'
 
     with open(temp_submit, "wc") as file:
-        file.write(slurm_draft)
+        file.write(slurm_draft.format(bw_str=str(bandwidth)))
 
     adaptive = False
     with open(python_submit, "wc") as file:
         file.write(python_draft.format(bandwidth=bandwidth,
-                                       adaptive=adaptive))
+                                       adaptive=adaptive,
+                                       bw_str=str(bandwidth)))
 
     os.system("sbatch {}".format(temp_submit))
