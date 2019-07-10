@@ -32,6 +32,8 @@ kde_dump_file.close()
 slurm_draft = """#!/usr/bin/env bash
 
 python temp_python.py
+
+cp /var/tmp/dict_test.txt /home/ge56lag
 """
 
 python_draft = """# -*- coding: utf-8 -*-
