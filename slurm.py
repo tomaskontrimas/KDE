@@ -3,7 +3,7 @@
 import numpy as np
 import itertools
 import os
-import pickle
+import dill as pickle
 
 from config import CFG
 from dataset import load_and_prepare_data
@@ -31,9 +31,11 @@ kde_dump_file.close()
 
 slurm_draft = """# -*- coding: utf-8 -*-
 
-import pickle
+import dill as pickle
 
-kde = pickle.load('kde_dump_file')
+kde_dump_file = open('kde_dump_file', 'r')
+kde = pickle.load(kde_dump_file)
+kde_dump_file.close()
 
 result = kde.cross_validate({bandwidth}, {adaptive})
 
