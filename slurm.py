@@ -2,6 +2,7 @@
 
 import numpy as np
 import itertools
+import os
 import pickle
 
 from config import CFG
@@ -17,7 +18,7 @@ model = Model(mc, settings, weighting=None)
 kde = KDE(model)
 
 kde_dump_file = open('kde_dump_file', 'wb')
-pickle.dump(kde, kde_dump_file)
+pickle.dump(kde, kde_dump_file, pickle.HIGHEST_PROTOCOL)
 kde_dump_file.close()
 
 # slurm_draft = '#!/usr/bin/env bash \n\
