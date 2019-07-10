@@ -33,7 +33,7 @@ slurm_draft = """#!/usr/bin/env bash
 
 python temp_python.py
 
-cp /var/tmp/dict_test_{bw_str}.txt /home/ge56lag/Software/KDE/output
+cp "/var/tmp/dict_test_{bw_str}.txt" /home/ge56lag/Software/KDE/output
 """
 
 python_draft = """# -*- coding: utf-8 -*-
