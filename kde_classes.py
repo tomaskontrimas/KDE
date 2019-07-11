@@ -40,7 +40,9 @@ class Model(object):
         self.bandwidth_vars = [key + '_bandwidth' for key in settings]
         self.nbins = [settings[key]['nbins'] for key in settings]
         self.bandwidths = [settings[key]['bandwidth'] for key in settings]
-        self.ranges = [settings[key]['range'] for key in settings]
+        self.ranges = [settings[key]['range']
+                       if settings[key]['range'] is not None
+                       else [min(mc[key]), max(mc[key])] for key in settings]
         self.mc = mc
         self.phi0 = phi0*1e-18  # Renormalize in units of 1e-18 1/GeV/cm^2/sr/s.
         self.gamma = gamma
