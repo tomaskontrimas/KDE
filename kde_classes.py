@@ -160,7 +160,7 @@ class KDE(object):
             v[i] = coord[i]
         return kernel_density.density(v)*self.model.kde_norm
 
-    def cross_validate(self, bandwidth, adaptive=False):
+    def cross_validate(self, bandwidth, adaptive=False, pdf_seed=None):
         kfold = KFold(n_splits=5, random_state=0, shuffle=True)
         llh = []
         zeros = []
@@ -168,7 +168,7 @@ class KDE(object):
             self._generate_tree_and_space(training_index)
 
             if adaptive:
-                kernel_density = self.generate_adaptive_kd(bandwidth)
+                kernel_density = self.generate_adaptive_kd(bandwidth, pdf_seed)
             else:
                 kernel_density = self.generate_binned_kd(bandwidth)
 
@@ -204,7 +204,7 @@ class KDE(object):
         self.cv_result = np.array([result_tuple], dtype=self.cv_result.dtype)
         return self.cv_result
 
-    def cross_validate_bandwidths(self, adaptive=False):
+    def cross_validate_bandwidths(self, adaptive=False, pdf_seed=None):
         for bandwidth in itertools.product(*self.model.bandwidths):
             self.logger.info('Bandwidth: %s', bandwidth)
             result = self.cross_validate(bandwidth, adaptive)
