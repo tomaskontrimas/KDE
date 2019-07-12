@@ -31,8 +31,7 @@ class Model(object):
     """The Model class initializes and stores variables based on the provided
     model settings file. It is used for the KDE instance generation.
     """
-    def __init__(self, mc, settings, index=None, weighting=None, gamma=2.0,
-                 phi0=1):
+    def __init__(self, mc, settings, weighting=None, gamma=2.0, phi0=1):
         super(Model, self).__init__()
         self.logger = logging.getLogger('KDE.' + __name__ + '.Model')
         self.values = [eval(settings[key]['values']) for key in settings]
@@ -80,7 +79,7 @@ class Model(object):
 
 class KDE(object):
     """docstring for KDE"""
-    def __init__(self, model, index=None):
+    def __init__(self, model):
         super(KDE, self).__init__()
         self.logger = logging.getLogger('KDE.' + __name__ + '.KDE')
         self.model = model
@@ -91,14 +90,10 @@ class KDE(object):
             'formats': ['f4', 'f4', 'f4', 'f4']
         })
         self.cv_results = np.array(self.cv_result)
-        if index is not None:
-            mc = self.model.mc[index]
-        else:
-            mc = self.model.mc
 
-        self._generate_tree_and_space(index)
+        self._generate_tree_and_space()
 
-    def _generate_tree_and_space(self, index):
+    def _generate_tree_and_space(self, index=None):
         self.tree = None
         spaces = []
         if index is None:
