@@ -203,8 +203,11 @@ class KDE(object):
         self.cv_result = np.array([result_tuple], dtype=self.cv_result.dtype)
         return self.cv_result
 
-    def cross_validate_bandwidths(self, adaptive=False, pdf_seed=None):
-        for bandwidth in itertools.product(*self.model.bandwidths):
+    def cross_validate_bandwidths(self, bandwidths=None, adaptive=False,
+                                  pdf_seed=None):
+        if bandwidths is None:
+            bandwidths = self.model.bandwidths
+        for bandwidth in itertools.product(*bandwidths):
             self.logger.info('Bandwidth: %s', bandwidth)
             result = self.cross_validate(bandwidth, adaptive)
             self.cv_results = np.append(self.cv_results, result)
