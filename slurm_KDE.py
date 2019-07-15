@@ -91,6 +91,6 @@ with open(temp_submit, "w") as file:
 
 with open(python_submit, "w") as file:
     file.write(python_draft.format(model=model,
-                                   adaptive=adaptive)
+                                   adaptive=adaptive))
 
 os.system("sbatch {}".format(temp_submit))
