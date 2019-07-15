@@ -55,10 +55,10 @@ for bandwidth in itertools.product(*bandwidths):
     temp_submit = 'temp_submit.sub'
     python_submit = 'temp_python.py'
 
-    with open(temp_submit, "wc") as file:
+    with open(temp_submit, "w") as file:
         file.write(slurm_draft.format(model=model, bw_str=str(bandwidth)))
 
-    with open(python_submit, "wc") as file:
+    with open(python_submit, "w") as file:
         file.write(python_draft.format(model_module='models.{}'.format(model),
                                        bandwidth=bandwidth,
                                        adaptive=adaptive,
