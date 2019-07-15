@@ -22,7 +22,7 @@ mkdir -p /home/ge56lag/Software/KDE/output/{model}/slurm
 
 python temp_python.py
 
-cp "/var/tmp/cv_{bw_str}.txt" /home/ge56lag/Software/KDE/output/{model}
+cp "/var/tmp/cv_{i}.txt" /home/ge56lag/Software/KDE/output/{model}
 """
 
 python_draft = """# -*- coding: utf-8 -*-
@@ -40,7 +40,7 @@ kde = KDE(model)
 
 result = kde.cross_validate({bandwidth}, {adaptive})
 
-with open("/var/tmp/cv_{bw_str}.txt","w") as f:
+with open("/var/tmp/cv_{i}.txt","w") as f:
     f.write(str(result))
 """
 
@@ -51,18 +51,18 @@ adaptive = False
 settings = importlib.import_module('models.{}'.format(model)).settings
 bandwidths = [settings[key]['bandwidth'] for key in settings]
 
-for bandwidth in itertools.product(*bandwidths):
+for i, bandwidth in enumerate(itertools.product(*bandwidths)):
     temp_submit = 'temp_submit.sub'
     python_submit = 'temp_python.py'
 
     with open(temp_submit, "w") as file:
-        file.write(slurm_draft.format(model=model, bw_str=str(bandwidth)))
+        file.write(slurm_draft.format(model=model, i=i))
 
     with open(python_submit, "w") as file:
         file.write(python_draft.format(model_module='models.{}'.format(model),
                                        bandwidth=bandwidth,
                                        adaptive=adaptive,
-                                       bw_str=str(bandwidth)))
+                                       i=i))
 
     os.system("sbatch {}".format(temp_submit))
     sleep(0.0001)
