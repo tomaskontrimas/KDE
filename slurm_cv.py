@@ -38,7 +38,7 @@ from kde_classes import Model, KDE
 
 mc = np.load(CFG['paths']['mg_mc'])
 
-model = Model('{model_module}', mc, weighting=None)
+model = Model('models.{model}', mc, weighting=None)
 kde = KDE(model)
 
 result = kde.cross_validate({bandwidth}, {adaptive})
@@ -61,7 +61,7 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
         file.write(slurm_draft.format(model=model, i=i))
 
     with open(python_submit, "w") as file:
-        file.write(python_draft.format(model_module='models.{}'.format(model),
+        file.write(python_draft.format(model=model,
                                        bandwidth=bandwidth,
                                        adaptive=adaptive,
                                        i=i))
