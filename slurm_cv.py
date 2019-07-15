@@ -15,14 +15,15 @@ from time import sleep
 
 slurm_draft = """#!/usr/bin/env bash
 
+mkdir -p /home/ge56lag/Software/KDE/output/{model}/slurm
+mkdir -p /home/ge56lag/Software/KDE/output/{model}/cv
+
 #SBATCH --error=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm.err
 #SBATCH --output=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm.out
 
-mkdir -p /home/ge56lag/Software/KDE/output/{model}/slurm
-
 python temp_python_{i}.py
 
-cp "/var/tmp/cv_{i}.txt" /home/ge56lag/Software/KDE/output/{model}
+cp "/var/tmp/cv_{i}.npy" /home/ge56lag/Software/KDE/output/{model}/cv
 
 rm temp_python_{i}.py
 """
@@ -42,8 +43,7 @@ kde = KDE(model)
 
 result = kde.cross_validate({bandwidth}, {adaptive})
 
-with open("/var/tmp/cv_{i}.txt","w") as f:
-    f.write(str(result))
+np.save("/var/tmp/cv_{i}.npy", result)
 """
 
 # Set model and parameters.
