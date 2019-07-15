@@ -55,7 +55,7 @@ bandwidths = [settings[key]['bandwidth'] for key in settings]
 
 for i, bandwidth in enumerate(itertools.product(*bandwidths)):
     temp_submit = 'temp_submit.sub'
-    python_submit = 'temp_python_{i}.py'.format(i)
+    python_submit = 'temp_python_{i}.py'.format(i=i)
 
     with open(temp_submit, "w") as file:
         file.write(slurm_draft.format(model=model, i=i))
