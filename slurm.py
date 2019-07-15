@@ -15,11 +15,14 @@ from time import sleep
 
 slurm_draft = """#!/usr/bin/env bash
 
+#SBATCH --error=output/{model}/slurm/slurm.err
+#SBATCH --output=output/{model}/slurm/slurm.out
+
+mkdir -p /home/ge56lag/Software/KDE/output/{model}/slurm
+
 python temp_python.py
 
 rm temp_python.py
-
-mkdir -p /home/ge56lag/Software/KDE/output/{model}
 mv "/var/tmp/cv_{bw_str}.txt" /home/ge56lag/Software/KDE/output/{model}
 """
 
@@ -33,7 +36,7 @@ from kde_classes import Model, KDE
 
 mc = np.load(CFG['paths']['mg_mc'])
 
-model = Model({model_module}, mc, weighting=None)
+model = Model('{model_module}', mc, weighting=None)
 kde = KDE(model)
 
 result = kde.cross_validate({bandwidth}, {adaptive})
