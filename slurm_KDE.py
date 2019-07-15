@@ -67,13 +67,8 @@ pdf_vals = np.asarray(
     [kde.eval_point(kernel_density, coord) for coord in coords])
 pdf_vals = pdf_vals.reshape(kde.model.nbins)
 
-result_dict = {
-    'vars': kde.model.vars,
-    'bins': out_bins,
-    'coords': coords,
-    'pdf_vals': pdf_vals,
-    'bw': bandwidth
-}
+result_dict = {'vars': kde.model.vars, 'bins': out_bins, 'coords': coords,
+    'pdf_vals': pdf_vals, 'bw': bandwidth}
 
 with open(os.path.join(output/{model}/KDE, '{model}.pkl'), 'wb') as file:
             pickle.dump(odict, file)
