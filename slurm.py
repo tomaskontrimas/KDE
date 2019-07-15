@@ -43,7 +43,7 @@ with open("/var/tmp/cv_{bw_str}.txt","w") as f:
 """
 
 # Set model and parameters.
-model = 'multi_gaussians'
+model = 'multi_gaussian'
 adaptive = False
 
 settings = importlib.import_module('models.{}'.format(model)).settings
