@@ -1,25 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import numpy as np
+import importlib
 import itertools
 import os
-import dill as pickle
-
-from config import CFG
-from dataset import load_and_prepare_data
-from kde_classes import Model, KDE
-
-from models.multi_gaussian import settings, grid
-
-mc = np.load(CFG['paths']['mg_mc'])
-
-model = Model(mc, settings, weighting=None)
-
-kde = KDE(model)
-
-kde_dump_file = open('kde_dump_file', 'wb')
-pickle.dump(kde, kde_dump_file, pickle.HIGHEST_PROTOCOL)
-kde_dump_file.close()
+from time import sleep
 
 # slurm_draft = '#!/usr/bin/env bash \n\
 # #SBATCH --time=2:30:00 \n\
@@ -33,35 +17,50 @@ slurm_draft = """#!/usr/bin/env bash
 
 python temp_python.py
 
-cp "/var/tmp/dict_test_{bw_str}.txt" /home/ge56lag/Software/KDE/output
+rm temp_python.py
+
+mkdir -p /home/ge56lag/Software/KDE/output/{model}
+mv "/var/tmp/cv_{bw_str}.txt" /home/ge56lag/Software/KDE/output/{model}
 """
 
 python_draft = """# -*- coding: utf-8 -*-
 
-import dill as pickle
+import numpy as np
 
-kde_dump_file = open('kde_dump_file', 'r')
-kde = pickle.load(kde_dump_file)
-kde_dump_file.close()
+from config import CFG
+from dataset import load_and_prepare_data
+from kde_classes import Model, KDE
+
+mc = np.load(CFG['paths']['mg_mc'])
+
+model = Model({model_module}, mc, weighting=None)
+kde = KDE(model)
 
 result = kde.cross_validate({bandwidth}, {adaptive})
 
-f = open("/var/tmp/dict_test_{bw_str}.txt","w")
-f.write(str(result))
-f.close()
+with open("/var/tmp/cv_{bw_str}.txt","w") as f:
+    f.write(str(result))
 """
 
-for bandwidth in itertools.product(*kde.model.bandwidths):
+# Set model and parameters.
+model = 'multi_gaussians'
+adaptive = False
+
+settings = importlib.import_module('models.{}'.format(model)).settings
+bandwidths = [settings[key]['bandwidth'] for key in settings]
+
+for bandwidth in itertools.product(*bandwidths):
     temp_submit = 'temp_submit.sub'
     python_submit = 'temp_python.py'
 
     with open(temp_submit, "wc") as file:
-        file.write(slurm_draft.format(bw_str=str(bandwidth)))
+        file.write(slurm_draft.format(model=model, bw_str=str(bandwidth)))
 
-    adaptive = False
     with open(python_submit, "wc") as file:
-        file.write(python_draft.format(bandwidth=bandwidth,
+        file.write(python_draft.format(model_module='models.{}'.format(model),
+                                       bandwidth=bandwidth,
                                        adaptive=adaptive,
                                        bw_str=str(bandwidth)))
 
     os.system("sbatch {}".format(temp_submit))
+    sleep(0.0001)
