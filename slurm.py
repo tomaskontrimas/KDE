@@ -20,9 +20,11 @@ slurm_draft = """#!/usr/bin/env bash
 
 mkdir -p /home/ge56lag/Software/KDE/output/{model}/slurm
 
-python temp_python.py
+python temp_python_{i}.py
 
 cp "/var/tmp/cv_{i}.txt" /home/ge56lag/Software/KDE/output/{model}
+
+rm temp_python_{i}.py
 """
 
 python_draft = """# -*- coding: utf-8 -*-
@@ -53,7 +55,7 @@ bandwidths = [settings[key]['bandwidth'] for key in settings]
 
 for i, bandwidth in enumerate(itertools.product(*bandwidths)):
     temp_submit = 'temp_submit.sub'
-    python_submit = 'temp_python.py'
+    python_submit = 'temp_python_{i}.py'.format(i)
 
     with open(temp_submit, "w") as file:
         file.write(slurm_draft.format(model=model, i=i))
