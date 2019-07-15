@@ -90,7 +90,6 @@ with open(temp_submit, "w") as file:
     file.write(slurm_draft.format(model=model))
 
 with open(python_submit, "w") as file:
-    file.write(python_draft.format(model=model,
-                                   adaptive=adaptive))
+    file.write(python_draft.format(model=model, adaptive=adaptive))
 
 os.system("sbatch {}".format(temp_submit))
