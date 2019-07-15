@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import importlib
 import itertools
 import logging
 import numpy as np
@@ -31,8 +32,12 @@ class Model(object):
     """The Model class initializes and stores variables based on the provided
     model settings file. It is used for the KDE instance generation.
     """
-    def __init__(self, mc, settings, weighting=None, gamma=2.0, phi0=1):
+    def __init__(self, model_module, mc, weighting=None, gamma=2.0, phi0=1):
         super(Model, self).__init__()
+        model = importlib.import_module(model_module)
+        settings = model.settings
+        grid = model.grid
+
         self.logger = logging.getLogger('KDE.' + __name__ + '.Model')
         self.values = [eval(settings[key]['values']) for key in settings]
         self.vars = [key for key in settings]
