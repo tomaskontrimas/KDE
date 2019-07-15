@@ -15,15 +15,14 @@ from time import sleep
 
 slurm_draft = """#!/usr/bin/env bash
 
-#SBATCH --error=output/{model}/slurm/slurm.err
-#SBATCH --output=output/{model}/slurm/slurm.out
+#SBATCH --error=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm.err
+#SBATCH --output=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm.out
 
 mkdir -p /home/ge56lag/Software/KDE/output/{model}/slurm
 
 python temp_python.py
 
-rm temp_python.py
-mv "/var/tmp/cv_{bw_str}.txt" /home/ge56lag/Software/KDE/output/{model}
+cp "/var/tmp/cv_{bw_str}.txt" /home/ge56lag/Software/KDE/output/{model}
 """
 
 python_draft = """# -*- coding: utf-8 -*-
