@@ -77,7 +77,7 @@ result_dict = {{
     'bw': bandwidth
 }}
 
-with open(os.path.join(/var/tmp '{model}.pkl'), 'wb') as file:
+with open(os.path.join('/var/tmp/{model}.pkl'), 'wb') as file:
             pickle.dump(odict, file)
 """
 
