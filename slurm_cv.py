@@ -1,9 +1,23 @@
 # -*- coding: utf-8 -*-
 
+import argparse
 import importlib
 import itertools
 import os
 from time import sleep
+
+def parseArguments():
+    """Parse the command line arguments
+    Returns:
+    args : Dictionary containing the command line arguments
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "model", type=str)
+    parser.add_argument(
+        "--adaptive", action="store_true", default=False)
+    args = parser.parse_args()
+    return vars(args)
 
 # slurm_draft = '#!/usr/bin/env bash \n\
 # #SBATCH --time=2:30:00 \n\
@@ -46,8 +60,9 @@ np.save("/var/tmp/cv_{i}.npy", result)
 """
 
 # Set model and parameters.
-model = 'multi_gaussian'
-adaptive = False
+args = parseArguments()
+model = args['model']
+adaptive = args['adaptive']
 
 settings = importlib.import_module('models.{}'.format(model)).settings
 bandwidths = [settings[key]['bandwidth'] for key in settings]
