@@ -25,10 +25,10 @@ def parseArguments():
 # #SBATCH --output={bpath}/slurm.out \n\
 # bash ./env.sh {args}\n'
 
-#SBATCH --error=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm.err
-#SBATCH --output=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm.out
-
 slurm_draft = """#!/usr/bin/env bash
+
+#SBATCH --error="/home/ge56lag/Software/KDE/output/slurm/slurm-%j.err"
+#SBATCH --output="/home/ge56lag/Software/KDE/output/slurm/slurm-%j.out"
 
 mkdir -p /home/ge56lag/Software/KDE/output/{model}/KDE
 
