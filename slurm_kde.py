@@ -76,7 +76,7 @@ result_dict = {{
 }}
 
 with open(os.path.join('/var/tmp/{model}.pkl'), 'wb') as file:
-            pickle.dump(odict, file)
+            pickle.dump(result_dict, file)
 """
 
 # Set model and parameters.
