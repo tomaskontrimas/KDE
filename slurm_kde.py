@@ -96,9 +96,6 @@ args = parseArguments()
 model = args['model']
 adaptive = args['adaptive']
 
-print(model)
-print(adaptive)
-
 temp_submit = 'temp_submit.sub'
 python_submit = 'temp_python.py'
 

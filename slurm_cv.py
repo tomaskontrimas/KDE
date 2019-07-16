@@ -27,10 +27,10 @@ def parseArguments():
 # #SBATCH --output={bpath}/slurm.out \n\
 # bash ./env.sh {args}\n'
 
-slurm_draft = """#!/usr/bin/env bash
-
 #SBATCH --error=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm.err
 #SBATCH --output=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm.out
+
+slurm_draft = """#!/usr/bin/env bash
 
 mkdir -p /home/ge56lag/Software/KDE/output/{model}/slurm
 mkdir -p /home/ge56lag/Software/KDE/output/{model}/cv
@@ -61,6 +61,9 @@ np.save("/var/tmp/cv_{i}.npy", result)
 args = parseArguments()
 model = args['model']
 adaptive = args['adaptive']
+
+print(model)
+print(adaptive)
 
 settings = importlib.import_module('models.{}'.format(model)).settings
 bandwidths = [settings[key]['bandwidth'] for key in settings]
