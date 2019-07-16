@@ -6,16 +6,15 @@ settings = {
     'logSigma': {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth': [0.08],
-        'nbins': 100,
-        'range': [0.0, 1.0]
+        'nbins': 200,
+        'range': None
         },
     'logEr': {
         'values': "mc['logE']",
         'bandwidth': [0.15, 0.20],
         'nbins': 100,
-        'range': [0, 10]
+        'range': None
         }
 }
 
-#grid = np.linspace(0, 1, 1000)
 grid = None
