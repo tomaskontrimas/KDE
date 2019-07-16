@@ -13,7 +13,7 @@ settings = OrderedDict([
     ('logE', {
         'values': "mc['logE']",
         'bandwidth': [0.15],
-        'nbins': 100,
+        'nbins': 200,
         'range': None
         })
 ])
