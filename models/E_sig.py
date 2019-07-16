@@ -3,19 +3,19 @@
 import numpy as np
 from collections import OrderedDict
 
-settings = {
-    'sigma_pull_corrected': {
+settings = OrderedDict([
+    ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth': [0.08],
         'nbins': 200,
         'range': None
-        },
-    'logE': {
+        }),
+    ('logE', {
         'values': "mc['logE']",
         'bandwidth': [0.15],
         'nbins': 100,
         'range': None
-        }
-}
+        })
+])
 
 grid = None
