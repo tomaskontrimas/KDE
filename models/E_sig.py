@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+from collections import OrderedDict
 
 settings = {
     'logSigma': {
@@ -11,7 +12,7 @@ settings = {
         },
     'logEr': {
         'values': "mc['logE']",
-        'bandwidth': [0.15, 0.20],
+        'bandwidth': [0.15],
         'nbins': 100,
         'range': None
         }
