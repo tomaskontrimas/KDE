@@ -49,9 +49,7 @@ import numpy as np
 from config import CFG
 from kde_classes import Model, KDE
 
-mc = np.load(CFG['paths']['mg_mc'])
-
-model = Model('models.{model}', mc, weighting=None)
+model = Model('models.{model}', mc=None, weighting=None)
 kde = KDE(model)
 
 result = kde.cross_validate({bandwidth}, {adaptive})

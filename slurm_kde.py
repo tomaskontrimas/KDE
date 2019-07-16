@@ -4,6 +4,19 @@ import argparse
 import os
 from time import sleep
 
+def parseArguments():
+    """Parse the command line arguments
+    Returns:
+    args : Dictionary containing the command line arguments
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "model", type=str)
+    parser.add_argument(
+        "--adaptive", action="store_true", default=False)
+    args = parser.parse_args()
+    return vars(args)
+
 # slurm_draft = '#!/usr/bin/env bash \n\
 # #SBATCH --time=2:30:00 \n\
 # #SBATCH --mem=8000 \n\
@@ -37,9 +50,7 @@ import os.path
 from config import CFG
 from kde_classes import Model, KDE
 
-mc = np.load(CFG['paths']['mg_mc'])
-
-model = Model('models.{model}', mc, weighting=None)
+model = Model('models.{model}', mc=None, weighting=None)
 kde = KDE(model)
 
 cv_files = glob.glob('output/{model}/cv/cv_*.npy')
@@ -81,8 +92,9 @@ with open(os.path.join('/var/tmp/{model}.pkl'), 'wb') as file:
 """
 
 # Set model and parameters.
-model = 'multi_gaussian'
-adaptive = False
+args = parseArguments()
+model = args['model']
+adaptive = args['adaptive']
 
 temp_submit = 'temp_submit.sub'
 python_submit = 'temp_python.py'
