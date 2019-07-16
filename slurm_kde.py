@@ -27,8 +27,8 @@ def parseArguments():
 
 slurm_draft = """#!/usr/bin/env bash
 
-#SBATCH --error="/home/ge56lag/Software/KDE/output/slurm/slurm-%j.err"
-#SBATCH --output="/home/ge56lag/Software/KDE/output/slurm/slurm-%j.out"
+#SBATCH --error=/home/ge56lag/Software/KDE/output/slurm/slurm-%j.err
+#SBATCH --output=/home/ge56lag/Software/KDE/output/slurm/slurm-%j.out
 
 mkdir -p /home/ge56lag/Software/KDE/output/{model}/KDE
 
