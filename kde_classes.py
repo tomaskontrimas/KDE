@@ -11,6 +11,7 @@ from sklearn.model_selection import KFold
 from scipy.interpolate import RegularGridInterpolator
 
 from config import CFG
+from dataset import load_and_prepare_data
 from functions import powerlaw
 
 # ROOT imports.
@@ -32,13 +33,20 @@ class Model(object):
     """The Model class initializes and stores variables based on the provided
     model settings file. It is used for the KDE instance generation.
     """
-    def __init__(self, model_module, mc, weighting=None, gamma=2.0, phi0=1):
+    def __init__(self, model_module, mc=None, weighting=None, gamma=2.0, phi0=1):
         super(Model, self).__init__()
         model = importlib.import_module(model_module)
         settings = model.settings
         grid = model.grid
 
         self.logger = logging.getLogger('KDE.' + __name__ + '.Model')
+
+        if mc is None:
+            if CFG['paths']['IC_mc'] is not None:
+                mc = load_and_prepare_data(CFG['paths']['IC_mc'])
+            else:
+                raise ValueError('No suitable Monte Carlo provided.')
+
         self.values = [eval(settings[key]['values']) for key in settings]
         self.vars = [key for key in settings]
         self.bandwidth_vars = [key + '_bandwidth' for key in settings]
