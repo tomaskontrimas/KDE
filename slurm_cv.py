@@ -18,8 +18,8 @@ slurm_draft = """#!/usr/bin/env bash
 mkdir -p /home/ge56lag/Software/KDE/output/{model}/slurm
 mkdir -p /home/ge56lag/Software/KDE/output/{model}/cv
 
-#SBATCH --error=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm.err
-#SBATCH --output=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm.out
+#SBATCH --error=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm_cv.err
+#SBATCH --output=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm_cv.out
 
 python temp_python_{i}.py
 

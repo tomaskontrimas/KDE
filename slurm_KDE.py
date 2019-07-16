@@ -15,12 +15,14 @@ from time import sleep
 
 slurm_draft = """#!/usr/bin/env bash
 
-#SBATCH --error=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm.err
-#SBATCH --output=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm.out
+#SBATCH --error=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm_KDE.err
+#SBATCH --output=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm_KDE.out
 
 mkdir -p /home/ge56lag/Software/KDE/output/{model}/KDE
 
 python temp_python.py
+
+cp "/var/tmp/{model}.pkl" /home/ge56lag/Software/KDE/output/{model}/KDE
 
 rm temp_python.py
 """
@@ -75,7 +77,7 @@ result_dict = {{
     'bw': bandwidth
 }}
 
-with open(os.path.join(output/{model}/KDE, '{model}.pkl'), 'wb') as file:
+with open(os.path.join(/var/tmp '{model}.pkl'), 'wb') as file:
             pickle.dump(odict, file)
 """
 
