@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import importlib
-import itertools
 import os
 from time import sleep
 
@@ -31,11 +29,11 @@ python_draft = """# -*- coding: utf-8 -*-
 
 import cPickle as pickle
 import glob
+import itertools
 import numpy as np
 import os.path
 
 from config import CFG
-from dataset import load_and_prepare_data
 from kde_classes import Model, KDE
 
 mc = np.load(CFG['paths']['mg_mc'])

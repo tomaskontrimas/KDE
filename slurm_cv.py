@@ -33,7 +33,6 @@ python_draft = """# -*- coding: utf-8 -*-
 import numpy as np
 
 from config import CFG
-from dataset import load_and_prepare_data
 from kde_classes import Model, KDE
 
 mc = np.load(CFG['paths']['mg_mc'])
