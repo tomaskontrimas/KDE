@@ -15,8 +15,8 @@ from time import sleep
 
 slurm_draft = """#!/usr/bin/env bash
 
-#SBATCH --error=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm_KDE.err
-#SBATCH --output=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm_KDE.out
+#SBATCH --error=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm.err
+#SBATCH --output=/home/ge56lag/Software/KDE/output/{model}/slurm/slurm.out
 
 mkdir -p /home/ge56lag/Software/KDE/output/{model}/KDE
 
