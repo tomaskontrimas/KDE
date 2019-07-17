@@ -26,12 +26,12 @@ slurm_draft = """#!/usr/bin/env bash
 
 mkdir -p /home/ge56lag/Software/KDE/output/{model}/pdf
 
-python temp_python.py
+python temp_python_{model}.py
 
 cp "/var/tmp/{model}.pkl" /home/ge56lag/Software/KDE/output/{model}/pdf
 
 rm "/var/tmp/{model}.pkl"
-rm temp_python.py
+rm temp_python_{model}.py
 rm -- "$0"
 """
 
@@ -92,8 +92,8 @@ args = parseArguments()
 model = args['model']
 adaptive = args['adaptive']
 
-temp_submit = 'temp_submit.sub'
-python_submit = 'temp_python.py'
+temp_submit = 'temp_submit_{model}.sub'.format(model=model)
+python_submit = 'temp_python_{model}.py'.format(model=model)
 
 with open(temp_submit, "w") as file:
     file.write(slurm_draft.format(model=model))

@@ -28,12 +28,12 @@ slurm_draft = """#!/usr/bin/env bash
 
 mkdir -p /home/ge56lag/Software/KDE/output/{model}/cv
 
-python temp_python_{i}.py
+python temp_python_{model}_{i}.py
 
 cp "/var/tmp/cv_{i}.npy" /home/ge56lag/Software/KDE/output/{model}/cv
 
 rm "/var/tmp/cv_{i}.npy"
-rm temp_python_{i}.py
+rm temp_python_{model}_{i}.py
 rm -- "$0"
 """
 
@@ -57,15 +57,12 @@ args = parseArguments()
 model = args['model']
 adaptive = args['adaptive']
 
-print(model)
-print(adaptive)
-
 settings = importlib.import_module('models.{}'.format(model)).settings
 bandwidths = [settings[key]['bandwidth'] for key in settings]
 
 for i, bandwidth in enumerate(itertools.product(*bandwidths)):
-    temp_submit = 'temp_submit.sub'
-    python_submit = 'temp_python_{i}.py'.format(i=i)
+    temp_submit = 'temp_submit_{model}.sub'.format(model=model)
+    python_submit = 'temp_python_{model}_{i}.py'.format(model=model, i=i)
 
     with open(temp_submit, "w") as file:
         file.write(slurm_draft.format(model=model, i=i))
