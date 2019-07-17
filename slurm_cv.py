@@ -34,6 +34,7 @@ cp "/var/tmp/cv_{i}.npy" /home/ge56lag/Software/KDE/output/{model}/cv
 
 rm "/var/tmp/cv_{i}.npy"
 rm temp_python_{i}.py
+rm -- "$0"
 """
 
 python_draft = """# -*- coding: utf-8 -*-
