@@ -47,7 +47,7 @@ from kde_classes import Model, KDE
 model = Model('models.{model}', mc=None, weighting=None)
 kde = KDE(model)
 
-result = kde.cross_validate({bandwidth}, {adaptive})
+result = kde.cross_validate({bandwidth}, adaptive={adaptive})
 
 np.save("/var/tmp/cv_{i}.npy", result)
 """
