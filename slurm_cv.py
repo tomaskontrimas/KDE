@@ -34,7 +34,7 @@ cp "/var/tmp/cv_{i}.npy" /home/ge56lag/Software/KDE/output/{model}/cv
 
 rm "/var/tmp/cv_{i}.npy"
 rm temp_python_{model}_{i}.py
-rm -- "$0"
+rm temp_submit_{model}_{i}.sub
 """
 
 python_draft = """# -*- coding: utf-8 -*-
@@ -61,7 +61,7 @@ settings = importlib.import_module('models.{}'.format(model)).settings
 bandwidths = [settings[key]['bandwidth'] for key in settings]
 
 for i, bandwidth in enumerate(itertools.product(*bandwidths)):
-    temp_submit = 'temp_submit_{model}.sub'.format(model=model)
+    temp_submit = 'temp_submit_{model}_{i}.sub'.format(model=model, i=i)
     python_submit = 'temp_python_{model}_{i}.py'.format(model=model, i=i)
 
     with open(temp_submit, "w") as file:
