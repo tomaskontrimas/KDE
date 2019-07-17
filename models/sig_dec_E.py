@@ -8,7 +8,8 @@ settings = OrderedDict([
         'values': "np.log10(mc['lgb_sigma_psimu'])",
         'bandwidth': [0.12],
         'nbins': 100,
-        'range': [np.min(sigma)-0.5, np.max(sigma)+0.5]
+        'range': "[np.min(np.log10(mc['lgb_sigma_psimu']))-0.5, \
+                   np.max(np.log10(mc['lgb_sigma_psimu']))+0.5]"
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
