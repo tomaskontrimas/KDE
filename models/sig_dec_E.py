@@ -20,7 +20,7 @@ settings = OrderedDict([
         'values': "mc['loge_muex']",
         'bandwidth': [0.148],
         'nbins': 100,
-        'range': [np.min(Er)-0.5, np.max(Er)+0.5]
+        'range': "[np.min(mc['loge_muex'])-0.5, np.max(mc['loge_muex'])+0.5]"
         })
 ])
 

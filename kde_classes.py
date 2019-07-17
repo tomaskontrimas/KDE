@@ -52,7 +52,7 @@ class Model(object):
         self.bandwidth_vars = [key + '_bandwidth' for key in settings]
         self.nbins = [settings[key]['nbins'] for key in settings]
         self.bandwidths = [settings[key]['bandwidth'] for key in settings]
-        self.ranges = [settings[key]['range']
+        self.ranges = [eval(str(settings[key]['range']))
                        if settings[key]['range'] is not None
                        else [min(self.values[i]), max(self.values[i])]
                        for i, key in enumerate(settings)]
