@@ -17,11 +17,11 @@ settings = OrderedDict([
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
-    ('loge_muex', {
-        'values': "mc['loge_muex']",
+    ('log_e', {
+        'values': "mc['log_e']",
         'bandwidth': [0.148],
         'nbins': 100,
-        'range': "[np.min(mc['loge_muex'])-0.5, np.max(mc['loge_muex'])+0.5]"
+        'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
 ])
 

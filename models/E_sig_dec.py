@@ -10,14 +10,14 @@ settings = OrderedDict([
         'nbins': 100,
         'range': None
         }),
-    ('trueDec', {
-        'values': "np.sin(mc['trueDec'])",
+    ('true_dec', {
+        'values': "np.sin(mc['true_dec'])",
         'bandwidth': [0.15],
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
-    ('logE', {
-        'values': "mc['logE']",
+    ('log_e', {
+        'values': "mc['log_e']",
         'bandwidth': [0.18],
         'nbins': 100,
         'range': None

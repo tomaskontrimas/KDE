@@ -16,8 +16,8 @@ settings = OrderedDict([
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
-    ('logE', {
-        'values': "mc['logE']",
+    ('log_e', {
+        'values': "mc['log_e']",
         'bandwidth': [0.17],
         'nbins': 100,
         'range': None

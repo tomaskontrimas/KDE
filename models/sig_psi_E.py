@@ -16,8 +16,8 @@ settings = OrderedDict([
         'nbins': 400,
         'range': None
         }),
-    ('loge_muex', {
-        'values': "mc['loge_muex']",
+    ('log_e', {
+        'values': "mc['log_e']",
         'bandwidth': [0.12],
         'nbins': 100,
         'range': None

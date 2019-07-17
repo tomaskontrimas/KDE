@@ -10,14 +10,14 @@ settings = OrderedDict([
         'nbins': 80,
         'range': None
         }),
-    ('psi', {
-        'values': "np.log10(mc['psi'])",
+    ('psi_mu', {
+        'values': "np.log10(mc['psi_mu'])",
         'bandwidth': [0.228],
         'nbins': 400,
         'range': None
         }),
-    ('logE', {
-        'values': "mc['logE']",
+    ('log_e', {
+        'values': "mc['log_e']",
         'bandwidth': [0.228],
         'nbins': 80,
         'range': None

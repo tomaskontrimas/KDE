@@ -10,8 +10,8 @@ settings = OrderedDict([
         'nbins': 200,
         'range': None
         }),
-    ('logE', {
-        'values': "mc['logE']",
+    ('log_e', {
+        'values': "mc['log_e']",
         'bandwidth': [0.15],
         'nbins': 200,
         'range': None
