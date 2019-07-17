@@ -23,11 +23,14 @@ from ROOT import (
     OneDimPhaseSpace,
     CombinedPhaseSpace,
     BinnedKernelDensity,
-    AdaptiveKernelDensity
+    AdaptiveKernelDensity,
+    Logger
 )
 
 from root_numpy import array2tree
 
+# Set Meerkat log level to Errors
+Logger.setLogLevel(2)
 
 class Model(object):
     """The Model class initializes and stores variables based on the provided
