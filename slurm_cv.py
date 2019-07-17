@@ -19,16 +19,10 @@ def parseArguments():
     args = parser.parse_args()
     return vars(args)
 
-# slurm_draft = '#!/usr/bin/env bash \n\
-# #SBATCH --time=2:30:00 \n\
-# #SBATCH --mem=8000 \n\
-# #SBATCH --partition=kta \n\
-# #SBATCH --error={bpath}/slurm.err \n\
-# #SBATCH --output={bpath}/slurm.out \n\
-# bash ./env.sh {args}\n'
-
 slurm_draft = """#!/usr/bin/env bash
-
+#SBATCH --time=10:00
+#SBATCH --mem=2000
+#SBATCH --partition=kta
 #SBATCH --error=/home/ge56lag/Software/KDE/output/slurm/slurm-%j.err
 #SBATCH --output=/home/ge56lag/Software/KDE/output/slurm/slurm-%j.out
 
@@ -38,6 +32,7 @@ python temp_python_{i}.py
 
 cp "/var/tmp/cv_{i}.npy" /home/ge56lag/Software/KDE/output/{model}/cv
 
+rm "/var/tmp/cv_{i}.npy"
 rm temp_python_{i}.py
 """
 
