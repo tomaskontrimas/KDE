@@ -18,7 +18,7 @@ def parseArguments():
     return vars(args)
 
 slurm_draft = """#!/usr/bin/env bash
-#SBATCH --time=15:00
+#SBATCH --time=1:00:00
 #SBATCH --mem=2000
 #SBATCH --partition=kta
 #SBATCH --error=/home/ge56lag/Software/KDE/output/slurm/slurm-%j.err
