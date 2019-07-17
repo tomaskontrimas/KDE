@@ -18,7 +18,7 @@ CFG = {
         'conv': 'conv', # Used in code.
         'astro': 'astro',
         #'logEr': 'loge_muex',
-        'logE': 'log_e'
+        'logE': 'log_e',
         'sigma': 'lgb_sigma_psimu',
         'trueDec': 'true_dec', # Used in code.
         'sigmaOK': 'sigmaok', # Used in code.
