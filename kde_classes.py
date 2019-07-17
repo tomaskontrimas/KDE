@@ -101,7 +101,7 @@ class KDE(object):
         self.adaptive_kernel = None
         self.cv_result = np.array([], dtype={
             'names': self.model.bandwidth_vars + ['LLH', 'Zeros'],
-            'formats': ['f4', 'f4', 'f4', 'f4']
+            'formats': ['f4']*len(self.model.bandwidth_vars) + ['f4', 'f4']
         })
         self.cv_results = np.array(self.cv_result)
 
