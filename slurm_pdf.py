@@ -32,6 +32,7 @@ cp "/var/tmp/{model}.pkl" /home/ge56lag/Software/KDE/output/{model}/pdf
 
 rm "/var/tmp/{model}.pkl"
 rm temp_python.py
+rm -- "$0"
 """
 
 python_draft = """# -*- coding: utf-8 -*-
