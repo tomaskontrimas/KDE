@@ -47,7 +47,6 @@ python_draft = """# -*- coding: utf-8 -*-
 
 import numpy as np
 
-from config import CFG
 from kde_classes import Model, KDE
 
 model = Model('models.{model}', mc=None, weighting='{weighting}',
