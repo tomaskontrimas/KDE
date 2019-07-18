@@ -9,7 +9,7 @@ import pickle
 
 from scipy.interpolate import RegularGridInterpolator
 
-with open('./output/sig_psi_E/sig_psi_E.pkl', 'rb') as ifile:
+with open('./output/sig_psi_E/pdf/sig_psi_E.pkl', 'rb') as ifile:
     spatial_KDE = pickle.load(ifile)
 
 bins_logsigma = spatial_KDE['bins'][0]
