@@ -7,7 +7,7 @@ import time
 import numpy as np
 import pickle
 
-from photospline import glam_fit, ndsparse, bspline
+from scipy.interpolate import RegularGridInterpolator
 
 with open('./output/sig_psi_E/sig_psi_E.pkl', 'rb') as ifile:
     spatial_KDE = pickle.load(ifile)
@@ -20,13 +20,9 @@ with open('./output/sig_E/pdf/sig_E.pkl', 'rb') as ifile:
     norm_KDE = pickle.load(ifile)
 spatial_KDE_vals = spatial_KDE['pdf_vals']/norm_KDE['pdf_vals'][:,np.newaxis,:]
 
-penalty_order = 2
-knots = np.linspace(-4,0.5,100)
-z=spatial_KDE_vals
-zs, w = ndsparse.from_data(z, np.ones(z.shape))
-spatial_pdf = glam_fit(zs,w,[bins_logsigma, bins_logpsi, bins_logEr],
-                  [bins_logsigma, bins_logpsi, bins_logEr],
-                  [1,1,1],[0,0,0],[penalty_order,penalty_order, penalty_order])
+spatial_pdf = RegularGridInterpolator((bins_logsigma, bins_logpsi, bins_logEr),
+                                            spatial_KDE_vals,
+                                            method='linear', bounds_error=False, fill_value=1.e-20)
 
 import logging
 mpl_logger = logging.getLogger('matplotlib')
@@ -45,6 +41,7 @@ mpl.rcParams['font.sans-serif'] = ['Verdana']
 
 plt.style.use('ggplot')
 
+
 mc = np.load('/home/ge56lag/Data/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy')
 
 def make_plot(logE, sigma_p, delta_sigma=0.2, show_quantile=False):
@@ -55,7 +52,7 @@ def make_plot(logE, sigma_p, delta_sigma=0.2, show_quantile=False):
     delta_logerec = 0.2
 
     weights = mc['orig_OW'] * mc['trueE']**(-gamma)
-    psi_max = 5.0*sigma_p # for plotting
+    psi_max = 8.0*sigma_p # for plotting
     idx_erec = np.logical_and(mc['logE']>logE-delta_logerec, mc['logE']<logE+delta_logerec)
     sp = mc['sigma_pull_corrected']/np.pi*180. # degrees
     idx_sigma_p = np.logical_and(sp>sigma_p-delta_sigma_p, sp<sigma_p+delta_sigma_p)
@@ -81,8 +78,8 @@ def make_plot(logE, sigma_p, delta_sigma=0.2, show_quantile=False):
     def eval_kde(logPsi, logE, sigma_p):
         sig_rad = np.radians(sigma_p)
         nbins = len(logPsi)
-        return spatial_pdf.evaluate_simple([np.full(nbins, np.log10(sig_rad)),
-                                   logPsi, np.full(nbins, logE)])
+        return spatial_pdf(np.stack([np.full(nbins, np.log10(sig_rad)),
+                                   logPsi, np.full(nbins, logE)], axis=1))
 
     def eval_kde_weighted(xvals, take_indices):
         xvals_rad = np.radians(xvals)
@@ -153,14 +150,15 @@ def make_plot(logE, sigma_p, delta_sigma=0.2, show_quantile=False):
     #fracs = [0.1 + i * 0.2 for i in range(5)]
     #percs = get_expected_quantile(fractions=fracs)
 
-    bins=np.linspace(0,2*psi_max,60)
+    bins=np.linspace(0,2*psi_max,80)
     hist = Hist(bins)
     hist.Sumw2()
     hist.fill_array(selected_psi, weights[idx])
     hist.Scale(1./hist.Integral("width"))
     hist.title="MC simulation"
-    rplt.errorbar(hist, markersize=0, elinewidth=2)
     plt.plot(xvals, yvals_p, 'r-', label="paraboloid")
+    rplt.errorbar(hist, markersize=0, elinewidth=2)
+    #plt.plot(xvals, yvals_p, 'r-', label="paraboloid")
     plt.plot(xvals, yvals_pdf, 'g-', label="KDE PDF")
     plt.xlabel('$\Psi\,|\,Erec, sin\delta, \sigma_p\,\,\,\,[deg]$', fontsize=20)
     plt.ylabel('pdf', fontsize=20)
@@ -185,13 +183,12 @@ def make_plot(logE, sigma_p, delta_sigma=0.2, show_quantile=False):
     ax.xaxis.label.set_color('0.2')
     ax.yaxis.label.set_color('0.2')
 
-
-
     plt.subplots_adjust( hspace=0 )
 
 
     plt.savefig("./output/wkde_cpd_rayleigh_lE_%.1f_sigma_%.2f.pdf" %(logE, sigma_p))
     plt.clf()
+
 '''
 make_plot(2.0, 0.2)
 make_plot(2.0, 0.5)
@@ -227,6 +224,7 @@ make_plot(5.0, 0.15)
 #make_plot(5.0, 0.1)
 #make_plot(5.5, 0.1)
 #make_plot(6.0, 0.1)
+
 
 
 
