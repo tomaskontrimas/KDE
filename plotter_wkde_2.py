@@ -55,14 +55,14 @@ def make_plot(logE, sigma_p, delta_sigma=0.2, show_quantile=False):
     weights = mc['orig_OW'] * mc['trueE']**(-gamma)
     psi_max = 8.0*sigma_p # for plotting
     idx_erec = np.logical_and(mc['logE']>logE-delta_logerec, mc['logE']<logE+delta_logerec)
-    sp = mc['sigma_pull_corrected']/np.pi*180. # degrees
+    sp = mc['sigma']/np.pi*180. # degrees
     idx_sigma_p = np.logical_and(sp>sigma_p-delta_sigma_p, sp<sigma_p+delta_sigma_p)
 
     idx_sin_dec = np.logical_and(np.sin(mc['trueDec'])>sin_dec-delta_sin_dec, np.sin(mc['trueDec'])<sin_dec+delta_sin_dec)
     idx = idx_erec&idx_sin_dec&idx_sigma_p
 
     selected_psi = mc['psi'][idx]/np.pi*180.
-    selected_paraboloid = mc['sigma_pull_corrected'][idx]/np.pi*180. # degrees
+    selected_paraboloid = mc['sigma'][idx]/np.pi*180. # degrees
     selected_weights = weights[idx]
     selected_energies = mc['logE'][idx]
 

@@ -12,7 +12,7 @@ settings = OrderedDict([
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.5, 0.25, 11), #[0.18]
+        'bandwidth': np.linspace(0.05, 0.25, 11), #[0.18]
         'nbins': 100,
         'range': None
         })
