@@ -6,13 +6,13 @@ from collections import OrderedDict
 settings = OrderedDict([
     ('lgb_sigma_psimu', {
         'values': "np.log10(mc['lgb_sigma_psimu'])",
-        'bandwidth': [0.04],
+        'bandwidth': np.linspace(0.2, 0.06, 5), #[0.04]
         'nbins': 200,
         'range': None
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': [0.18],
+        'bandwidth': np.linspace(0.16, 0.20, 5), #[0.18]
         'nbins': 200,
         'range': None
         })
