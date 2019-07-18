@@ -52,7 +52,7 @@ import os.path
 from config import CFG
 from kde_classes import Model, KDE
 
-model = Model('models.{model}', mc=None, weighting={weighting},
+model = Model('models.{model}', mc=None, weighting='{weighting}',
               gamma={gamma}, phi0={phi0})
 kde = KDE(model)
 
