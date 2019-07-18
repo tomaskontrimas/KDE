@@ -88,6 +88,8 @@ class Model(object):
                 gamma=self.gamma
             )
             weights = self.mc['conv'] + diff_weights
+        elif weighting == 'plotter_wkde': # Custom weights for comparison.
+            weights = self.mc['orig_OW']*self.mc['true_energy']**(-self.gamma)
         else:
             weights = np.ones(len(self.mc))
             self.logger.info('Using ones as weight.')
