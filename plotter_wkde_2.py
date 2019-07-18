@@ -220,17 +220,7 @@ make_plot(6.0, 0.12)
 make_plot(6.0, 0.5)
 '''
 
-#make_plot(4.0, 0.13)
+make_plot(2.5, 0.5)
+make_plot(3.5, 0.25)
+make_plot(4.0, 0.2)
 make_plot(5.0, 0.15)
-#make_plot(5.0, 0.1)
-#make_plot(5.5, 0.1)
-#make_plot(6.0, 0.1)
-
-
-
-
-
-
-
-
-
