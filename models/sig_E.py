@@ -4,8 +4,8 @@ import numpy as np
 from collections import OrderedDict
 
 settings = OrderedDict([
-    ('lgb_sigma_psimu', {
-        'values': "np.log10(mc['lgb_sigma_psimu'])",
+    ('sigma_pull_corrected', {
+        'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth': np.linspace(0.01, 0.11, 11), #[0.04]
         'nbins': 100,
         'range': None

@@ -36,9 +36,9 @@ mkdir -p /home/ge56lag/Software/KDE/output/{model}/cv
 
 python temp_python_{model}_{i}.py
 
-cp "/var/tmp/cv_{i}.npy" /home/ge56lag/Software/KDE/output/{model}/cv
+cp /var/tmp/cv_{i}.npy /home/ge56lag/Software/KDE/output/{model}/cv
 
-rm "/var/tmp/cv_{i}.npy"
+rm /var/tmp/cv_{i}.npy
 rm temp_python_{model}_{i}.py
 rm temp_submit_{model}_{i}.sub
 """

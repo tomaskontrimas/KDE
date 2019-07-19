@@ -34,9 +34,9 @@ mkdir -p /home/ge56lag/Software/KDE/output/{model}/pdf
 
 python temp_python_{model}.py
 
-cp "/var/tmp/{model}.pkl" /home/ge56lag/Software/KDE/output/{model}/pdf
+cp /var/tmp/{model}.pkl /home/ge56lag/Software/KDE/output/{model}/pdf
 
-rm "/var/tmp/{model}.pkl"
+rm /var/tmp/{model}.pkl
 rm temp_python_{model}.py
 rm temp_submit_{model}.sub
 """
