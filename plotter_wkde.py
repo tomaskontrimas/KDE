@@ -192,7 +192,7 @@ def make_plot(logE, sigma_p, delta_sigma=0.2, show_quantile=False):
     plt.subplots_adjust( hspace=0 )
 
 
-    plt.savefig("./output/wkde_cpd_rayleigh_lE_%.1f_sigma_%.2f.pdf" %(logE, sigma_p))
+    plt.savefig("/var/tmp/wkde_cpd_rayleigh_lE_%.1f_sigma_%.2f.pdf" %(logE, sigma_p))
     plt.clf()
 '''
 make_plot(2.0, 0.2)
