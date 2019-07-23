@@ -122,7 +122,7 @@ if local:
     with open(temp_local, "w") as file:
         file.write(local_draft.format(model=model))
 
-    os.system("python {}".format(temp_local))
+    os.system("source {}".format(temp_local))
 else:
     temp_slurm = 'temp_slurm_{model}.sub'.format(model=model)
     with open(temp_slurm, "w") as file:
