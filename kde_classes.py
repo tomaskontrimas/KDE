@@ -236,13 +236,13 @@ class KDE(object):
         return self.cv_results
 
     def get_coordinates_and_pdf_values(self, kernel_density):
-            out_bins = []
-            for i, key in enumerate(self.model.vars):
-                out_bins.append(np.linspace(self.model.ranges[i][0],
-                                        self.model.ranges[i][1],
-                                        self.model.nbins[i]))
-            coords = np.array(list(itertools.product(*out_bins)))
-            pdf_vals = np.asarray(
-                [self.eval_point(kernel_density, coord) for coord in coords])
-            pdf_vals = pdf_vals.reshape(self.model.nbins)
+        out_bins = []
+        for i, key in enumerate(self.model.vars):
+            out_bins.append(np.linspace(self.model.ranges[i][0],
+                                    self.model.ranges[i][1],
+                                    self.model.nbins[i]))
+        coords = np.array(list(itertools.product(*out_bins)))
+        pdf_vals = np.asarray(
+            [self.eval_point(kernel_density, coord) for coord in coords])
+        pdf_vals = pdf_vals.reshape(self.model.nbins)
         return (coords, pdf_vals)
