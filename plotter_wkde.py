@@ -19,6 +19,8 @@ bins_logEr = spatial_KDE['bins'][2]
 with open('./output/sig_E/pdf/sig_E.pkl', 'rb') as ifile:
     norm_KDE = pickle.load(ifile)
 spatial_KDE_vals = spatial_KDE['pdf_vals']/norm_KDE['pdf_vals'][:,np.newaxis,:]
+# Set non finite values to zero.
+spatial_KDE_vals[~np.isfinite(spatial_KDE_vals)] = 0
 
 penalty_order = 2
 knots = np.linspace(-4,0.5,100)
