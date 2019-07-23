@@ -20,8 +20,23 @@ def parseArguments():
         "--gamma", type=float, default=2.0)
     parser.add_argument(
         "--phi0", type=float, default=1.01)
+    parser.add_argument(
+        "--local", action="store_true", default=False)
     args = parser.parse_args()
     return vars(args)
+
+local_draft = """#!/usr/bin/env bash
+
+mkdir -p /home/ge56lag/Software/KDE/output/{model}/pdf
+
+python temp_python_{model}.py
+
+cp /var/tmp/{model}.pkl /home/ge56lag/Software/KDE/output/{model}/pdf
+
+rm /var/tmp/{model}.pkl
+rm temp_python_{model}.py
+rm temp_local_{model}.sub
+"""
 
 slurm_draft = """#!/usr/bin/env bash
 #SBATCH --time=3:00:00
@@ -38,7 +53,7 @@ cp /var/tmp/{model}.pkl /home/ge56lag/Software/KDE/output/{model}/pdf
 
 rm /var/tmp/{model}.pkl
 rm temp_python_{model}.py
-rm temp_submit_{model}.sub
+rm temp_slurm_{model}.sub
 """
 
 python_draft = """# -*- coding: utf-8 -*-
@@ -92,18 +107,25 @@ adaptive = args['adaptive']
 weighting = args['weighting']
 gamma = args['gamma']
 phi0 = args['phi0']
+local = args['local']
 
-temp_submit = 'temp_submit_{model}.sub'.format(model=model)
-python_submit = 'temp_python_{model}.py'.format(model=model)
+temp_python_ = 'temp_python_{model}.py'.format(model=model)
 
-with open(temp_submit, "w") as file:
-    file.write(slurm_draft.format(model=model))
-
-with open(python_submit, "w") as file:
+with open(temp_python_, "w") as file:
     file.write(python_draft.format(model=model,
                                    weighting=weighting,
                                    gamma=gamma,
                                    phi0=phi0,
                                    adaptive=adaptive))
+if local:
+    temp_local = 'temp_local_{model}.sub'.format(model=model)
+    with open(temp_local, "w") as file:
+        file.write(local_draft.format(model=model))
 
-os.system("sbatch {}".format(temp_submit))
+    os.system("python {}".format(temp_local))
+else:
+    temp_slurm = 'temp_slurm_{model}.sub'.format(model=model)
+    with open(temp_slurm, "w") as file:
+        file.write(slurm_draft.format(model=model))
+
+    os.system("sbatch {}".format(temp_slurm))
