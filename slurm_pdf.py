@@ -62,24 +62,16 @@ for cv_file in cv_files:
     cv_result = np.load(cv_file)
     cv_results = np.append(cv_results, cv_result)
 
-result_max_LLH = cv_results[cv_results['LLH'] == np.max(cv_results['LLH'])]
+cv_results_max_LLH = cv_results[cv_results['LLH'] == np.max(cv_results['LLH'])]
 
-bandwidth = [result_max_LLH[key] for key in model.bandwidth_vars]
+bandwidth = [cv_results_max_LLH[key] for key in model.bandwidth_vars]
 
 if {adaptive}:
     kernel_density = kde.generate_adaptive_kd(bandwidth)
 else:
     kernel_density = kde.generate_binned_kd(bandwidth)
 
-out_bins = []
-for i, key in enumerate(kde.model.vars):
-    out_bins.append(np.linspace(kde.model.ranges[i][0],
-                            kde.model.ranges[i][1],
-                            kde.model.nbins[i]))
-coords = np.array(list(itertools.product(*out_bins)))
-pdf_vals = np.asarray(
-    [kde.eval_point(kernel_density, coord) for coord in coords])
-pdf_vals = pdf_vals.reshape(kde.model.nbins)
+coords, pdf_vals = kde.get_coordinates_and_pdf_values(kernel_density)
 
 result_dict = {{
     'vars': kde.model.vars,

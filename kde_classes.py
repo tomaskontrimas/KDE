@@ -181,7 +181,8 @@ class KDE(object):
         return kernel_density.density(v)*self.model.kde_norm
 
     def cross_validate(self, bandwidth, adaptive=False, pdf_seed=None):
-        kfold = KFold(n_splits=5, random_state=0, shuffle=True)
+        kfold = KFold(n_splits=CFG['project']['n_splits'],
+                      random_state=CFG['project']['random_state'], shuffle=True)
         llh = []
         zeros = []
         for training_index, validation_index in kfold.split(self.model.mc):
@@ -233,3 +234,15 @@ class KDE(object):
             result = self.cross_validate(bandwidth, adaptive)
             self.cv_results = np.append(self.cv_results, result)
         return self.cv_results
+
+    def get_coordinates_and_pdf_values(self, kernel_density):
+            out_bins = []
+            for i, key in enumerate(self.model.vars):
+                out_bins.append(np.linspace(self.model.ranges[i][0],
+                                        self.model.ranges[i][1],
+                                        self.model.nbins[i]))
+            coords = np.array(list(itertools.product(*out_bins)))
+            pdf_vals = np.asarray(
+                [self.eval_point(kernel_density, coord) for coord in coords])
+            pdf_vals = pdf_vals.reshape(self.model.nbins)
+        return (coords, pdf_vals)
