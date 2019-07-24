@@ -32,17 +32,17 @@ from root_numpy import array2tree
 # Set Meerkat log level to Errors
 Logger.setLogLevel(2)
 
+
 class Model(object):
     """The Model class initializes and stores variables based on the provided
     model settings file. It is used for the KDE instance generation.
     """
     def __init__(self, model_module, mc=None, weighting=None, gamma=2.0, phi0=1):
         super(Model, self).__init__()
-        model = importlib.import_module(model_module)
+        self.logger = logging.getLogger('KDE.' + __name__ + '.Model')
+        model = importlib.import_module('models.{}'.format(model_module))
         settings = model.settings
         grid = model.grid
-
-        self.logger = logging.getLogger('KDE.' + __name__ + '.Model')
 
         if mc is None:
             if CFG['paths']['IC_mc'] is not None:
@@ -62,7 +62,6 @@ class Model(object):
         self.mc = mc
         self.phi0 = phi0*1e-18  # Renormalize in units of 1e-18 1/GeV/cm^2/sr/s.
         self.gamma = gamma
-        #self.approx_pdf = 0
         self.weights = self._generate_weights(weighting)
 
         # Calculate KDE normalization.
