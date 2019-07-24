@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 
 CFG = {
+    'debugging': {
+        'log_format': ('%(asctime)s %(processName)s %(name)s %(levelname)s: '
+            '%(message)s')  # The default log format.
+    }
     'paths': {
         'meerkat_root': '/home/ge56lag/Software/Meerkat/inc',
         'meerkat_lib': '/home/ge56lag/Software/Meerkat/lib/libMeerkat.so',
         #'IC_mc': '/home/ge56lag/Data/diffuse_mc_wBDT.npy',
         'IC_mc': '/home/ge56lag/Data/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy'
-        #'mg_mc': 'data/multi_gaussian.npy'
     },
     'project': {
-        'wd': '.',  # A working directory path to save created files.
         'NCPU': 4,
         'n_splits': 5,  # Number of folds for cross validation.
-        'random_state': 0  # Seed used by the random number generator.
+        'random_state': 0,  # Seed used by the random number generator.
+        'working_directory': '.'  # Project's working directory.
     },
     'MC_keys': {
         'ow': 'generator_ow',
