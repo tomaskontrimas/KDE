@@ -69,10 +69,10 @@ class Model(object):
         self.kde_norm = reduce((lambda x, y : x/y), range_norm)
 
         self.weighting_dict = {
-            'pl': pl_weighting,
-            'conv': pl_weighting,
-            'conv+pl': pl_weighting,
-            'plotter_wkde': plotter_wkde_weighting
+            'pl': Model.pl_weighting,
+            'conv': Model.conv_weighting,
+            'conv+pl': Model.conv_pl_weighting,
+            'plotter_wkde': Model.plotter_wkde_weighting
         }
         if custom_weighting_dict is not None:
             self.weighting_dict.update(custom_weighting_dict)
