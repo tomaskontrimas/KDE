@@ -4,7 +4,7 @@ CFG = {
     'debugging': {
         'log_format': ('%(asctime)s %(processName)s %(name)s %(levelname)s: '
             '%(message)s')  # The default log format.
-    }
+    },
     'paths': {
         'meerkat_root': '/home/ge56lag/Software/Meerkat/inc',
         'meerkat_lib': '/home/ge56lag/Software/Meerkat/lib/libMeerkat.so',
