@@ -37,7 +37,8 @@ class Model(object):
     """The Model class initializes and stores variables based on the provided
     model settings file. It is used for the KDE instance generation.
     """
-    def __init__(self, model_module, mc=None, weighting=None, gamma=2.0, phi0=1):
+    def __init__(self, model_module, mc=None, weighting=None,
+                 custom_weighting_dict=None, gamma=2.0, phi0=1):
         super(Model, self).__init__()
         self.logger = logging.getLogger('KDE.' + __name__ + '.Model')
         model = importlib.import_module('models.{}'.format(model_module))
@@ -62,11 +63,36 @@ class Model(object):
         self.mc = mc
         self.phi0 = phi0*1e-18  # Renormalize in units of 1e-18 1/GeV/cm^2/sr/s.
         self.gamma = gamma
-        self.weights = self._generate_weights(weighting)
 
         # Calculate KDE normalization.
         range_norm = [1.0] + [bound[1] - bound[0] for bound in self.ranges]
         self.kde_norm = reduce((lambda x, y : x/y), range_norm)
+
+        self.weighting_dict = {
+            'pl': pl_weighting,
+            'conv': pl_weighting,
+            'conv+pl': pl_weighting,
+            'plotter_wkde': plotter_wkde_weighting
+        }
+        if custom_weighting_dict is not None:
+            self.weighting_dict.update(custom_weighting_dict)
+        self.weights = self._generate_weights(weighting)
+
+    @staticmethod
+    def pl_weighting(mc, phi0, gamma):
+        return mc['orig_OW']*powerlaw(mc['true_energy'], phi0=phi0, gamma=gamma)
+
+    @staticmethod
+    def conv_weighting(mc, **kwargs):
+        return mc['conv']
+
+    @staticmethod
+    def conv_pl_weighting(mc, phi0, gamma):
+        return conv_weighting(mc) + pl_weighting(mc, phi0, gamma)
+
+    @staticmethod
+    def plotter_wkde_weighting(mc, phi0, gamma):
+        return mc['orig_OW']*mc['true_energy']**(-gamma)
 
     def _generate_weights(self, weighting):
         if isinstance(weighting, list):
@@ -74,21 +100,8 @@ class Model(object):
                 raise ValueError('Weighting list length should be equal to the '
                                  'MC length.')
             weights = weighting
-        elif weighting == 'pl':
-            weights = self.mc['orig_OW']*powerlaw(
-                self.mc['true_energy'], phi0=self.phi0,
-                gamma=self.gamma
-            )
-        elif weighting == 'conv':
-            weights = self.mc['conv']
-        elif weighting == 'conv+pl':
-            diff_weights = self.mc['orig_OW']*powerlaw(
-                self.mc['true_energy'], phi0=self.phi0,
-                gamma=self.gamma
-            )
-            weights = self.mc['conv'] + diff_weights
-        elif weighting == 'plotter_wkde': # Custom weights for comparison.
-            weights = self.mc['orig_OW']*self.mc['true_energy']**(-self.gamma)
+        elif weighting in weighting_dict:
+            weights = weighting_dict[weighting](self.mc, self.phi0, self.gamma)
         else:
             weights = np.ones(len(self.mc))
             self.logger.info('Using ones as weight.')
