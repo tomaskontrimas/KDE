@@ -100,8 +100,8 @@ class Model(object):
                 raise ValueError('Weighting list length should be equal to the '
                                  'MC length.')
             weights = weighting
-        elif weighting in weighting_dict:
-            weights = weighting_dict[weighting](self.mc, self.phi0, self.gamma)
+        elif weighting in self.weighting_dict:
+            weights = self.weighting_dict[weighting](self.mc, self.phi0, self.gamma)
         else:
             weights = np.ones(len(self.mc))
             self.logger.info('Using ones as weight.')
