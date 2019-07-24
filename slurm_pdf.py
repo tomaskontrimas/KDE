@@ -35,7 +35,7 @@ cp /var/tmp/{model}.pkl /home/ge56lag/Software/KDE/output/{model}/pdf
 
 rm /var/tmp/{model}.pkl
 rm temp_python_{model}.py
-rm temp_local_{model}.sub
+rm temp_local_{model}.sh
 """
 
 slurm_draft = """#!/usr/bin/env bash
@@ -118,7 +118,7 @@ with open(temp_python_, "w") as file:
                                    phi0=phi0,
                                    adaptive=adaptive))
 if local:
-    temp_local = 'temp_local_{model}.sub'.format(model=model)
+    temp_local = 'temp_local_{model}.sh'.format(model=model)
     with open(temp_local, "w") as file:
         file.write(local_draft.format(model=model))
 

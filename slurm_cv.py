@@ -37,7 +37,7 @@ cp /var/tmp/cv_{i}.npy /home/ge56lag/Software/KDE/output/{model}/cv
 
 rm /var/tmp/cv_{i}.npy
 rm temp_python_{model}_{i}.py
-rm temp_local_{model}_{i}.sub
+rm temp_local_{model}_{i}.sh
 """
 
 slurm_draft = """#!/usr/bin/env bash
@@ -98,7 +98,7 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
                                        i=i))
 
     if local:
-        temp_local = 'temp_local_{model}.sub'.format(model=model)
+        temp_local = 'temp_local_{model}.sh'.format(model=model)
         with open(temp_local, "w") as file:
             file.write(local_draft.format(model=model, i=i))
 
