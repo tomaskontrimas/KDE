@@ -82,7 +82,7 @@ class Model(object):
 
         if grid is None:
             self.out_bins = [np.linspace(self.ranges[i][0], self.ranges[i][1],
-                                         self.model.nbins[i])
+                                         self.nbins[i])
                              for i, key in enumerate(settings)]
         else:
             self.out_bins = [grid[key] for key in settings]
