@@ -4,7 +4,6 @@ import importlib
 import itertools
 import logging
 import numpy as np
-from numpy.lib import recfunctions as np_rfn
 import os
 
 from sklearn.model_selection import KFold
@@ -12,7 +11,12 @@ from scipy.interpolate import RegularGridInterpolator
 
 from config import CFG
 from dataset import load_and_prepare_data
-from functions import powerlaw
+from functions import (
+    pl_weighting,
+    conv_weighting,
+    conv_pl_weighting,
+    plotter_wkde_weighting
+)
 
 # ROOT imports.
 os.environ["ROOT_INCLUDE_PATH"] = os.pathsep + CFG['paths']['meerkat_root']
@@ -37,8 +41,8 @@ class Model(object):
     """The Model class initializes and stores variables based on the provided
     model settings file. It is used for the KDE instance generation.
     """
-    def __init__(self, model_module, mc=None, weighting=None,
-                 custom_weighting_dict=None, gamma=2.0, phi0=1):
+    def __init__(self, model_module, mc=None, weighting=None, gamma=2.0,
+                 phi0=1):
         super(Model, self).__init__()
         self.logger = logging.getLogger('KDE.' + __name__ + '.Model')
         model = importlib.import_module('models.{}'.format(model_module))
@@ -68,44 +72,28 @@ class Model(object):
         range_norm = [1.0] + [bound[1] - bound[0] for bound in self.ranges]
         self.kde_norm = reduce((lambda x, y : x/y), range_norm)
 
-        self.weighting_dict = {
-            'pl': Model.pl_weighting,
-            'conv': Model.conv_weighting,
-            'conv+pl': Model.conv_pl_weighting,
-            'plotter_wkde': Model.plotter_wkde_weighting
+        self.default_weighting_dict = {
+            'pl': pl_weighting,
+            'conv': conv_weighting,
+            'conv+pl': conv_pl_weighting,
+            'plotter_wkde': plotter_wkde_weighting
         }
-        if custom_weighting_dict is not None:
-            self.weighting_dict.update(custom_weighting_dict)
         self.weights = self._generate_weights(weighting)
 
-    @staticmethod
-    def pl_weighting(mc, phi0, gamma):
-        return mc['orig_OW']*powerlaw(mc['true_energy'], phi0=phi0, gamma=gamma)
-
-    @staticmethod
-    def conv_weighting(mc, **kwargs):
-        return mc['conv']
-
-    @staticmethod
-    def conv_pl_weighting(mc, phi0, gamma):
-        return conv_weighting(mc) + pl_weighting(mc, phi0, gamma)
-
-    @staticmethod
-    def plotter_wkde_weighting(mc, phi0, gamma):
-        return mc['orig_OW']*mc['true_energy']**(-gamma)
-
     def _generate_weights(self, weighting):
-        if isinstance(weighting, list):
+        if callable(weighting):
+            return = weighting(self.mc, self.phi0, self.gamma)
+        elif isinstance(weighting, list):
             if len(weighting) != len(self.mc):
                 raise ValueError('Weighting list length should be equal to the '
                                  'MC length.')
-            weights = weighting
-        elif weighting in self.weighting_dict:
-            weights = self.weighting_dict[weighting](self.mc, self.phi0, self.gamma)
+            return weighting
+        elif weighting in self.default_weighting_dict:
+            return self.default_weighting_dict[weighting](self.mc, self.phi0,
+                                                          self.gamma)
         else:
-            weights = np.ones(len(self.mc))
             self.logger.info('Using ones as weight.')
-        return weights
+            return np.ones(len(self.mc))
 
 
 class KDE(object):
