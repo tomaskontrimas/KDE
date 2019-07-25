@@ -82,7 +82,7 @@ class Model(object):
 
     def _generate_weights(self, weighting):
         if callable(weighting):
-            return = weighting(self.mc, self.phi0, self.gamma)
+            return weighting(self.mc, self.phi0, self.gamma)
         elif isinstance(weighting, list):
             if len(weighting) != len(self.mc):
                 raise ValueError('Weighting list length should be equal to the '
