@@ -86,13 +86,13 @@ if {adaptive}:
 else:
     kernel_density = kde.generate_binned_kd(bandwidth)
 
-out_bins, coords, pdf_vals = kde.get_bins_coordinates_and_pdf_values(kernel_density)
+pdf_values = kde.get_pdf_values(kernel_density)
 
 result_dict = {{
     'vars': kde.model.vars,
-    'bins': out_bins,
-    'coords': coords,
-    'pdf_vals': pdf_vals,
+    'bins': kde.model.out_bins,
+    'coords': kde.model.coords,
+    'pdf_vals': pdf_values,
     'bw': bandwidth
 }}
 

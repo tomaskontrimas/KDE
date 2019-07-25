@@ -80,6 +80,16 @@ class Model(object):
         }
         self.weights = self._generate_weights(weighting)
 
+        if grid is None:
+            self.out_bins = [np.linspace(self.ranges[i][0], self.ranges[i][1],
+                                         self.model.nbins[i])
+                             for i, key in enumerate(settings)]
+        else:
+            self.out_bins = [grid[key] for key in settings]
+            if self.out_bins.shape != self.nbins:
+                raise ValueError('Grid shape are not equal to defined nbins.')
+        self.coords = np.array(list(itertools.product(*out_bins)))
+
     def _generate_weights(self, weighting):
         if callable(weighting):
             return weighting(self.mc, self.phi0, self.gamma)
@@ -142,7 +152,6 @@ class KDE(object):
         args.append("weight")
         args.extend(self.model.nbins)
         args.extend(bandwidth)
-        #args.extend([self.model.approx_pdf, 0])
         args.extend([0, 0])
 
         self.binned_kernel = BinnedKernelDensity(*args)
@@ -165,7 +174,6 @@ class KDE(object):
         args.extend(self.model.nbins)
         args.extend(bandwidth)
         args.extend([pdf_seed,
-                     #self.model.approx_pdf,
                      pdf_seed,
                      0])
 
@@ -193,15 +201,7 @@ class KDE(object):
             else:
                 kernel_density = self.generate_binned_kd(bandwidth)
 
-            out_bins = []
-            for i, key in enumerate(self.model.vars):
-                out_bins.append(np.linspace(self.model.ranges[i][0],
-                                        self.model.ranges[i][1],
-                                        self.model.nbins[i]))
-            coords = np.array(list(itertools.product(*out_bins)))
-            training_pdf_vals = np.asarray(
-                [self.eval_point(kernel_density, coord) for coord in coords])
-            training_pdf_vals = training_pdf_vals.reshape(self.model.nbins)
+            training_pdf_vals = self.get_pdf_values(kernel_density)
 
             # Validation
             rgi_pdf = RegularGridInterpolator(tuple(out_bins), training_pdf_vals,
@@ -235,14 +235,8 @@ class KDE(object):
             self.cv_results = np.append(self.cv_results, result)
         return self.cv_results
 
-    def get_bins_coordinates_and_pdf_values(self, kernel_density):
-        out_bins = []
-        for i, key in enumerate(self.model.vars):
-            out_bins.append(np.linspace(self.model.ranges[i][0],
-                                    self.model.ranges[i][1],
-                                    self.model.nbins[i]))
-        coords = np.array(list(itertools.product(*out_bins)))
-        pdf_vals = np.asarray(
-            [self.eval_point(kernel_density, coord) for coord in coords])
-        pdf_vals = pdf_vals.reshape(self.model.nbins)
-        return (out_bins, coords, pdf_vals)
+    def get_pdf_values(self, kernel_density):
+        pdf_values = np.asarray([self.eval_point(kernel_density, coord)
+                               for coord in self.model.coords])
+        pdf_values = pdf_values.reshape(self.model.nbins)
+        return pdf_values
