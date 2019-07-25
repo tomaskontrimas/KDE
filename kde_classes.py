@@ -86,8 +86,9 @@ class Model(object):
                              for i, key in enumerate(settings)]
         else:
             self.out_bins = [grid[key] for key in settings]
-            if self.out_bins.shape != self.nbins:
-                raise ValueError('Grid shape are not equal to defined nbins.')
+            for i, key in enumerate(settings):
+                if len(self.out_bins[i]) != self.nbins[i]:
+                    raise ValueError('Grid has different dimensions to nbins.')
         self.coords = np.array(list(itertools.product(*self.out_bins)))
 
     def _generate_weights(self, weighting):
