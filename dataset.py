@@ -66,7 +66,6 @@ def assert_file_exists(pathfilename):
     ------
     RuntimeError
         If the file does not exist.
-
     """
     if(not os.path.isfile(pathfilename)):
         raise RuntimeError('The data file "%s" does not exist!'%(pathfilename))
