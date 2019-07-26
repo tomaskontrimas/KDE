@@ -193,8 +193,9 @@ class KDE(object):
             training_pdf_vals = self.get_pdf_values(kernel_density)
 
             # Validation
-            rgi_pdf = RegularGridInterpolator(tuple(out_bins), training_pdf_vals,
-                method='linear', bounds_error=False, fill_value=0)
+            rgi_pdf = RegularGridInterpolator(tuple(self.model.out_bins),
+                training_pdf_vals, method='linear', bounds_error=False,
+                fill_value=0)
 
             mc_validation_values = []
             for i, var in enumerate(self.model.vars):
