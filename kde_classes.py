@@ -11,12 +11,6 @@ from scipy.interpolate import RegularGridInterpolator
 
 from config import CFG
 from dataset import load_and_prepare_data
-from functions import (
-    pl_weighting,
-    conv_weighting,
-    conv_pl_weighting,
-    plotter_wkde_weighting
-)
 
 # ROOT imports.
 os.environ["ROOT_INCLUDE_PATH"] = os.pathsep + CFG['paths']['meerkat_root']
@@ -72,12 +66,7 @@ class Model(object):
         range_norm = [1.0] + [bound[1] - bound[0] for bound in self.ranges]
         self.kde_norm = reduce((lambda x, y : x/y), range_norm)
 
-        self.default_weighting_dict = {
-            'pl': pl_weighting,
-            'conv': conv_weighting,
-            'conv+pl': conv_pl_weighting,
-            'plotter_wkde': plotter_wkde_weighting
-        }
+        self.weighting_dict = CFG['weighting_dict']
         self.weights = self._generate_weights(weighting)
 
         if grid is None:
@@ -99,9 +88,8 @@ class Model(object):
                 raise ValueError('Weighting list length should be equal to the '
                                  'MC length.')
             return weighting
-        elif weighting in self.default_weighting_dict:
-            return self.default_weighting_dict[weighting](self.mc, self.phi0,
-                                                          self.gamma)
+        elif weighting in self.weighting_dict:
+            return self.weighting_dict[weighting](self.mc, self.phi0, self.gamma)
         else:
             self.logger.info('Using ones as weight.')
             return np.ones(len(self.mc))

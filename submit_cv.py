@@ -6,6 +6,8 @@ import itertools
 import os
 from time import sleep
 
+from config import CFG
+
 def parseArguments():
     """Parse the command line arguments
     Returns:
@@ -29,11 +31,11 @@ def parseArguments():
 
 local_draft = """#!/usr/bin/env bash
 
-mkdir -p /home/ge56lag/Software/KDE/output/{model}/cv
+mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
 
 python temp_python_{model}_{i}.py
 
-cp /var/tmp/cv_{i}.npy /home/ge56lag/Software/KDE/output/{model}/cv
+cp /var/tmp/cv_{i}.npy {working_directory}/output/{model}/{parameters_dir}/cv
 
 rm /var/tmp/cv_{i}.npy
 rm temp_python_{model}_{i}.py
@@ -44,14 +46,14 @@ slurm_draft = """#!/usr/bin/env bash
 #SBATCH --time=3:00:00
 #SBATCH --mem=2000
 #SBATCH --partition=kta
-#SBATCH --error=/home/ge56lag/Software/KDE/output/slurm/slurm-%j.err
-#SBATCH --output=/home/ge56lag/Software/KDE/output/slurm/slurm-%j.out
+#SBATCH --error={working_directory}/output/slurm/slurm-%j.err
+#SBATCH --output={working_directory}/output/slurm/slurm-%j.out
 
-mkdir -p /home/ge56lag/Software/KDE/output/{model}/cv
+mkdir -p {working_directory}/output/{model}/cv
 
 python temp_python_{model}_{i}.py
 
-cp /var/tmp/cv_{i}.npy /home/ge56lag/Software/KDE/output/{model}/cv
+cp /var/tmp/cv_{i}.npy {working_directory}/output/{model}/{parameters_dir}/cv
 
 rm /var/tmp/cv_{i}.npy
 rm temp_python_{model}_{i}.py
@@ -82,6 +84,12 @@ gamma = args['gamma']
 phi0 = args['phi0']
 local = args['local']
 
+working_directory = CFG['project']['working_directory']
+
+parameters_dir_format = '{kd}_{weighting}_gamma_{gamma}_phi0_{phi0}'
+parameters_dir = parameters_dir_format.format(kd='adaptive_kd' if adaptive else
+    'binned_kd', weighting=weighting, gamma=gamma, phi0=phi0)
+
 settings = importlib.import_module('models.{}'.format(model)).settings
 bandwidths = [settings[key]['bandwidth'] for key in settings]
 
@@ -98,14 +106,18 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
                                        i=i))
 
     if local:
-        temp_local = 'temp_local_{model}.sh'.format(model=model)
+        temp_local = 'temp_local_{model}_{i}.sh'.format(model=model, i=i)
         with open(temp_local, "w") as file:
-            file.write(local_draft.format(model=model, i=i))
+            file.write(local_draft.format(model=model, i=i,
+                                          working_directory=working_directory,
+                                          parameters_dir=parameters_dir))
 
-        os.system("python {}".format(temp_local))
+        os.system("source ./{}".format(temp_local))
     else:
         temp_slurm = 'temp_slurm_{model}_{i}.sub'.format(model=model, i=i)
         with open(temp_slurm, "w") as file:
-            file.write(slurm_draft.format(model=model, i=i))
+            file.write(slurm_draft.format(model=model, i=i,
+                                          working_directory=working_directory,
+                                          parameters_dir=parameters_dir))
 
         os.system("sbatch {}".format(temp_slurm))

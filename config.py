@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from functions import (
+    pl_weighting,
+    conv_weighting,
+    conv_pl_weighting,
+    plotter_wkde_weighting
+)
+
 CFG = {
     'debugging': {
         'log_format': ('%(asctime)s %(processName)s %(name)s %(levelname)s: '
@@ -15,7 +22,7 @@ CFG = {
         'NCPU': 4,
         'n_splits': 5,  # Number of folds for cross validation.
         'random_state': 0,  # Seed used by the random number generator.
-        'working_directory': '.'  # Project's working directory.
+        'working_directory': '/home/ge56lag/Software/KDE'
     },
     'MC_keys': {
         'ow': 'generator_ow',
@@ -28,5 +35,11 @@ CFG = {
         'trueDec': 'true_dec',  # Used in code.
         'sigmaOK': 'sigmaok',  # Used in code.
         'psi': 'psi_mu'
+    },
+    'weighting_dict' = {
+        'pl': pl_weighting,
+        'conv': conv_weighting,
+        'conv+pl': conv_pl_weighting,
+        'plotter_wkde': plotter_wkde_weighting
     }
 }
