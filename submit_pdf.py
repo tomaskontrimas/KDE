@@ -29,11 +29,11 @@ def parseArguments():
 
 local_draft = """#!/usr/bin/env bash
 
-mkdir -p {working_directory}/output/{model}/{parameters_dir}/pdf
+mkdir -p "{working_directory}/output/{model}/{parameters_dir}/pdf"
 
 python temp_python_{model}.py
 
-cp /var/tmp/{model}.pkl {working_directory}/output/{model}/{parameters_dir}/pdf
+cp /var/tmp/{model}.pkl "{working_directory}/output/{model}/{parameters_dir}/pdf"
 
 rm /var/tmp/{model}.pkl
 rm temp_python_{model}.py
@@ -47,11 +47,11 @@ slurm_draft = """#!/usr/bin/env bash
 #SBATCH --error={working_directory}/output/slurm/slurm-%j.err
 #SBATCH --output={working_directory}/output/slurm/slurm-%j.out
 
-mkdir -p {working_directory}/output/{model}/{parameters_dir}/pdf
+mkdir -p "{working_directory}/output/{model}/{parameters_dir}/pdf"
 
 python temp_python_{model}.py
 
-cp /var/tmp/{model}.pkl {working_directory}/output/{model}/{parameters_dir}/pdf
+cp /var/tmp/{model}.pkl "{working_directory}/output/{model}/{parameters_dir}/pdf"
 
 rm /var/tmp/{model}.pkl
 rm temp_python_{model}.py
