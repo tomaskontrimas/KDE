@@ -49,7 +49,7 @@ slurm_draft = """#!/usr/bin/env bash
 #SBATCH --error={working_directory}/output/slurm/slurm-%j.err
 #SBATCH --output={working_directory}/output/slurm/slurm-%j.out
 
-mkdir -p {working_directory}/output/{model}/cv
+mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
 
 python temp_python_{model}_{i}.py
 
