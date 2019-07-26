@@ -27,16 +27,36 @@ from ROOT import (
 
 from root_numpy import array2tree
 
-# Set Meerkat log level to Errors
+# Set Meerkat package log level to errors only.
 Logger.setLogLevel(2)
 
 
 class Model(object):
     """The Model class initializes and stores variables based on the provided
-    model settings file. It is used for the KDE instance generation.
+    model module and given parameters. It is used for the KDE instance
+    generation.
     """
-    def __init__(self, model_module, mc=None, weighting=None, gamma=2.0,
-                 phi0=1):
+    def __init__(self, model_module, mc=None, weighting=None, phi0=1.0,
+                 gamma=2.0):
+        """Creates a new model object.
+
+        Parameters
+        ----------
+        model_module : str
+            Name of model file inside models directory.
+        mc : numpy record ndarray, optional
+            Monte-carlo data. If not provided the default `IC_mc` dataset from
+            configuration is used.
+        weighting : function | str | sequence of floats, optional
+            The function is called with `mc`, `phi0` and `gamma` arguments.
+            String is looked for in config `weighting_dict`. Sequence of weights
+            has to be the same length as the monte-carlo data. If no option is
+            given falls back to uniform weighting.
+        phi0: float, optional
+            Powerlaw normalization, default is 1.0.
+        gamma : float, optional
+            Powerlaw index, default is 2.0.
+        """
         super(Model, self).__init__()
         self.logger = logging.getLogger('KDE.' + __name__ + '.Model')
         model = importlib.import_module('models.{}'.format(model_module))
@@ -81,6 +101,8 @@ class Model(object):
         self.coords = np.array(list(itertools.product(*self.out_bins)))
 
     def _generate_weights(self, weighting):
+        """Private method to generate weights by a given option.
+        """
         if callable(weighting):
             return weighting(self.mc, self.phi0, self.gamma)
         elif isinstance(weighting, list):
@@ -96,8 +118,17 @@ class Model(object):
 
 
 class KDE(object):
-    """docstring for KDE"""
+    """The KDE class provides methods for kernel density estimation and cross
+    validation.
+    """
     def __init__(self, model):
+        """Creates a new KDE object.
+
+        Parameters
+        ----------
+        model : Model
+            Instance of `Model` class used for initialization and calculations.
+        """
         super(KDE, self).__init__()
         self.logger = logging.getLogger('KDE.' + __name__ + '.KDE')
         self.model = model
@@ -112,6 +143,8 @@ class KDE(object):
         self._generate_tree_and_space()
 
     def _generate_tree_and_space(self, index=None):
+        """Private method to generate tree and phase space.
+        """
         self.tree = None
         spaces = []
         if index is None:

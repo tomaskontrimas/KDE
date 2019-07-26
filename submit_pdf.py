@@ -7,9 +7,12 @@ from time import sleep
 from config import CFG
 
 def parseArguments():
-    """Parse the command line arguments
-    Returns:
-    args : Dictionary containing the command line arguments
+    """Parse the command line arguments.
+
+    Returns
+    -------
+    args : dict
+        Dictionary containing the command line arguments.
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -41,6 +44,7 @@ rm temp_local_{model}.sh
 """
 
 slurm_draft = """#!/usr/bin/env bash
+
 #SBATCH --time=3:00:00
 #SBATCH --mem=2000
 #SBATCH --partition=kta
