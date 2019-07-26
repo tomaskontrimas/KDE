@@ -36,7 +36,7 @@ CFG = {
         'sigmaOK': 'sigmaok',  # Used in code.
         'psi': 'psi_mu'
     },
-    'weighting_dict' = {
+    'weighting_dict': {
         'pl': pl_weighting,
         'conv': conv_weighting,
         'conv+pl': conv_pl_weighting,
