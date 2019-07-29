@@ -19,7 +19,8 @@ def load_and_prepare_data(pathfilenames):
     data : numpy record ndarray
         Loaded and prepared monte-carlo data.
     """
-    pathfilenames = list(pathfilenames)
+    if isinstance(pathfilenames, basestring):
+        pathfilenames = [pathfilenames]
     pathfilename = pathfilenames[0]
     assert_file_exists(pathfilename)
     data = np.load(pathfilename)
