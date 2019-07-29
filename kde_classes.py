@@ -180,7 +180,10 @@ class KDE(object):
         array2tree(np.array(self.model.weights[index],
             dtype=[("weight", np.float32)]), tree=self.tree)
 
-        self.space = CombinedPhaseSpace("PhspCombined", *spaces)
+        if len(spaces) == 1:
+            self.space = spaces[0]
+        else:
+            self.space = CombinedPhaseSpace("PhspCombined", *spaces)
 
     def generate_binned_kd(self, bandwidth, pdf_seed=None):
         """Wrapper method of `BinnedKernelDensity` constructor for N-dimensional
