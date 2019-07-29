@@ -102,6 +102,19 @@ class Model(object):
 
     def _generate_weights(self, weighting):
         """Private method to generate weights by a given option.
+
+        Parameters
+        ----------
+        weighting : function | str | sequence of floats, optional
+            The function is called with `mc`, `phi0` and `gamma` arguments.
+            String is looked for in config `weighting_dict`. Sequence of weights
+            has to be the same length as the monte-carlo data. If no option is
+            given falls back to uniform weighting.
+
+        Returns
+        -------
+        weights : numpy ndarray of floats
+            Generated weights with a given `weighting` option.
         """
         if callable(weighting):
             return weighting(self.mc, self.phi0, self.gamma)
@@ -127,7 +140,7 @@ class KDE(object):
         Parameters
         ----------
         model : Model
-            Instance of `Model` class used for initialization and calculations.
+            Instance of `Model` class.
         """
         super(KDE, self).__init__()
         self.logger = logging.getLogger('KDE.' + __name__ + '.KDE')
@@ -143,7 +156,13 @@ class KDE(object):
         self._generate_tree_and_space()
 
     def _generate_tree_and_space(self, index=None):
-        """Private method to generate tree and phase space.
+        """Private method to generate a tree object of the given data with
+        weights and a combined phase space over data ranges.
+
+        Parameters
+        ----------
+        index : numpy ndarray of floats | None
+            Indices for selection of the monte-carlo and weights data subset.
         """
         self.tree = None
         spaces = []
@@ -163,47 +182,99 @@ class KDE(object):
 
         self.space = CombinedPhaseSpace("PhspCombined", *spaces)
 
-    def generate_binned_kd(self, bandwidth):
+    def generate_binned_kd(self, bandwidth, pdf_seed=None):
+        """Wrapper method of `BinnedKernelDensity` constructor for N-dimensional
+        kernel PDF with binned interpolation from the sample of points in an
+        NTuple with weight.
+
+        Parameters
+        ----------
+        bandwidth : list floats
+            List of kernel widths.
+        pdf_seed : KernelDensity | None
+            PDF seed for the approximation PDF.
+
+        Returns
+        -------
+        binned_kernel : BinnedKernelDensity
+            BinnedKernelDensity instance.
+        """
+        if pdf_seed is None:
+            pdf_seed = 0
+
         args = []
         args.extend([
             "BinnedKernelDensity",
-            self.space,
-            self.tree
+            self.space,  # Phase space.
+            self.tree  # Input NTuple.
         ])
-        args.extend(self.model.vars)
-        args.append("weight")
-        args.extend(self.model.nbins)
-        args.extend(bandwidth)
-        args.extend([0, 0])
+        args.extend(self.model.vars)  # Variables to use.
+        args.append("weight")  # Weights.
+        args.extend(self.model.nbins)  # Numbers of bins.
+        args.extend(bandwidth)  # Kernel widths.
+        args.extend([pdf_seed,  # Approximation PDF (0 for flat approximation).
+                     0])  # Sample size for MC convolution (0 for binned convolution)
 
         self.binned_kernel = BinnedKernelDensity(*args)
 
         return self.binned_kernel
 
     def generate_adaptive_kd(self, bandwidth, pdf_seed=None):
-        # Set or generate pdf_seed if not provided.
+        """Wrapper method of `AdaptiveKernelDensity` constructor for
+        N-dimensional adaptive kernel PDF from the sample of points in an NTuple
+        with weight.
+
+        Parameters
+        ----------
+        bandwidth : list floats
+            List of kernel widths.
+        pdf_seed : KernelDensity | None
+            PDF seed for the width scaling and the approximation PDF.
+
+        Returns
+        -------
+        adaptive_kernel : AdaptiveKernelDensity
+            AdaptiveKernelDensity instance.
+        """
+        # Generate pdf_seed if not provided.
         if pdf_seed is None:
             pdf_seed = self.generate_binned_kd(bandwidth)
 
         args = []
         args.extend([
             "AdaptiveKernelDensity",
-            self.space,
-            self.tree
+            self.space,  # Phase space.
+            self.tree  # Input NTuple.
         ])
-        args.extend(self.model.vars)
-        args.append("weight")
-        args.extend(self.model.nbins)
-        args.extend(bandwidth)
-        args.extend([pdf_seed,
-                     pdf_seed,
-                     0])
+        args.extend(self.model.vars)  # Variables to use.
+        args.append("weight")  # Weights.
+        args.extend(self.model.nbins)  # Numbers of bins.
+        args.extend(bandwidth)  # Kernel widths.
+        args.extend([pdf_seed,  # PDF for kernel width scaling.
+                     pdf_seed,  # Approximation PDF (0 for flat approximation).
+                     0])  # Sample size for MC convolution (0 for binned convolution)
 
         self.adaptive_kernel = AdaptiveKernelDensity(*args)
 
         return self.adaptive_kernel
 
     def eval_point(self, kernel_density, coord):
+        """Evaluates PDF value at a given coordinate of normalized
+        `KernelDensity` instance.
+
+        Parameters
+        ----------
+        kernel_density : KernelDensity
+            Binned or adaptive `KernelDensity` instance.
+        coord : tuple of floats
+            Coordinates of a point at which the `kernel_density` is evaluated.
+
+        Returns
+        -------
+        value : float
+            Evaluated PDF value at a given coordinate of normalized
+            `kernel_density`.
+        """
         l = len(coord)
         v = std.vector(Double)(l)
         for i in range(l):
@@ -211,6 +282,25 @@ class KDE(object):
         return kernel_density.density(v)*self.model.kde_norm
 
     def cross_validate(self, bandwidth, adaptive=False, pdf_seed=None):
+        """Calculates average log likelihood value with given bandwidth on a
+        dataset using K-Folds cross-validator.
+
+        Parameters
+        ----------
+        bandwidth : list floats
+            List of kernel widths.
+        adaptive : boolean
+            Chooses AdaptiveKernelDensity generator if True and
+            BinnedKernelDensity generator if False.
+        pdf_seed : KernelDensity | None
+            PDF seed for the width scaling and the approximation PDF.
+
+        Returns
+        -------
+        cv_result : numpy record ndarray
+            Cross validation array containing bandwidth, log likelihood and
+            zeros values.
+        """
         kfold = KFold(n_splits=CFG['project']['n_splits'],
                       random_state=CFG['project']['random_state'], shuffle=True)
         llh = []
@@ -221,7 +311,7 @@ class KDE(object):
             if adaptive:
                 kernel_density = self.generate_adaptive_kd(bandwidth, pdf_seed)
             else:
-                kernel_density = self.generate_binned_kd(bandwidth)
+                kernel_density = self.generate_binned_kd(bandwidth, pdf_seed)
 
             training_pdf_vals = self.get_pdf_values(kernel_density)
 
@@ -250,6 +340,26 @@ class KDE(object):
 
     def cross_validate_bandwidths(self, bandwidths=None, adaptive=False,
                                   pdf_seed=None):
+        """Calculates average log likelihood value with given bandwidth on a
+        dataset using K-Folds cross-validator for given `bandwidths` or
+        generated product of the model bandwidth ranges.
+
+        Parameters
+        ----------
+        bandwidths : list of list floats | None
+            List of kernel widths.
+        adaptive : boolean
+            Chooses AdaptiveKernelDensity generator if True and
+            BinnedKernelDensity generator if False.
+        pdf_seed : KernelDensity | None
+            PDF seed for the width scaling and the approximation PDF.
+
+        Returns
+        -------
+        cv_results : numpy record ndarray
+            Cross validation array containing bandwidths, log likelihoods and
+            zeros values.
+        """
         if bandwidths is None:
             bandwidths = self.model.bandwidths
         for bandwidth in itertools.product(*bandwidths):
@@ -259,6 +369,19 @@ class KDE(object):
         return self.cv_results
 
     def get_pdf_values(self, kernel_density):
+        """Evaluates PDF values at all coordinates of normalized `KernelDensity`
+        instance.
+
+        Parameters
+        ----------
+        kernel_density : KernelDensity
+            Binned or adaptive `KernelDensity` instance.
+
+        Returns
+        -------
+        pdf_values : numpy ndarray of floats
+            Evaluated PDF values.
+        """
         pdf_values = np.asarray([self.eval_point(kernel_density, coord)
                                for coord in self.model.coords])
         pdf_values = pdf_values.reshape(self.model.nbins)
