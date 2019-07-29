@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from config import CFG
 import numpy as np
 from numpy.lib import recfunctions as np_rfn
 import os.path
+
+from config import CFG
 
 def load_and_prepare_data(pathfilenames):
     """Loads the data file(s), renames fields and applies diffuse dataset cuts.

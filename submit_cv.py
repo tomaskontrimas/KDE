@@ -4,7 +4,6 @@ import argparse
 import importlib
 import itertools
 import os
-from time import sleep
 
 from config import CFG
 

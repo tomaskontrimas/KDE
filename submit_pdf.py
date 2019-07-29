@@ -2,7 +2,6 @@
 
 import argparse
 import os
-from time import sleep
 
 from config import CFG
 
