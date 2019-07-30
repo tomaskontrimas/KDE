@@ -148,7 +148,7 @@ class KDE(object):
         self.binned_kernel = None
         self.adaptive_kernel = None
         self.cv_result_dtype = np.dtype({
-            'names': ['bandwidth' 'LLH', 'Zeros'],
+            'names': ['bandwidth', 'LLH', 'Zeros'],
             'formats': ['(' + str(len(self.model.vars)) + ',)f4', 'f4', 'f4']
         })
 
