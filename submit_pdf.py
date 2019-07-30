@@ -76,11 +76,22 @@ model = Model('{model}', mc=None, weighting='{weighting}',
 kde = KDE(model)
 
 cv_files = glob.glob('output/{model}/{parameters_dir}/cv/cv_*.npy')
-cv_results = np.array([], dtype=kde.cv_result_dtype)
+cv_results_split = np.array([], dtype=kde.cv_result_dtype)
+#cv_results = np.array([], dtype=kde.cv_result_dtype)
 
 for cv_file in cv_files:
-    cv_result = np.load(cv_file)
-    cv_results = np.append(cv_results, cv_result)
+    cv_result_split = np.load(cv_file)
+    cv_results_split = np.append(cv_results_split, cv_result_split)
+
+# Gather splitted cv results by calculating average values.
+arr, unique_index = np.unique(cv_results_split['bandwidth'], return_index=True,
+                              axis=0)
+cv_results = cv_results_split[unique_index]
+for i, cv_result in enumerate(cv_results):
+    matches = cv_results_split[np.all(
+        cv_results_split['bandwidth'] == cv_result['bandwidth'], axis=1)]
+    cv_results['LLH'][i] = np.average(matches['LLH'])
+    cv_results['Zeros'][i] = np.average(matches['Zeros'])
 
 cv_results_max_LLH = cv_results[cv_results['LLH'] == np.max(cv_results['LLH'])]
 
