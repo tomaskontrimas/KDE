@@ -308,7 +308,7 @@ class KDE(object):
         kfold = KFold(n_splits=CFG['project']['n_splits'],
                       random_state=CFG['project']['random_state'], shuffle=True)
 
-        training_index, validation_index in list(kfold.split(self.model.mc))[n_split]
+        training_index, validation_index = list(kfold.split(self.model.mc))[n_split]
 
         self._generate_tree_and_space(training_index)
 
