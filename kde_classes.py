@@ -147,11 +147,10 @@ class KDE(object):
         self.model = model
         self.binned_kernel = None
         self.adaptive_kernel = None
-        self.cv_result = np.array([], dtype={
+        self.cv_result_dtype = np.dtype({
             'names': self.model.bandwidth_vars + ['LLH', 'Zeros'],
             'formats': ['f4']*len(self.model.bandwidth_vars) + ['f4', 'f4']
         })
-        self.cv_results = np.array(self.cv_result)
 
         self._generate_tree_and_space()
 
@@ -284,6 +283,65 @@ class KDE(object):
             v[i] = coord[i]
         return kernel_density.density(v)*self.model.kde_norm
 
+    def cross_validate_split(self, bandwidth, n_split, adaptive=False, pdf_seed=None):
+        """Calculates average log likelihood value with given bandwidth on a
+        dataset using K-Folds cross-validator.
+
+        Parameters
+        ----------
+        bandwidth : list floats
+            List of kernel widths.
+        n_split : int
+            Number of fold to cross validate.
+        adaptive : boolean
+            Chooses AdaptiveKernelDensity generator if True and
+            BinnedKernelDensity generator if False.
+        pdf_seed : KernelDensity | None
+            PDF seed for the width scaling and the approximation PDF.
+
+        Returns
+        -------
+        cv_result_split : numpy record ndarray
+            Cross validation array containing bandwidth, log likelihood and
+            zeros values.
+        """
+        kfold = KFold(n_splits=CFG['project']['n_splits'],
+                      random_state=CFG['project']['random_state'], shuffle=True)
+
+        training_index, validation_index in list(kfold.split(self.model.mc))[n_split]
+
+        self._generate_tree_and_space(training_index)
+
+        if adaptive:
+            kernel_density = self.generate_adaptive_kd(bandwidth, pdf_seed)
+        else:
+            kernel_density = self.generate_binned_kd(bandwidth, pdf_seed)
+
+        training_pdf_vals = self.get_pdf_values(kernel_density)
+
+        # Validation
+        rgi_pdf = RegularGridInterpolator(tuple(self.model.out_bins),
+            training_pdf_vals, method='linear', bounds_error=False,
+            fill_value=0)
+
+        mc_validation_values = []
+        for i, var in enumerate(self.model.vars):
+            mc_validation_values.append(
+                self.model.values[i][validation_index])
+
+        likelihood = rgi_pdf(zip(*mc_validation_values))
+        inds = likelihood > 0.
+
+        weights = self.model.weights[validation_index]
+        weights /= np.sum(weights)
+
+        llh = np.sum(np.log(likelihood[inds])*weights[inds])
+        zeros = len(likelihood) - len(inds)
+        result_tuple = tuple(list(bandwidth)
+                             + [np.average(llh), np.average(zeros)])
+        cv_result_split = np.array([result_tuple], dtype=self.cv_result_dtype)
+        return cv_result_split
+
     def cross_validate(self, bandwidth, adaptive=False, pdf_seed=None):
         """Calculates average log likelihood value with given bandwidth on a
         dataset using K-Folds cross-validator.
@@ -304,42 +362,18 @@ class KDE(object):
             Cross validation array containing bandwidth, log likelihood and
             zeros values.
         """
-        kfold = KFold(n_splits=CFG['project']['n_splits'],
-                      random_state=CFG['project']['random_state'], shuffle=True)
-        llh = []
-        zeros = []
-        for training_index, validation_index in kfold.split(self.model.mc):
-            self._generate_tree_and_space(training_index)
+        result = np.array([], dtype=self.cv_result_dtype)
+        for n_split in range(CFG['project']['n_splits'])
+            cv_result_split = self.cross_validate_split(bandwidth, n_split,
+                adaptive=False, pdf_seed=None)
+            result.append(cv_result_split)
 
-            if adaptive:
-                kernel_density = self.generate_adaptive_kd(bandwidth, pdf_seed)
-            else:
-                kernel_density = self.generate_binned_kd(bandwidth, pdf_seed)
 
-            training_pdf_vals = self.get_pdf_values(kernel_density)
+        result_tuple = tuple(list(bandwidth) + [np.average(cv_result['LLH']),
+                                                np.average(cv_result['Zeros'])])
 
-            # Validation
-            rgi_pdf = RegularGridInterpolator(tuple(self.model.out_bins),
-                training_pdf_vals, method='linear', bounds_error=False,
-                fill_value=0)
-
-            mc_validation_values = []
-            for i, var in enumerate(self.model.vars):
-                mc_validation_values.append(
-                    self.model.values[i][validation_index])
-
-            likelihood = rgi_pdf(zip(*mc_validation_values))
-            inds = likelihood > 0.
-
-            weights = self.model.weights[validation_index]
-            weights /= np.sum(weights)
-
-            llh.append(np.sum(np.log(likelihood[inds])*weights[inds]))
-            zeros.append(len(likelihood) - len(inds))
-        result_tuple = tuple(list(bandwidth)
-                             + [np.average(llh), np.average(zeros)])
-        self.cv_result = np.array([result_tuple], dtype=self.cv_result.dtype)
-        return self.cv_result
+        cv_result = np.array([result_tuple], dtype=self.cv_result_dtype)
+        return cv_result
 
     def cross_validate_bandwidths(self, bandwidths=None, adaptive=False,
                                   pdf_seed=None):
@@ -363,13 +397,14 @@ class KDE(object):
             Cross validation array containing bandwidths, log likelihoods and
             zeros values.
         """
+        cv_results = np.array([], dtype=self.cv_result_dtype)
         if bandwidths is None:
             bandwidths = self.model.bandwidths
         for bandwidth in itertools.product(*bandwidths):
             self.logger.info('Bandwidth: %s', bandwidth)
             result = self.cross_validate(bandwidth, adaptive)
-            self.cv_results = np.append(self.cv_results, result)
-        return self.cv_results
+            cv_results = np.append(cv_results, result)
+        return cv_results
 
     def get_pdf_values(self, kernel_density):
         """Evaluates PDF values at all coordinates of normalized `KernelDensity`
