@@ -37,9 +37,9 @@ mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
 
 python temp_python_{model}_{i}.py
 
-cp /var/tmp/cv_{i}.npy {working_directory}/output/{model}/{parameters_dir}/cv
+cp /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv
 
-rm /var/tmp/cv_{i}.npy
+rm /var/tmp/cv_{i}_{n_split}.npy
 rm temp_python_{model}_{i}.py
 rm temp_local_{model}_{i}.sh
 """
@@ -56,9 +56,9 @@ mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
 
 python temp_python_{model}_{i}.py
 
-cp /var/tmp/cv_{i}.npy {working_directory}/output/{model}/{parameters_dir}/cv
+cp /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv
 
-rm /var/tmp/cv_{i}.npy
+rm /var/tmp/cv_{i}_{n_split}.npy
 rm temp_python_{model}_{i}.py
 rm temp_slurm_{model}_{i}.sub
 """
@@ -73,9 +73,9 @@ model = Model('{model}', mc=None, weighting='{weighting}',
               gamma={gamma}, phi0={phi0})
 kde = KDE(model)
 
-result = kde.cross_validate({bandwidth}, adaptive={adaptive})
+result = kde.cross_validate_split({bandwidth}, {n_split}, adaptive={adaptive})
 
-np.save("/var/tmp/cv_{i}.npy", result)
+np.save("/var/tmp/cv_{i}_{n_split}.npy", result)
 """
 
 # Set model and parameters.
@@ -97,30 +97,34 @@ settings = importlib.import_module('models.{}'.format(model)).settings
 bandwidths = [settings[key]['bandwidth'] for key in settings]
 
 for i, bandwidth in enumerate(itertools.product(*bandwidths)):
-    python_submit = 'temp_python_{model}_{i}.py'.format(model=model, i=i)
+    for n_split in range(CFG['project']['n_splits']):
+        python_submit = 'temp_python_{model}_{i}.py'.format(model=model, i=i)
 
-    with open(python_submit, "w") as file:
-        file.write(python_draft.format(model=model,
-                                       weighting=weighting,
-                                       gamma=gamma,
-                                       phi0=phi0,
-                                       bandwidth=bandwidth,
-                                       adaptive=adaptive,
-                                       i=i))
+        with open(python_submit, "w") as file:
+            file.write(python_draft.format(model=model,
+                                           weighting=weighting,
+                                           gamma=gamma,
+                                           phi0=phi0,
+                                           bandwidth=bandwidth,
+                                           adaptive=adaptive,
+                                           i=i,
+                                           n_split=n_split))
 
-    if local:
-        temp_local = 'temp_local_{model}_{i}.sh'.format(model=model, i=i)
-        with open(temp_local, "w") as file:
-            file.write(local_draft.format(model=model, i=i,
-                                          working_directory=working_directory,
-                                          parameters_dir=parameters_dir))
+        if local:
+            temp_local = 'temp_local_{model}_{i}.sh'.format(model=model, i=i)
+            with open(temp_local, "w") as file:
+                file.write(local_draft.format(model=model, i=i,
+                                              working_directory=working_directory,
+                                              parameters_dir=parameters_dir,
+                                              n_split=n_split))
 
-        os.system("source ./{}".format(temp_local))
-    else:
-        temp_slurm = 'temp_slurm_{model}_{i}.sub'.format(model=model, i=i)
-        with open(temp_slurm, "w") as file:
-            file.write(slurm_draft.format(model=model, i=i,
-                                          working_directory=working_directory,
-                                          parameters_dir=parameters_dir))
+            os.system("source ./{}".format(temp_local))
+        else:
+            temp_slurm = 'temp_slurm_{model}_{i}.sub'.format(model=model, i=i)
+            with open(temp_slurm, "w") as file:
+                file.write(slurm_draft.format(model=model, i=i,
+                                              working_directory=working_directory,
+                                              parameters_dir=parameters_dir,
+                                              n_split=n_split))
 
-        os.system("sbatch {}".format(temp_slurm))
+            os.system("sbatch {}".format(temp_slurm))
