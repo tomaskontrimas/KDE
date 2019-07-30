@@ -148,8 +148,8 @@ class KDE(object):
         self.binned_kernel = None
         self.adaptive_kernel = None
         self.cv_result_dtype = np.dtype({
-            'names': self.model.bandwidth_vars + ['LLH', 'Zeros'],
-            'formats': ['f4']*len(self.model.bandwidth_vars) + ['f4', 'f4']
+            'names': ['bandwidth' 'LLH', 'Zeros'],
+            'formats': ['(' + str(len(self.model.vars)) + ',)f4', 'f4', 'f4']
         })
 
         self._generate_tree_and_space()
@@ -337,7 +337,7 @@ class KDE(object):
 
         llh = np.sum(np.log(likelihood[inds])*weights[inds])
         zeros = len(likelihood) - len(inds)
-        result_tuple = tuple(list(bandwidth) + [llh, zeros])
+        result_tuple = tuple(tuple(bandwidth), llh, zeros)
         cv_result_split = np.array([result_tuple], dtype=self.cv_result_dtype)
         return cv_result_split
 
@@ -367,8 +367,8 @@ class KDE(object):
                 adaptive=adaptive, pdf_seed=pdf_seed)
             result = np.append(result, cv_result_split)
 
-        result_tuple = tuple(list(bandwidth) + [np.average(result['LLH']),
-                                                np.average(result['Zeros'])])
+        result_tuple = tuple(tuple(bandwidth), np.average(result['LLH']),
+                             np.average(result['Zeros']))
 
         cv_result = np.array([result_tuple], dtype=self.cv_result_dtype)
         return cv_result

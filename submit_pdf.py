@@ -76,7 +76,7 @@ model = Model('{model}', mc=None, weighting='{weighting}',
 kde = KDE(model)
 
 cv_files = glob.glob('output/{model}/{parameters_dir}/cv/cv_*.npy')
-cv_results = np.array([], dtype=kde.cv_result.dtype)
+cv_results = np.array([], dtype=kde.cv_result_dtype)
 
 for cv_file in cv_files:
     cv_result = np.load(cv_file)
