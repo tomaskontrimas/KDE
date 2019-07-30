@@ -363,7 +363,7 @@ class KDE(object):
             zeros values.
         """
         result = np.array([], dtype=self.cv_result_dtype)
-        for n_split in range(CFG['project']['n_splits'])
+        for n_split in range(CFG['project']['n_splits']):
             cv_result_split = self.cross_validate_split(bandwidth, n_split,
                 adaptive=False, pdf_seed=None)
             result.append(cv_result_split)
