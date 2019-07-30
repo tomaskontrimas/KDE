@@ -364,8 +364,8 @@ class KDE(object):
         result = np.array([], dtype=self.cv_result_dtype)
         for n_split in range(CFG['project']['n_splits']):
             cv_result_split = self.cross_validate_split(bandwidth, n_split,
-                adaptive=False, pdf_seed=None)
-            np.append(result, cv_result_split)
+                adaptive=adaptive, pdf_seed=pdf_seed)
+            result = np.append(result, cv_result_split)
 
         result_tuple = tuple(list(bandwidth) + [np.average(result['LLH']),
                                                 np.average(result['Zeros'])])
