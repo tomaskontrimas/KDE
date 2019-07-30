@@ -95,7 +95,7 @@ for i, cv_result in enumerate(cv_results):
 
 cv_results_max_LLH = cv_results[cv_results['LLH'] == np.max(cv_results['LLH'])]
 
-bandwidth = [cv_results_max_LLH[key] for key in model.bandwidth_vars]
+bandwidth = cv_results_max_LLH['bandwidth']
 
 if {adaptive}:
     kernel_density = kde.generate_adaptive_kd(bandwidth)
