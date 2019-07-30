@@ -337,7 +337,7 @@ class KDE(object):
 
         llh = np.sum(np.log(likelihood[inds])*weights[inds])
         zeros = len(likelihood) - len(inds)
-        result_tuple = tuple(tuple(bandwidth), llh, zeros)
+        result_tuple = tuple([tuple(bandwidth), llh, zeros])
         cv_result_split = np.array([result_tuple], dtype=self.cv_result_dtype)
         return cv_result_split
 
@@ -367,8 +367,8 @@ class KDE(object):
                 adaptive=adaptive, pdf_seed=pdf_seed)
             result = np.append(result, cv_result_split)
 
-        result_tuple = tuple(tuple(bandwidth), np.average(result['LLH']),
-                             np.average(result['Zeros']))
+        result_tuple = tuple([tuple(bandwidth), np.average(result['LLH']),
+                              np.average(result['Zeros'])])
 
         cv_result = np.array([result_tuple], dtype=self.cv_result_dtype)
         return cv_result
