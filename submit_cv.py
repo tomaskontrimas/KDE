@@ -25,7 +25,7 @@ def parseArguments():
     parser.add_argument(
         "--gamma", type=float, default=2.0)
     parser.add_argument(
-        "--phi0", type=float, default=1.01)
+        "--phi0", type=float, default=1.0)
     parser.add_argument(
         "--local", action="store_true", default=False)
     parser.add_argument(
