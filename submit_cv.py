@@ -28,6 +28,8 @@ def parseArguments():
         "--phi0", type=float, default=1.01)
     parser.add_argument(
         "--local", action="store_true", default=False)
+    parser.add_argument(
+        "--split", action="store_true", default=False)
     args = parser.parse_args()
     return vars(args)
 
@@ -73,7 +75,10 @@ model = Model('{model}', mc=None, weighting='{weighting}',
               gamma={gamma}, phi0={phi0})
 kde = KDE(model)
 
-result = kde.cross_validate_split({bandwidth}, {n_split}, adaptive={adaptive})
+if {split}:
+    result = kde.cross_validate_split({bandwidth}, {n_split}, adaptive={adaptive})
+else:
+    result = kde.cross_validate({bandwidth}, adaptive={adaptive})
 
 np.save("/var/tmp/cv_{i}_{n_split}.npy", result)
 """
@@ -86,6 +91,7 @@ weighting = args['weighting']
 gamma = args['gamma']
 phi0 = args['phi0']
 local = args['local']
+split = args['split']
 
 working_directory = CFG['project']['working_directory']
 
@@ -97,7 +103,12 @@ settings = importlib.import_module('models.{}'.format(model)).settings
 bandwidths = [settings[key]['bandwidth'] for key in settings]
 
 for i, bandwidth in enumerate(itertools.product(*bandwidths)):
-    for n_split in range(CFG['project']['n_splits']):
+    if split:
+        n_splits = CFG['project']['n_splits']
+    else:
+        n_splits = 1
+
+    for n_split in range(n_splits):
         python_submit = 'temp_python_{model}_{i}_{n_split}.py'.format(
             model=model, i=i, n_split=n_split)
         with open(python_submit, "w") as file:
@@ -108,7 +119,8 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
                                            bandwidth=bandwidth,
                                            adaptive=adaptive,
                                            i=i,
-                                           n_split=n_split))
+                                           n_split=n_split,
+                                           split=split))
 
         if local:
             temp_local = 'temp_local_{model}_{i}_{n_split}.sh'.format(
