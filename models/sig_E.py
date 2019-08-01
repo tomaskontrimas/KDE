@@ -4,15 +4,15 @@ import numpy as np
 from collections import OrderedDict
 
 settings = OrderedDict([
-    ('sigma_pull_corrected', {
-        'values': "np.log10(mc['sigma_pull_corrected'])",
-        'bandwidth': np.linspace(0.07, 0.13, 7), #[0.1]
+    ('sigma', {
+        'values': "np.log10(mc['sigma'])",
+        'bandwidth': np.linspace(0.01, 0.20, 20), #[0.1]
         'nbins': 100,
         'range': None
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.14, 0.20, 7), #[0.17]
+        'bandwidth': np.linspace(0.10, 0.30, 21), #[0.17]
         'nbins': 100,
         'range': None
         })

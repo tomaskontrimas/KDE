@@ -25,16 +25,16 @@ CFG = {
         'working_directory': '/home/ge56lag/Software/KDE'
     },
     'MC_keys': {
-        'ow': 'generator_ow',
+        #'ow': 'generator_ow',
         'trueE': 'true_energy',  # Used in code.
-        'conv': 'conv',  # Used in code.
-        'astro': 'astro',
+        #'conv': 'conv',  # Used in code.
+        #'astro': 'astro',
         #'logEr': 'loge_muex',
         'logE': 'log_e',
-        'sigma': 'lgb_sigma_psimu',
+        #'sigma': 'lgb_sigma_psimu',
         'trueDec': 'true_dec',  # Used in code.
-        'sigmaOK': 'sigmaok',  # Used in code.
-        'psi': 'psi_mu'
+        'sigmaOK': 'sigmaok'  # Used in code.
+        #'psi': 'psi_mu'
     },
     'weighting_dict': {
         'pl': pl_weighting,
