@@ -37,13 +37,13 @@ local_draft = """#!/usr/bin/env bash
 
 mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
 
-python temp_python_{model}_{i}_{n_split}.py
+python temp_python_{model}_{parameters_dir}_{i}_{n_split}.py
 
 cp /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv
 
 rm /var/tmp/cv_{i}_{n_split}.npy
-rm temp_python_{model}_{i}_{n_split}.py
-rm temp_local_{model}_{i}_{n_split}.sh
+rm temp_python_{model}_{parameters_dir}_{i}_{n_split}.py
+rm temp_local_{model}_{parameters_dir}_{i}_{n_split}.sh
 """
 
 slurm_draft = """#!/usr/bin/env bash
@@ -56,13 +56,13 @@ slurm_draft = """#!/usr/bin/env bash
 
 mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
 
-python temp_python_{model}_{i}_{n_split}.py
+python temp_python_{model}_{parameters_dir}_{i}_{n_split}.py
 
 cp /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv
 
 rm /var/tmp/cv_{i}_{n_split}.npy
-rm temp_python_{model}_{i}_{n_split}.py
-rm temp_slurm_{model}_{i}_{n_split}.sub
+rm temp_python_{model}_{parameters_dir}_{i}_{n_split}.py
+rm temp_slurm_{model}_{parameters_dir}_{i}_{n_split}.sub
 """
 
 python_draft = """# -*- coding: utf-8 -*-
@@ -109,8 +109,8 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
         n_splits = 1
 
     for n_split in range(n_splits):
-        python_submit = 'temp_python_{model}_{i}_{n_split}.py'.format(
-            model=model, i=i, n_split=n_split)
+        python_submit = 'temp_python_{model}_{par_dir}_{i}_{n_split}.py'.format(
+            model=model, par_dir=parameters_dir, i=i, n_split=n_split)
         with open(python_submit, "w") as file:
             file.write(python_draft.format(model=model,
                                            weighting=weighting,
@@ -123,8 +123,8 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
                                            split=split))
 
         if local:
-            temp_local = 'temp_local_{model}_{i}_{n_split}.sh'.format(
-                model=model, i=i, n_split=n_split)
+            temp_local = 'temp_local_{model}_{par_dir}_{i}_{n_split}.sh'.format(
+                model=model, par_dir=parameters_dir, i=i, n_split=n_split)
             with open(temp_local, "w") as file:
                 file.write(local_draft.format(model=model, i=i,
                                               working_directory=working_directory,
@@ -133,8 +133,8 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
 
             os.system("source ./{}".format(temp_local))
         else:
-            temp_slurm = 'temp_slurm_{model}_{i}_{n_split}.sub'.format(
-                model=model, i=i, n_split=n_split)
+            temp_slurm = 'temp_slurm_{model}_{par_dir}_{i}_{n_split}.sub'.format(
+                model=model, par_dir=parameters_dir, i=i, n_split=n_split)
             with open(temp_slurm, "w") as file:
                 file.write(slurm_draft.format(model=model, i=i,
                                               working_directory=working_directory,

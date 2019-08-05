@@ -34,13 +34,13 @@ local_draft = """#!/usr/bin/env bash
 
 mkdir -p {working_directory}/output/{model}/{parameters_dir}/pdf
 
-python temp_python_{model}.py
+python temp_python_{model}_{parameters_dir}.py
 
 cp /var/tmp/{model}.pkl {working_directory}/output/{model}/{parameters_dir}/pdf
 
 rm /var/tmp/{model}.pkl
-rm temp_python_{model}.py
-rm temp_local_{model}.sh
+rm temp_python_{model}_{parameters_dir}.py
+rm temp_local_{model}_{parameters_dir}.sh
 """
 
 slurm_draft = """#!/usr/bin/env bash
@@ -53,13 +53,13 @@ slurm_draft = """#!/usr/bin/env bash
 
 mkdir -p {working_directory}/output/{model}/{parameters_dir}/pdf
 
-python temp_python_{model}.py
+python temp_python_{model}_{parameters_dir}.py
 
 cp /var/tmp/{model}.pkl {working_directory}/output/{model}/{parameters_dir}/pdf
 
 rm /var/tmp/{model}.pkl
-rm temp_python_{model}.py
-rm temp_slurm_{model}.sub
+rm temp_python_{model}_{parameters_dir}.py
+rm temp_slurm_{model}_{parameters_dir}.sub
 """
 
 python_draft = """# -*- coding: utf-8 -*-
@@ -135,7 +135,8 @@ parameters_dir_format = '{kd}_{weighting}_gamma_{gamma}_phi0_{phi0}'
 parameters_dir = parameters_dir_format.format(kd='adaptive_kd' if adaptive else
     'binned_kd', weighting=weighting, gamma=gamma, phi0=phi0)
 
-temp_python_ = 'temp_python_{model}.py'.format(model=model)
+temp_python_ = 'temp_python_{model}_{par_dir}.py'.format(model=model,
+    par_dir=parameters_dir)
 
 with open(temp_python_, "w") as file:
     file.write(python_draft.format(model=model,
@@ -146,7 +147,8 @@ with open(temp_python_, "w") as file:
                                    parameters_dir=parameters_dir
                                    bw=bw))
 if local:
-    temp_local = 'temp_local_{model}.sh'.format(model=model)
+    temp_local = 'temp_local_{model}_{par_dir}.sh'.format(model=model,
+        par_dir=parameters_dir)
     with open(temp_local, "w") as file:
         file.write(local_draft.format(model=model,
                                       working_directory=working_directory,
@@ -154,7 +156,8 @@ if local:
 
     os.system("source ./{}".format(temp_local))
 else:
-    temp_slurm = 'temp_slurm_{model}.sub'.format(model=model)
+    temp_slurm = 'temp_slurm_{model}_{par_dir}.sub'.format(model=model,
+        par_dir=parameters_dir)
     with open(temp_slurm, "w") as file:
         file.write(slurm_draft.format(model=model,
                                       working_directory=working_directory,
