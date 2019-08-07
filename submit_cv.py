@@ -39,7 +39,7 @@ mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
 
 python temp_python_{model}_{parameters_dir}_{i}_{n_split}.py
 
-cp /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv
+cp /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
 
 rm /var/tmp/cv_{i}_{n_split}.npy
 rm temp_python_{model}_{parameters_dir}_{i}_{n_split}.py
@@ -103,6 +103,7 @@ settings = importlib.import_module('models.{}'.format(model)).settings
 bandwidths = [settings[key]['bandwidth'] for key in settings]
 
 for i, bandwidth in enumerate(itertools.product(*bandwidths)):
+    bw_str = ','.join(map(str, bandwidth))
     if split:
         n_splits = CFG['project']['n_splits']
     else:
@@ -129,7 +130,8 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
                 file.write(local_draft.format(model=model, i=i,
                                               working_directory=working_directory,
                                               parameters_dir=parameters_dir,
-                                              n_split=n_split))
+                                              n_split=n_split,
+                                              bw_str=bw_str))
 
             os.system("source ./{}".format(temp_local))
         else:
@@ -139,6 +141,7 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
                 file.write(slurm_draft.format(model=model, i=i,
                                               working_directory=working_directory,
                                               parameters_dir=parameters_dir,
-                                              n_split=n_split))
+                                              n_split=n_split,
+                                              bw_str=bw_str))
 
             os.system("sbatch {}".format(temp_slurm))
