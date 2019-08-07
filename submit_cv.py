@@ -39,9 +39,9 @@ mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
 
 python temp_python_{model}_{parameters_dir}_{i}_{n_split}.py
 
-cp /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
+mv /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
 
-rm /var/tmp/cv_{i}_{n_split}.npy
+#rm /var/tmp/cv_{i}_{n_split}.npy
 rm temp_python_{model}_{parameters_dir}_{i}_{n_split}.py
 rm temp_local_{model}_{parameters_dir}_{i}_{n_split}.sh
 """
@@ -58,9 +58,9 @@ mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
 
 python temp_python_{model}_{parameters_dir}_{i}_{n_split}.py
 
-cp /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv
+mv /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
 
-rm /var/tmp/cv_{i}_{n_split}.npy
+#rm /var/tmp/cv_{i}_{n_split}.npy
 rm temp_python_{model}_{parameters_dir}_{i}_{n_split}.py
 rm temp_slurm_{model}_{parameters_dir}_{i}_{n_split}.sub
 """
