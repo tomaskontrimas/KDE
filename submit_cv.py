@@ -67,9 +67,24 @@ rm temp_slurm_{model}_{parameters_dir}_{i}_{n_split}.sub
 
 python_draft = """# -*- coding: utf-8 -*-
 
+import logging
 import numpy as np
+import time
+from datetime import timedelta
+
+# Logging setup utilities
+from debugging import (
+    setup_logger,
+    setup_console_handler
+)
 
 from kde_classes import Model, KDE
+
+setup_logger('KDE', logging.DEBUG)
+setup_console_handler('KDE', logging.DEBUG)
+logger = logging.getLogger('KDE.' + __name__)
+
+start_time = time.time()
 
 model = Model('{model}', mc=None, weighting='{weighting}',
               gamma={gamma}, phi0={phi0})
@@ -81,6 +96,9 @@ else:
     result = kde.cross_validate({bandwidth}, adaptive={adaptive})
 
 np.save("/var/tmp/cv_{i}_{n_split}.npy", result)
+
+elapsed_time = time.time() - start_time
+logger.debug('Elapsed time %s', timedelta(seconds=elapsed_time))
 """
 
 # Set model and parameters.
