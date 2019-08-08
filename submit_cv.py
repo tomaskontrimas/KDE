@@ -121,7 +121,7 @@ settings = importlib.import_module('models.{}'.format(model)).settings
 bandwidths = [settings[key]['bandwidth'] for key in settings]
 
 for i, bandwidth in enumerate(itertools.product(*bandwidths)):
-    bw_str = ','.join(map(str, bandwidth))
+    bw_str = ','.join(map('{:.3f}'.format, bandwidth))
     if split:
         n_splits = CFG['project']['n_splits']
     else:
