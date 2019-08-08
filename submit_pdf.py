@@ -144,7 +144,7 @@ with open(temp_python_, "w") as file:
                                    gamma=gamma,
                                    phi0=phi0,
                                    adaptive=adaptive,
-                                   parameters_dir=parameters_dir
+                                   parameters_dir=parameters_dir,
                                    bw=bw))
 if local:
     temp_local = 'temp_local_{model}_{par_dir}.sh'.format(model=model,
