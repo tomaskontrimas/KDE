@@ -67,10 +67,25 @@ python_draft = """# -*- coding: utf-8 -*-
 import cPickle as pickle
 import glob
 import itertools
+import logging
 import numpy as np
 import os.path
+import time
+from datetime import timedelta
+
+# Logging setup utilities
+from debugging import (
+    setup_logger,
+    setup_console_handler
+)
 
 from kde_classes import Model, KDE
+
+setup_logger('KDE', logging.DEBUG)
+setup_console_handler('KDE', logging.DEBUG)
+logger = logging.getLogger('KDE.' + __name__)
+
+start_time = time.time()
 
 model = Model('{model}', mc=None, weighting='{weighting}',
               gamma={gamma}, phi0={phi0})
@@ -117,6 +132,9 @@ result_dict = {{
 
 with open(os.path.join('/var/tmp/{model}.pkl'), 'wb') as file:
             pickle.dump(result_dict, file)
+
+elapsed_time = time.time() - start_time
+logger.debug('Elapsed time %s', timedelta(seconds=elapsed_time))
 """
 
 # Set model and parameters.
