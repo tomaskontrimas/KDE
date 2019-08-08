@@ -96,7 +96,7 @@ if {bw} is None:
 
     cv_results_max_LLH = cv_results[cv_results['LLH'] == np.max(cv_results['LLH'])]
 
-    bandwidth = cv_results_max_LLH['bandwidth']
+    bandwidth = cv_results_max_LLH['bandwidth'][0]
 else:
     bandwidth = {bw}
 
