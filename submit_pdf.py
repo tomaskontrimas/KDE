@@ -26,7 +26,7 @@ def parseArguments():
         "--phi0", type=float, default=1.01)
     parser.add_argument(
         "--local", action="store_true", default=False)
-    parser.add_argument('--bw', nargs='*', type=float, defaul=None)
+    parser.add_argument('--bw', nargs='*', type=float, default=None)
     args = parser.parse_args()
     return vars(args)
 
