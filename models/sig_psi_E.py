@@ -6,20 +6,20 @@ from collections import OrderedDict
 settings = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
-        'bandwidth': np.linspace(0.05, 0.25, 5), #[0.13]
-        'nbins': 100,
+        'bandwidth': [0.15], #[0.15]
+        'nbins': 150,
         'range': None
         }),
     ('psi', {
         'values': "np.log10(mc['psi'])",
-        'bandwidth': np.linspace(0.05, 0.35, 7), #[0.30]
-        'nbins': 400,
+        'bandwidth': np.linspace(0.42, 0.62, 11), #[0.20]
+        'nbins': 300,
         'range': None
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.05, 0.35, 7), #[0.30 ]
-        'nbins': 100,
+        'bandwidth': [0.56], #[0.35]
+        'nbins': 150,
         'range': None
         })
 ])
