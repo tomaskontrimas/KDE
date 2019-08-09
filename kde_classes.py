@@ -37,7 +37,7 @@ class Model(object):
     generation.
     """
     def __init__(self, model_module, mc=None, weighting=None, phi0=1.0,
-                 gamma=2.0):
+                 gamma=None):
         """Creates a new model object.
 
         Parameters
@@ -60,8 +60,17 @@ class Model(object):
         super(Model, self).__init__()
         self.logger = logging.getLogger('KDE.' + __name__ + '.Model')
         model = importlib.import_module('models.{}'.format(model_module))
-        settings = model.settings
-        grid = model.grid
+
+        if gamma is None:
+            gamma = 2.0
+            settings = model.settings['default']
+            if model.grid is not None:
+                grid = model.grid['default']
+        else:
+            gamma = float(gamma)
+            settings = model.settings[str(gamma)]
+            if model.grid is not None:
+                grid = model.grid[str(gamma)]
 
         if mc is None:
             if CFG['paths']['IC_mc'] is not None:
