@@ -19,6 +19,10 @@ def parseArguments():
     parser.add_argument(
         "--adaptive", action="store_true", default=False)
     parser.add_argument(
+        "--partition", type=str, default='kta')
+    parser.add_argument(
+        "--time", type=str, default='3:00:00')
+    parser.add_argument(
         "--weighting", type=str, default=None)
     parser.add_argument(
         "--gamma", type=float, default=2.0)
@@ -45,9 +49,9 @@ rm temp_local_{model}_{parameters_dir}.sh
 
 slurm_draft = """#!/usr/bin/env bash
 
-#SBATCH --time=3:00:00
+#SBATCH --time={time}
 #SBATCH --mem=2000
-#SBATCH --partition=kta
+#SBATCH --partition={partition}
 #SBATCH --error={working_directory}/output/slurm/slurm-%j.err
 #SBATCH --output={working_directory}/output/slurm/slurm-%j.out
 
@@ -141,6 +145,8 @@ logger.debug('Elapsed time %s', timedelta(seconds=elapsed_time))
 args = parseArguments()
 model = args['model']
 adaptive = args['adaptive']
+partition = args['partition']
+time = args['time']
 weighting = args['weighting']
 gamma = args['gamma']
 phi0 = args['phi0']
@@ -179,6 +185,8 @@ else:
     with open(temp_slurm, "w") as file:
         file.write(slurm_draft.format(model=model,
                                       working_directory=working_directory,
-                                      parameters_dir=parameters_dir))
+                                      parameters_dir=parameters_dir,
+                                      partition=partition,
+                                      time=time))
 
     os.system("sbatch {}".format(temp_slurm))
