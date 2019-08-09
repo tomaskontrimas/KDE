@@ -123,7 +123,7 @@ parameters_dir_format = '{kd}_{weighting}_gamma_{gamma}_phi0_{phi0}'
 parameters_dir = parameters_dir_format.format(kd='adaptive_kd' if adaptive else
     'binned_kd', weighting=weighting, gamma=gamma, phi0=phi0)
 
-settings = importlib.import_module('models.{}'.format(model)).settings
+settings = importlib.import_module('models.{}'.format(model)).settings[str(gamma)]
 bandwidths = [settings[key]['bandwidth'] for key in settings]
 
 for i, bandwidth in enumerate(itertools.product(*bandwidths)):
