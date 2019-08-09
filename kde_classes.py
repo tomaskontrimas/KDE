@@ -66,11 +66,15 @@ class Model(object):
             settings = model.settings['default']
             if model.grid is not None:
                 grid = model.grid['default']
+            else:
+                grid = model.grid
         else:
             gamma = float(gamma)
             settings = model.settings[str(gamma)]
             if model.grid is not None:
                 grid = model.grid[str(gamma)]
+            else:
+                grid = model.grid
 
         if mc is None:
             if CFG['paths']['IC_mc'] is not None:
