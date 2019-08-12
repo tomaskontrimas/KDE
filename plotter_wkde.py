@@ -10,25 +10,6 @@ import pickle
 
 from photospline import glam_fit, ndsparse, bspline
 
-with open('./output/sig_psi_E/pdf/sig_psi_E.pkl', 'rb') as ifile:
-    spatial_KDE = pickle.load(ifile)
-
-bins_logsigma = spatial_KDE['bins'][0]
-bins_logpsi = spatial_KDE['bins'][1]
-bins_logEr = spatial_KDE['bins'][2]
-
-with open('./output/sig_E/pdf/sig_E.pkl', 'rb') as ifile:
-    norm_KDE = pickle.load(ifile)
-spatial_KDE_vals = spatial_KDE['pdf_vals']/norm_KDE['pdf_vals'][:,np.newaxis,:]
-
-penalty_order = 2
-knots = np.linspace(-4,0.5,100)
-z=spatial_KDE_vals
-zs, w = ndsparse.from_data(z, np.ones(z.shape))
-spatial_pdf = glam_fit(zs,w,[bins_logsigma, bins_logpsi, bins_logEr],
-                  [bins_logsigma, bins_logpsi, bins_logEr],
-                  [1,1,1],[0,0,0],[penalty_order,penalty_order, penalty_order])
-
 import logging
 mpl_logger = logging.getLogger('matplotlib')
 mpl_logger.setLevel(logging.WARNING)
@@ -46,10 +27,33 @@ mpl.rcParams['font.sans-serif'] = ['Verdana']
 
 plt.style.use('ggplot')
 
-mc = np.load('/home/ge56lag/Data/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy')
+def setup(spatial_KDE_path, norm_KDE_path):
 
-def make_plot(logE, sigma_p, delta_sigma=0.2, show_quantile=False):
-    gamma=2.0
+    with open('./output/sig_psi_E/pdf/sig_psi_E.pkl', 'rb') as ifile:
+        spatial_KDE = pickle.load(ifile)
+
+    bins_logsigma = spatial_KDE['bins'][0]
+    bins_logpsi = spatial_KDE['bins'][1]
+    bins_logEr = spatial_KDE['bins'][2]
+
+    with open('./output/sig_E/pdf/sig_E.pkl', 'rb') as ifile:
+        norm_KDE = pickle.load(ifile)
+    spatial_KDE_vals = spatial_KDE['pdf_vals']/norm_KDE['pdf_vals'][:,np.newaxis,:]
+
+    penalty_order = 2
+    knots = np.linspace(-4,0.5,100)
+    z=spatial_KDE_vals
+    zs, w = ndsparse.from_data(z, np.ones(z.shape))
+    spatial_pdf = glam_fit(zs,w,[bins_logsigma, bins_logpsi, bins_logEr],
+                      [bins_logsigma, bins_logpsi, bins_logEr],
+                      [1,1,1],[0,0,0],[penalty_order,penalty_order, penalty_order])
+
+    mc = np.load('/home/ge56lag/Data/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy')
+
+    return spatial_pdf, mc
+
+def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
+              show_quantile=False):
     sin_dec = np.sin(np.radians(5.693))
     delta_sin_dec = 0.2
     delta_sigma_p = delta_sigma * sigma_p
@@ -168,7 +172,7 @@ def make_plot(logE, sigma_p, delta_sigma=0.2, show_quantile=False):
     plt.xlim([0.0, psi_max])
     #plt.plot([-1,-2],[-1,-1],'k--', label='quantiles (0.1-0.9)')
     plt.ylim(ymin=0)
-    plt.title("$log_{10}E/GeV=%.1f,\,\\sigma_p=%.2f,\,\\Delta\\sigma_p/\\sigma_p=%.2f$" %(logE, sigma_p, delta_sigma))
+    plt.title("$\gamma={.2f},\,log_{10}E/GeV={.2f},\,\\sigma_p={.2f},\,\\Delta\\sigma_p/\\sigma_p={.2f}$".format(gamma, logE, sigma_p, delta_sigma))
 
     ax = plt.axes()
     #colors=cm.magma(np.linspace(0.2,0.8,len(fracs)))
@@ -191,7 +195,8 @@ def make_plot(logE, sigma_p, delta_sigma=0.2, show_quantile=False):
     plt.subplots_adjust( hspace=0 )
 
 
-    plt.savefig("/var/tmp/wkde_cpd_rayleigh_lE_%.1f_sigma_%.2f.pdf" %(logE, sigma_p))
+    plt.savefig("./output/wkde_cpd_rayleigh_gamma_{.2f}_lE_{.2f}_sigma_{.2f}"\
+        ".pdf".format(sigma, logE, sigma_p))
     plt.clf()
 '''
 make_plot(2.0, 0.2)
