@@ -61,6 +61,7 @@ class Model(object):
         self.logger = logging.getLogger('KDE.' + __name__ + '.Model')
         model = importlib.import_module('models.{}'.format(model_module))
 
+        # Choose settings and grid from model.
         if gamma not in model.settings.keys():
             self.logger.info('Using default model settings and setting gamma '
                 'to 2.0.')
@@ -70,7 +71,6 @@ class Model(object):
                 grid = model.grid
             else:
                 grid = model.grid['default']
-
         else:
             gamma = float(gamma)
             settings = model.settings[str(gamma)]
@@ -114,9 +114,6 @@ class Model(object):
                              for i, key in enumerate(settings)]
         else:
             self.out_bins = [grid[key] for key in settings]
-            for i, key in enumerate(settings):
-                if len(self.out_bins[i]) != self.nbins[i]:
-                    raise ValueError('Grid has different dimensions to nbins.')
         self.coords = np.array(list(itertools.product(*self.out_bins)))
 
     def _generate_weights(self, weighting):
