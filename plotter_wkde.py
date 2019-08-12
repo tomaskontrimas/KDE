@@ -29,14 +29,14 @@ plt.style.use('ggplot')
 
 def setup(spatial_KDE_path, norm_KDE_path):
 
-    with open('./output/sig_psi_E/pdf/sig_psi_E.pkl', 'rb') as ifile:
+    with open(spatial_KDE_path, 'rb') as ifile:
         spatial_KDE = pickle.load(ifile)
 
     bins_logsigma = spatial_KDE['bins'][0]
     bins_logpsi = spatial_KDE['bins'][1]
     bins_logEr = spatial_KDE['bins'][2]
 
-    with open('./output/sig_E/pdf/sig_E.pkl', 'rb') as ifile:
+    with open(norm_KDE_path, 'rb') as ifile:
         norm_KDE = pickle.load(ifile)
     spatial_KDE_vals = spatial_KDE['pdf_vals']/norm_KDE['pdf_vals'][:,np.newaxis,:]
 
