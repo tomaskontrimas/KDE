@@ -190,10 +190,7 @@ def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
     ax.xaxis.label.set_color('0.2')
     ax.yaxis.label.set_color('0.2')
 
-
-
     plt.subplots_adjust( hspace=0 )
-
 
     plt.savefig("./output/wkde_cpd_rayleigh_gamma_{.2f}_lE_{.2f}_sigma_{.2f}"\
         ".pdf".format(sigma, logE, sigma_p))
@@ -229,7 +226,7 @@ make_plot(6.0, 0.5)
 '''
 
 #make_plot(4.0, 0.13)
-make_plot(5.0, 0.15)
+#make_plot(5.0, 0.15)
 #make_plot(5.0, 0.1)
 #make_plot(5.5, 0.1)
 #make_plot(6.0, 0.1)
