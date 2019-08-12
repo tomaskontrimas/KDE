@@ -61,20 +61,26 @@ class Model(object):
         self.logger = logging.getLogger('KDE.' + __name__ + '.Model')
         model = importlib.import_module('models.{}'.format(model_module))
 
-        if gamma is None:
+        if gamma not in model.settings.keys():
+            self.logger.info('Using default model settings and setting gamma '
+                'to 2.0.')
             gamma = 2.0
             settings = model.settings['default']
-            if model.grid is not None:
-                grid = model.grid['default']
-            else:
+            if model.grid is None:
                 grid = model.grid
+            else:
+                grid = model.grid['default']
+
         else:
             gamma = float(gamma)
             settings = model.settings[str(gamma)]
-            if model.grid is not None:
+            if model.grid is None:
+                grid = model.grid
+            elif gamma in model.grid.keys():
                 grid = model.grid[str(gamma)]
             else:
-                grid = model.grid
+                self.logger.info('Using default model grid.')
+                grid = model.grid['default']
 
         if mc is None:
             if CFG['paths']['IC_mc'] is not None:
