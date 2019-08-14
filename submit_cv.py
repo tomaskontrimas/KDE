@@ -77,7 +77,8 @@ rm temp_slurm_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.sub
 python_draft = """# -*- coding: utf-8 -*-
 
 import os
-import cPickle as pickle
+#import cPickle as pickle
+import dill as pickle
 import logging
 import numpy as np
 import time
@@ -109,7 +110,7 @@ if {seed}:
         binned_kernel = kde.generate_binned_kd({bandwidth})
 
     with open('/var/tmp/cv_seed_{model}_{bw_str}_{n_split}.pkl', 'wb') as file:
-        pickle.dump(binned_kernel, file, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(binned_kernel, file, protocol=-1)
 else:
     seed_path = '{working_directory}/output/{model}/{parameters_dir}/cv/cv_seed_{model}_{bw_str}_{n_split}.pkl'
     if os.path.exists(seed_path):
