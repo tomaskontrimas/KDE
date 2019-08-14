@@ -34,6 +34,8 @@ def parseArguments():
         "--local", action="store_true", default=False)
     parser.add_argument(
         "--split", action="store_true", default=False)
+    parser.add_argument(
+        "--seed", action="store_true", default=False)
     args = parser.parse_args()
     return vars(args)
 
@@ -41,13 +43,13 @@ local_draft = """#!/usr/bin/env bash
 
 mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
 
-python temp_python_{model}_{parameters_dir}_{i}_{n_split}.py
+python temp_python_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.py
 
 mv /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
 
 #rm /var/tmp/cv_{i}_{n_split}.npy
-rm temp_python_{model}_{parameters_dir}_{i}_{n_split}.py
-rm temp_local_{model}_{parameters_dir}_{i}_{n_split}.sh
+rm temp_python_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.py
+rm temp_local_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.sh
 """
 
 slurm_draft = """#!/usr/bin/env bash
@@ -60,17 +62,22 @@ slurm_draft = """#!/usr/bin/env bash
 
 mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
 
-python temp_python_{model}_{parameters_dir}_{i}_{n_split}.py
+python temp_python_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.py
 
-mv /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
+if {seed}; then
+    mv /var/tmp/cv_seed_{model}_{bw_str}_{n_split}.pkl {working_directory}/output/{model}/{parameters_dir}/cv/cv_seed_{model}_{bw_str}_{n_split}.pkl
+else
+    mv /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
+fi
 
-#rm /var/tmp/cv_{i}_{n_split}.npy
-rm temp_python_{model}_{parameters_dir}_{i}_{n_split}.py
-rm temp_slurm_{model}_{parameters_dir}_{i}_{n_split}.sub
+rm temp_python_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.py
+rm temp_slurm_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.sub
 """
 
 python_draft = """# -*- coding: utf-8 -*-
 
+import os
+import cPickle as pickle
 import logging
 import numpy as np
 import time
@@ -94,12 +101,28 @@ model = Model('{model}', mc=None, weighting='{weighting}',
               gamma={gamma}, phi0={phi0})
 kde = KDE(model)
 
-if {split}:
-    result = kde.cross_validate_split({bandwidth}, {n_split}, adaptive={adaptive})
-else:
-    result = kde.cross_validate({bandwidth}, adaptive={adaptive})
+if {seed}:
+    kde.set_kfold_subset({n_split})
+    binned_kernel = kde.generate_binned_kd({bandwidth})
 
-np.save("/var/tmp/cv_{i}_{n_split}.npy", result)
+    with open('/var/tmp/cv_seed_{model}_{bw_str}_{n_split}.pkl', 'wb') as file:
+        pickle.dump(binned_kernel, file)
+else:
+    seed_path = '{working_directory}/output/{model}/{parameters_dir}/cv/cv_seed_{model}_{bw_str}_{n_split}.pkl'
+    if os.path.exists(seed_path):
+        with open(seed_path, 'rb') as ifile:
+            pdf_seed = pickle.load(ifile)
+    else:
+        pdf_seed = None
+
+    if {split}:
+        result = kde.cross_validate_split({bandwidth}, {n_split},
+            adaptive={adaptive}, pdf_seed=pdf_seed)
+    else:
+        result = kde.cross_validate({bandwidth}, adaptive={adaptive},
+                                    pdf_seed=pdf_seed)
+
+    np.save("/var/tmp/cv_{i}_{n_split}.npy", result)
 
 elapsed_time = time.time() - start_time
 logger.debug('Elapsed time %s', timedelta(seconds=elapsed_time))
@@ -116,6 +139,12 @@ gamma = args['gamma']
 phi0 = args['phi0']
 local = args['local']
 split = args['split']
+seed = args['seed']
+
+if seed:
+    seed_str = 'seed_'
+else:
+    seed_str = ''
 
 working_directory = CFG['project']['working_directory']
 
@@ -134,24 +163,33 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
         n_splits = 1
 
     for n_split in range(n_splits):
-        python_submit = 'temp_python_{model}_{par_dir}_{i}_{n_split}.py'.format(
-            model=model, par_dir=parameters_dir, i=i, n_split=n_split)
+        python_submit = 'temp_python_{seed_str}{model}_{par_dir}_{i}_{n_split}'\
+            '.py'.format(seed_str=seed_str, model=model, par_dir=parameters_dir,
+            i=i, n_split=n_split)
         with open(python_submit, "w") as file:
-            file.write(python_draft.format(model=model,
+            file.write(python_draft.format(seed=seed,
+                                           model=model,
                                            weighting=weighting,
                                            gamma=gamma,
                                            phi0=phi0,
                                            bandwidth=bandwidth,
+                                           bw_str=bw_str,
                                            adaptive=adaptive,
                                            i=i,
+                                           working_directory=working_directory,
+                                           parameters_dir=parameters_dir,
                                            n_split=n_split,
                                            split=split))
 
         if local:
-            temp_local = 'temp_local_{model}_{par_dir}_{i}_{n_split}.sh'.format(
-                model=model, par_dir=parameters_dir, i=i, n_split=n_split)
+            temp_local = 'temp_local_{seed_str}{model}_{par_dir}_{i}_{n_split}'\
+                '.sh'.format(seed_str=seed_str, model=model,
+                             par_dir=parameters_dir, i=i, n_split=n_split)
             with open(temp_local, "w") as file:
-                file.write(local_draft.format(model=model, i=i,
+                file.write(local_draft.format(seed=seed,,
+                                              seed_str=seed_str,
+                                              model=model,
+                                              i=i,
                                               working_directory=working_directory,
                                               parameters_dir=parameters_dir,
                                               n_split=n_split,
@@ -159,10 +197,14 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
 
             os.system("source ./{}".format(temp_local))
         else:
-            temp_slurm = 'temp_slurm_{model}_{par_dir}_{i}_{n_split}.sub'.format(
-                model=model, par_dir=parameters_dir, i=i, n_split=n_split)
+            temp_slurm = 'temp_slurm_{seed_str}{model}_{par_dir}_{i}_{n_split}'\
+            '.sub'.format(seed_str=seed_str, model=model,
+                          par_dir=parameters_dir, i=i, n_split=n_split)
             with open(temp_slurm, "w") as file:
-                file.write(slurm_draft.format(model=model, i=i,
+                file.write(slurm_draft.format(seed=str(seed).lower(),
+                                              seed_str=seed_str,
+                                              model=model,
+                                              i=i,
                                               working_directory=working_directory,
                                               parameters_dir=parameters_dir,
                                               n_split=n_split,

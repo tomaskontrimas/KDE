@@ -299,6 +299,28 @@ class KDE(object):
             v[i] = coord[i]
         return kernel_density.density(v)*self.model.kde_norm
 
+    def set_kfold_subset(n_split):
+        """Generates and sets tree and space of `n_split` data subset.
+
+        Parameters
+        ----------
+        n_split : int
+            Number of fold to cross validate.
+        Returns
+        -------
+        validation_index : list(float)
+            Validation indices of data subset.
+        """
+
+        kfold = KFold(n_splits=CFG['project']['n_splits'],
+                      random_state=CFG['project']['random_state'], shuffle=True)
+
+        training_index, validation_index = list(kfold.split(self.model.mc))[n_split]
+
+        self._generate_tree_and_space(training_index)
+
+        return validation_index
+
     def cross_validate_split(self, bandwidth, n_split, adaptive=False, pdf_seed=None):
         """Calculates average log likelihood value with given bandwidth on a
         dataset using K-Folds cross-validator.
@@ -321,12 +343,7 @@ class KDE(object):
             Cross validation array containing bandwidth, log likelihood and
             zeros values.
         """
-        kfold = KFold(n_splits=CFG['project']['n_splits'],
-                      random_state=CFG['project']['random_state'], shuffle=True)
-
-        training_index, validation_index = list(kfold.split(self.model.mc))[n_split]
-
-        self._generate_tree_and_space(training_index)
+        validation_index = self.set_kfold_subset(n_split)
 
         if adaptive:
             kernel_density = self.generate_adaptive_kd(bandwidth, pdf_seed)
