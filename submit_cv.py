@@ -65,7 +65,7 @@ mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
 python temp_python_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.py
 
 if {seed}; then
-    mv /var/tmp/cv_seed_{model}_{bw_str}_{n_split}.pkl {working_directory}/output/{model}/{parameters_dir}/cv/cv_seed_{model}_{bw_str}_{n_split}.pkl
+    mv /var/tmp/cv_seed_{model}_{bw_str}_{n_split}.txt {working_directory}/output/{model}/{parameters_dir}/cv/cv_seed_{model}_{bw_str}_{n_split}.txt
 else
     mv /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
 fi
@@ -77,8 +77,6 @@ rm temp_slurm_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.sub
 python_draft = """# -*- coding: utf-8 -*-
 
 import os
-#import cPickle as pickle
-import dill as pickle
 import logging
 import numpy as np
 import time
@@ -109,13 +107,11 @@ if {seed}:
     else:
         binned_kernel = kde.generate_binned_kd({bandwidth})
 
-    with open('/var/tmp/cv_seed_{model}_{bw_str}_{n_split}.pkl', 'wb') as file:
-        pickle.dump(binned_kernel, file, protocol=-1)
+    binned_kernel.writeToFile('/var/tmp/cv_seed_{model}_{bw_str}_{n_split}.txt')
 else:
-    seed_path = '{working_directory}/output/{model}/{parameters_dir}/cv/cv_seed_{model}_{bw_str}_{n_split}.pkl'
+    seed_path = '{working_directory}/output/{model}/{parameters_dir}/cv/cv_seed_{model}_{bw_str}_{n_split}.txt'
     if os.path.exists(seed_path):
-        with open(seed_path, 'rb') as ifile:
-            pdf_seed = pickle.load(ifile)
+        pdf_seed = BinnedDensity.readFromFile(seed_path)
     else:
         pdf_seed = None
 
