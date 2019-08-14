@@ -186,7 +186,7 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
                 '.sh'.format(seed_str=seed_str, model=model,
                              par_dir=parameters_dir, i=i, n_split=n_split)
             with open(temp_local, "w") as file:
-                file.write(local_draft.format(seed=seed,,
+                file.write(local_draft.format(seed=str(seed).lower(),
                                               seed_str=seed_str,
                                               model=model,
                                               i=i,
