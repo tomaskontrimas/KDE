@@ -90,8 +90,6 @@ from debugging import (
 
 from kde_classes import Model, KDE
 
-from ROOT import BinnedDensity
-
 setup_logger('KDE', logging.DEBUG)
 setup_console_handler('KDE', logging.DEBUG)
 logger = logging.getLogger('KDE.' + __name__)
@@ -113,7 +111,7 @@ if {seed}:
 else:
     seed_path = '{working_directory}/output/{model}/{parameters_dir}/cv/cv_seed_{model}_{bw_str}_{n_split}.txt'
     if os.path.exists(seed_path):
-        pdf_seed = BinnedDensity.readFromFile(seed_path)
+        pdf_seed = kde.readFromFile(seed_path)
     else:
         pdf_seed = None
 
