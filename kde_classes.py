@@ -62,21 +62,21 @@ class Model(object):
         model = importlib.import_module('models.{}'.format(model_module))
 
         # Choose settings and grid from model.
-        if gamma not in model.settings.keys():
+        if str(gamma) not in model.settings.keys():
             self.logger.info('Using default model settings and setting gamma '
                 'to 2.0.')
             gamma = 2.0
             settings = model.settings['default']
             if model.grid is None:
-                grid = model.grid
+                grid = None
             else:
+                self.logger.info('Using default model grid.')
                 grid = model.grid['default']
         else:
-            gamma = float(gamma)
             settings = model.settings[str(gamma)]
             if model.grid is None:
-                grid = model.grid
-            elif gamma in model.grid.keys():
+                grid = None
+            elif str(gamma) in model.grid.keys():
                 grid = model.grid[str(gamma)]
             else:
                 self.logger.info('Using default model grid.')
