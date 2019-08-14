@@ -90,6 +90,8 @@ from debugging import (
 
 from kde_classes import Model, KDE
 
+from ROOT import BinnedDensity
+
 setup_logger('KDE', logging.DEBUG)
 setup_console_handler('KDE', logging.DEBUG)
 logger = logging.getLogger('KDE.' + __name__)
