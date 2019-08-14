@@ -299,7 +299,7 @@ class KDE(object):
             v[i] = coord[i]
         return kernel_density.density(v)*self.model.kde_norm
 
-    def set_kfold_subset(n_split):
+    def set_kfold_subset(self, n_split):
         """Generates and sets tree and space of `n_split` data subset.
 
         Parameters
