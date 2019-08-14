@@ -102,8 +102,11 @@ model = Model('{model}', mc=None, weighting='{weighting}',
 kde = KDE(model)
 
 if {seed}:
-    kde.set_kfold_subset({n_split})
-    binned_kernel = kde.generate_binned_kd({bandwidth})
+    if {split}:
+        kde.set_kfold_subset({n_split})
+        binned_kernel = kde.generate_binned_kd({bandwidth})
+    else:
+        binned_kernel = kde.generate_binned_kd({bandwidth})
 
     with open('/var/tmp/cv_seed_{model}_{bw_str}_{n_split}.pkl', 'wb') as file:
         pickle.dump(binned_kernel, file)
