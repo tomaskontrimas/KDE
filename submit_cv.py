@@ -65,7 +65,7 @@ mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
 python temp_python_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.py
 
 if {seed}; then
-    mv /var/tmp/cv_seed_{model}_{bw_str}_{n_split}.txt {working_directory}/output/{model}/{parameters_dir}/cv/cv_seed_{model}_{bw_str}_{n_split}.txt
+    mv /var/tmp/binned_kd_{model}_{bw_str}_{n_split}.txt {working_directory}/output/{model}/{parameters_dir}/cv/binned_kd_{model}_{bw_str}_{n_split}.txt
 else
     mv /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
 fi
@@ -109,9 +109,9 @@ if {seed}:
     else:
         binned_kernel = kde.generate_binned_kd({bandwidth})
 
-    binned_kernel.writeToFile('/var/tmp/cv_seed_{model}_{bw_str}_{n_split}.txt')
+    binned_kernel.writeToFile('/var/tmp/binned_kd_{model}_{bw_str}_{n_split}.txt')
 else:
-    seed_path = '{working_directory}/output/{model}/{parameters_dir}/cv/cv_seed_{model}_{bw_str}_{n_split}.txt'
+    seed_path = '{working_directory}/output/{model}/{parameters_dir}/cv/binned_kd_{model}_{bw_str}_{n_split}.txt'
     if os.path.exists(seed_path):
         pdf_seed = BinnedDensity('BinnedKernelDensity', kde.space, seed_path)
     else:
