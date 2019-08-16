@@ -32,19 +32,19 @@ settings['default'] = OrderedDict([
 settings['1.5'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
-        'bandwidth': np.linspace(0.13, 0.21, 5),
+        'bandwidth': np.linspace(0.15, 0.23, 5),
         'nbins': 150,
         'range': None
         }),
     ('psi', {
         'values': "np.log10(mc['psi'])",
-        'bandwidth': np.linspace(0.38, 0.46, 5),
+        'bandwidth': np.linspace(0.36, 0.44, 5),
         'nbins': 300,
         'range': None
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.58, 0.66, 5),
+        'bandwidth': np.linspace(0.66, 0.74, 5),
         'nbins': 150,
         'range': None
         })
