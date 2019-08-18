@@ -38,13 +38,13 @@ settings['1.5'] = OrderedDict([
 settings['2.0'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
-        'bandwidth': np.linspace(0.01, 0.20, 2),
+        'bandwidth': np.linspace(0.01, 0.20, 20),
         'nbins': 100,
         'range': None
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.01, 0.30, 3),
+        'bandwidth': np.linspace(0.01, 0.30, 30),
         'nbins': 100,
         'range': None
         })
