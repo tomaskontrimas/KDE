@@ -113,6 +113,7 @@ if {seed}:
 else:
     seed_path = '{working_directory}/output/{model}/{parameters_dir}/cv/binned_kd_{model}_{bw_str}_{n_split}.txt'
     if os.path.exists(seed_path):
+        logger.debug('Loaded seed from %s', seed_path)
         pdf_seed = BinnedDensity('BinnedKernelDensity', kde.space, seed_path)
     else:
         pdf_seed = None
