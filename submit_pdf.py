@@ -192,6 +192,7 @@ with open(temp_python_, "w") as file:
                                    gamma=gamma,
                                    phi0=phi0,
                                    adaptive=adaptive,
+                                   working_directory=working_directory,
                                    parameters_dir=parameters_dir,
                                    bw=bw))
 if local:
