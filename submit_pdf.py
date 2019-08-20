@@ -30,6 +30,8 @@ def parseArguments():
         "--phi0", type=float, default=1.01)
     parser.add_argument(
         "--local", action="store_true", default=False)
+    parser.add_argument(
+        "--seed", action="store_true", default=False)
     parser.add_argument('--bw', nargs='*', type=float, default=None)
     args = parser.parse_args()
     return vars(args)
@@ -38,13 +40,16 @@ local_draft = """#!/usr/bin/env bash
 
 mkdir -p {working_directory}/output/{model}/{parameters_dir}/pdf
 
-python temp_python_{model}_{parameters_dir}.py
+python temp_python_{seed_str}{model}_{parameters_dir}.py
 
-cp /var/tmp/{model}.pkl {working_directory}/output/{model}/{parameters_dir}/pdf
+if {seed}; then
+    mv /var/tmp/binned_kd_{model}.txt {working_directory}/output/{model}/{parameters_dir}/pdf/binned_kd_{model}.txt
+else
+    mv /var/tmp/{model}.pkl {working_directory}/output/{model}/{parameters_dir}/pdf/{model}.pkl
+fi
 
-rm /var/tmp/{model}.pkl
-rm temp_python_{model}_{parameters_dir}.py
-rm temp_local_{model}_{parameters_dir}.sh
+rm temp_python_{seed_str}{model}_{parameters_dir}.py
+rm temp_local_{seed_str}{model}_{parameters_dir}.sh
 """
 
 slurm_draft = """#!/usr/bin/env bash
@@ -57,11 +62,14 @@ slurm_draft = """#!/usr/bin/env bash
 
 mkdir -p {working_directory}/output/{model}/{parameters_dir}/pdf
 
-python temp_python_{model}_{parameters_dir}.py
+python temp_python_{seed_str}{model}_{parameters_dir}.py
 
-cp /var/tmp/{model}.pkl {working_directory}/output/{model}/{parameters_dir}/pdf
+if {seed}; then
+    mv /var/tmp/binned_kd_{model}.txt {working_directory}/output/{model}/{parameters_dir}/pdf/binned_kd_{model}.txt
+else
+    mv /var/tmp/{model}.pkl {working_directory}/output/{model}/{parameters_dir}/pdf/{model}.pkl
+fi
 
-rm /var/tmp/{model}.pkl
 rm temp_python_{model}_{parameters_dir}.py
 rm temp_slurm_{model}_{parameters_dir}.sub
 """
@@ -70,7 +78,6 @@ python_draft = """# -*- coding: utf-8 -*-
 
 import cPickle as pickle
 import glob
-import itertools
 import logging
 import numpy as np
 import os.path
@@ -119,23 +126,33 @@ if {bw} is None:
 else:
     bandwidth = {bw}
 
-if {adaptive}:
-    kernel_density = kde.generate_adaptive_kd(bandwidth)
+if {seed}:
+    binned_kernel = kde.generate_binned_kd(bandwidth)
+    binned_kernel.writeToFile('/var/tmp/binned_kd_{model}.txt')
 else:
-    kernel_density = kde.generate_binned_kd(bandwidth)
+    if {adaptive}:
+        seed_path = '{working_directory}/output/{model}/{parameters_dir}/pdf/binned_kd_{model}.txt'
+        if os.path.exists(seed_path):
+            logger.debug('Loaded seed from %s', seed_path)
+            pdf_seed = BinnedDensity('BinnedKernelDensity', kde.space, seed_path)
+        else:
+            pdf_seed = None
+        kernel_density = kde.generate_adaptive_kd(bandwidth, pdf_seed=pdf_seed)
+    else:
+        kernel_density = kde.generate_binned_kd(bandwidth)
 
-pdf_values = kde.get_pdf_values(kernel_density)
+    pdf_values = kde.get_pdf_values(kernel_density)
 
-result_dict = {{
-    'vars': kde.model.vars,
-    'bins': kde.model.out_bins,
-    'coords': kde.model.coords,
-    'pdf_vals': pdf_values,
-    'bw': bandwidth
-}}
+    result_dict = {{
+        'vars': kde.model.vars,
+        'bins': kde.model.out_bins,
+        'coords': kde.model.coords,
+        'pdf_vals': pdf_values,
+        'bw': bandwidth
+    }}
 
-with open(os.path.join('/var/tmp/{model}.pkl'), 'wb') as file:
-            pickle.dump(result_dict, file)
+    with open(os.path.join('/var/tmp/{model}.pkl'), 'wb') as file:
+                pickle.dump(result_dict, file)
 
 elapsed_time = time.time() - start_time
 logger.debug('Elapsed time %s', timedelta(seconds=elapsed_time))
@@ -152,6 +169,12 @@ gamma = args['gamma']
 phi0 = args['phi0']
 local = args['local']
 bw = args['bw']
+seed = args['seed']
+
+if seed:
+    seed_str = 'seed_'
+else:
+    seed_str = ''
 
 working_directory = CFG['project']['working_directory']
 
@@ -159,11 +182,12 @@ parameters_dir_format = '{kd}_{weighting}_gamma_{gamma}_phi0_{phi0}'
 parameters_dir = parameters_dir_format.format(kd='adaptive_kd' if adaptive else
     'binned_kd', weighting=weighting, gamma=gamma, phi0=phi0)
 
-temp_python_ = 'temp_python_{model}_{par_dir}.py'.format(model=model,
-    par_dir=parameters_dir)
+temp_python_ = 'temp_python_{seed_str}{model}_{par_dir}.py'.format(
+    seed_str=seed_str, model=model, par_dir=parameters_dir)
 
 with open(temp_python_, "w") as file:
-    file.write(python_draft.format(model=model,
+    file.write(python_draft.format(seed=seed,
+                                   model=model,
                                    weighting=weighting,
                                    gamma=gamma,
                                    phi0=phi0,
@@ -171,19 +195,23 @@ with open(temp_python_, "w") as file:
                                    parameters_dir=parameters_dir,
                                    bw=bw))
 if local:
-    temp_local = 'temp_local_{model}_{par_dir}.sh'.format(model=model,
-        par_dir=parameters_dir)
+    temp_local = 'temp_local_{seed_str}{model}_{par_dir}.sh'.format(
+        seed_str=seed_str, model=model, par_dir=parameters_dir)
     with open(temp_local, "w") as file:
-        file.write(local_draft.format(model=model,
+        file.write(local_draft.format(seed=str(seed).lower(),
+                                      seed_str=seed_str,
+                                      model=model,
                                       working_directory=working_directory,
                                       parameters_dir=parameters_dir))
 
     os.system("source ./{}".format(temp_local))
 else:
-    temp_slurm = 'temp_slurm_{model}_{par_dir}.sub'.format(model=model,
-        par_dir=parameters_dir)
+    temp_slurm = 'temp_slurm_{seed_str}{model}_{par_dir}.sub'.format(
+        seed_str=seed_str, model=model, par_dir=parameters_dir)
     with open(temp_slurm, "w") as file:
-        file.write(slurm_draft.format(model=model,
+        file.write(slurm_draft.format(seed=str(seed).lower(),
+                                      seed_str=seed_str,
+                                      model=model,
                                       working_directory=working_directory,
                                       parameters_dir=parameters_dir,
                                       partition=partition,

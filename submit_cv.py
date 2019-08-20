@@ -45,9 +45,12 @@ mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
 
 python temp_python_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.py
 
-mv /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
+if {seed}; then
+    mv /var/tmp/binned_kd_{model}_{bw_str}_{n_split}.txt {working_directory}/output/{model}/{parameters_dir}/cv/binned_kd_{model}_{bw_str}_{n_split}.txt
+else
+    mv /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
+fi
 
-#rm /var/tmp/cv_{i}_{n_split}.npy
 rm temp_python_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.py
 rm temp_local_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.sh
 """
