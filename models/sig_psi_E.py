@@ -59,7 +59,7 @@ settings['2.0'] = OrderedDict([
         }),
     ('psi', {
         'values': "np.log10(mc['psi'])",
-        'bandwidth': np.linspace(0.20, 0.24, 5),
+        'bandwidth': np.linspace(0.22, 0.26, 5),
         'nbins': 100,
         'range': None
         }),
@@ -158,19 +158,19 @@ settings['2.4'] = OrderedDict([
 settings['2.5'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
-        'bandwidth': np.linspace(0.16, 0.20, 5),
+        'bandwidth': np.linspace(0.12, 0.26, 5),
         'nbins': 100,
         'range': None
         }),
     ('psi', {
         'values': "np.log10(mc['psi'])",
-        'bandwidth': np.linspace(0.16, 0.20, 5),
+        'bandwidth': np.linspace(0.20, 0.24, 5),
         'nbins': 100,
         'range': None
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.32, 0.36, 5),
+        'bandwidth': np.linspace(0.24, 0.28, 5),
         'nbins': 100,
         'range': None
         })
