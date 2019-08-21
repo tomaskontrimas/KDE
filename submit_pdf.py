@@ -43,9 +43,9 @@ mkdir -p {working_directory}/output/{model}/{parameters_dir}/pdf
 python temp_python_{seed_str}{model}_{parameters_dir}.py
 
 if {seed}; then
-    mv /var/tmp/binned_kd_{model}.txt {working_directory}/output/{model}/{parameters_dir}/pdf/binned_kd_{model}.txt
+    mv /var/tmp/binned_kd_{model}_{gamma}.txt {working_directory}/output/{model}/{parameters_dir}/pdf/binned_kd_{model}.txt
 else
-    mv /var/tmp/{model}.pkl {working_directory}/output/{model}/{parameters_dir}/pdf/{model}.pkl
+    mv /var/tmp/{model}_{gamma}.pkl {working_directory}/output/{model}/{parameters_dir}/pdf/{model}.pkl
 fi
 
 rm temp_python_{seed_str}{model}_{parameters_dir}.py
@@ -65,9 +65,9 @@ mkdir -p {working_directory}/output/{model}/{parameters_dir}/pdf
 python temp_python_{seed_str}{model}_{parameters_dir}.py
 
 if {seed}; then
-    mv /var/tmp/binned_kd_{model}.txt {working_directory}/output/{model}/{parameters_dir}/pdf/binned_kd_{model}.txt
+    mv /var/tmp/binned_kd_{model}_{gamma}.txt {working_directory}/output/{model}/{parameters_dir}/pdf/binned_kd_{model}.txt
 else
-    mv /var/tmp/{model}.pkl {working_directory}/output/{model}/{parameters_dir}/pdf/{model}.pkl
+    mv /var/tmp/{model}_{gamma}.pkl {working_directory}/output/{model}/{parameters_dir}/pdf/{model}.pkl
 fi
 
 rm temp_python_{model}_{parameters_dir}.py
@@ -130,7 +130,7 @@ else:
 
 if {seed}:
     binned_kernel = kde.generate_binned_kd(bandwidth)
-    binned_kernel.writeToFile('/var/tmp/binned_kd_{model}.txt')
+    binned_kernel.writeToFile('/var/tmp/binned_kd_{model}_{gamma}.txt')
 else:
     if {adaptive}:
         seed_path = '{working_directory}/output/{model}/{parameters_dir}/pdf/binned_kd_{model}.txt'
@@ -153,7 +153,7 @@ else:
         'bw': bandwidth
     }}
 
-    with open(os.path.join('/var/tmp/{model}.pkl'), 'wb') as file:
+    with open(os.path.join('/var/tmp/{model}_{gamma}.pkl'), 'wb') as file:
                 pickle.dump(result_dict, file)
 
 elapsed_time = time.time() - start_time
