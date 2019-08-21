@@ -205,7 +205,8 @@ if local:
                                       seed_str=seed_str,
                                       model=model,
                                       working_directory=working_directory,
-                                      parameters_dir=parameters_dir))
+                                      parameters_dir=parameters_dir,
+                                      gamma=gamma))
 
     os.system("source ./{}".format(temp_local))
 else:
@@ -218,6 +219,7 @@ else:
                                       working_directory=working_directory,
                                       parameters_dir=parameters_dir,
                                       partition=partition,
-                                      time=time))
+                                      time=time,
+                                      gamma=gamma))
 
     os.system("sbatch {}".format(temp_slurm))
