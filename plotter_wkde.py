@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import itertools
 import matplotlib as mpl
-#mpl.use('Agg')
+mpl.use('Agg')
 from matplotlib.pyplot import cm
 import pylab as plt
 import time
