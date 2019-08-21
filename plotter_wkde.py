@@ -158,7 +158,6 @@ def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
     #fracs = [0.1 + i * 0.2 for i in range(5)]
     #percs = get_expected_quantile(fractions=fracs)
 
-    plt.figure()
     bins=np.linspace(0,2*psi_max,60)
     hist = Hist(bins)
     hist.Sumw2()
@@ -192,10 +191,10 @@ def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
     ax.yaxis.label.set_color('0.2')
 
     plt.subplots_adjust( hspace=0 )
-    plt.show()
 
-    plt.savefig("./output/wkde_cpd_rayleigh_gamma_{:.2f}_lE_{:.2f}_sigma_{:.2f}"\
+    plt.savefig("./temp_output/wkde_cpd_rayleigh_gamma_{:.2f}_lE_{:.2f}_sigma_{:.2f}"\
         ".pdf".format(gamma, logE, sigma_p))
+    plt.clf()
 '''
 make_plot(2.0, 0.2)
 make_plot(2.0, 0.5)
