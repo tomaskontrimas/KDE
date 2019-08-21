@@ -172,7 +172,7 @@ def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
     plt.xlim([0.0, psi_max])
     #plt.plot([-1,-2],[-1,-1],'k--', label='quantiles (0.1-0.9)')
     plt.ylim(ymin=0)
-    plt.title("$\gamma={:.2f},\,log_{10}E/GeV={:.2f},\,\\sigma_p={:.2f},\,\\Delta\\sigma_p/\\sigma_p={:.2f}$".format(gamma, logE, sigma_p, delta_sigma))
+    plt.title("$\\gamma={:.2f},\,log_{{10}}E/GeV={:.2f},\,\\sigma_p={:.2f},\,\\Delta\\sigma_p/\\sigma_p={:.2f}$".format(gamma, logE, sigma_p, delta_sigma))
 
     ax = plt.axes()
     #colors=cm.magma(np.linspace(0.2,0.8,len(fracs)))
