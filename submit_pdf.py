@@ -70,8 +70,8 @@ else
     mv /var/tmp/{model}_{gamma}.pkl {working_directory}/output/{model}/{parameters_dir}/pdf/{model}.pkl
 fi
 
-rm temp_python_{model}_{parameters_dir}.py
-rm temp_slurm_{model}_{parameters_dir}.sub
+rm temp_python_{seed_str}{model}_{parameters_dir}.py
+rm temp_slurm_{seed_str}{model}_{parameters_dir}.sub
 """
 
 python_draft = """# -*- coding: utf-8 -*-
