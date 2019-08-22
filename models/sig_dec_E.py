@@ -16,7 +16,7 @@ settings['default'] = OrderedDict([
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.01, 0.09, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
@@ -39,13 +39,13 @@ settings['1.5'] = OrderedDict([
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.01, 0.09, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.40, 0.90, 6),
+        'bandwidth': np.linspace(0.60, 0.80, 5),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -61,13 +61,13 @@ settings['2.0'] = OrderedDict([
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.01, 0.09, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.30, 0.50, 5),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -83,13 +83,13 @@ settings['2.1'] = OrderedDict([
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.01, 0.09, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.20, 0.40, 5),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -105,13 +105,13 @@ settings['2.2'] = OrderedDict([
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.01, 0.09, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.05, 0.25, 5),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -127,13 +127,13 @@ settings['2.3'] = OrderedDict([
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.01, 0.09, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.05, 0.25, 5),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -149,13 +149,13 @@ settings['2.4'] = OrderedDict([
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.01, 0.09, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.05, 0.25, 5),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -171,13 +171,13 @@ settings['2.5'] = OrderedDict([
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.01, 0.09, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.05, 0.25, 5),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -193,13 +193,13 @@ settings['2.6'] = OrderedDict([
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.01, 0.09, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.05, 0.25, 5),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -215,13 +215,13 @@ settings['2.7'] = OrderedDict([
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.01, 0.09, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.05, 0.25, 5),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -237,13 +237,13 @@ settings['2.8'] = OrderedDict([
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.01, 0.09, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.05, 0.25, 5),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -259,13 +259,13 @@ settings['2.9'] = OrderedDict([
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.01, 0.09, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.05, 0.25, 5),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -281,13 +281,13 @@ settings['3.0'] = OrderedDict([
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.01, 0.09, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.10, 0.60, 6),
+        'bandwidth': np.linspace(0.05, 0.25, 5),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
