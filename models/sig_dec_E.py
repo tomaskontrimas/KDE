@@ -39,13 +39,13 @@ settings['1.5'] = OrderedDict([
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.08, 0.12, 5),
+        'bandwidth': np.linspace(0.07, 0.11, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.65, 0.75, 6),
+        'bandwidth': np.linspace(0.72, 0.82, 6),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -54,7 +54,7 @@ settings['1.5'] = OrderedDict([
 settings['2.0'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
-        'bandwidth': np.linspace(0.17, 0.23, 7),
+        'bandwidth': np.linspace(0.14, 0.20, 7),
         'nbins': 100,
         'range': "[np.min(np.log10(mc['sigma_pull_corrected']))-0.5, \
                    np.max(np.log10(mc['sigma_pull_corrected']))+0.5]"
@@ -67,7 +67,7 @@ settings['2.0'] = OrderedDict([
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.30, 0.40, 6),
+        'bandwidth': np.linspace(0.32, 0.42, 6),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -76,7 +76,7 @@ settings['2.0'] = OrderedDict([
 settings['2.1'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
-        'bandwidth': np.linspace(0.17, 0.23, 7),
+        'bandwidth': np.linspace(0.14, 0.20, 7),
         'nbins': 100,
         'range': "[np.min(np.log10(mc['sigma_pull_corrected']))-0.5, \
                    np.max(np.log10(mc['sigma_pull_corrected']))+0.5]"
@@ -89,7 +89,7 @@ settings['2.1'] = OrderedDict([
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.30, 0.40, 6),
+        'bandwidth': np.linspace(0.32, 0.42, 6),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -98,14 +98,14 @@ settings['2.1'] = OrderedDict([
 settings['2.2'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
-        'bandwidth': np.linspace(0.17, 0.23, 7),
+        'bandwidth': np.linspace(0.15, 0.21, 7),
         'nbins': 100,
         'range': "[np.min(np.log10(mc['sigma_pull_corrected']))-0.5, \
                    np.max(np.log10(mc['sigma_pull_corrected']))+0.5]"
         }),
     ('true_dec', {
         'values': "np.sin(mc['true_dec'])",
-        'bandwidth': np.linspace(0.03, 0.07, 5),
+        'bandwidth': np.linspace(0.01, 0.05, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
@@ -199,7 +199,7 @@ settings['2.6'] = OrderedDict([
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.12, 0.18, 7),
+        'bandwidth': np.linspace(0.16, 0.22, 7),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -208,7 +208,7 @@ settings['2.6'] = OrderedDict([
 settings['2.7'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
-        'bandwidth': np.linspace(0.12, 0.18, 7),
+        'bandwidth': np.linspace(0.15, 0.21, 7),
         'nbins': 100,
         'range': "[np.min(np.log10(mc['sigma_pull_corrected']))-0.5, \
                    np.max(np.log10(mc['sigma_pull_corrected']))+0.5]"
@@ -221,7 +221,7 @@ settings['2.7'] = OrderedDict([
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.12, 0.18, 7),
+        'bandwidth': np.linspace(0.16, 0.22, 7),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -230,7 +230,7 @@ settings['2.7'] = OrderedDict([
 settings['2.8'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
-        'bandwidth': np.linspace(0.12, 0.18, 7),
+        'bandwidth': np.linspace(0.16, 0.22, 7),
         'nbins': 100,
         'range': "[np.min(np.log10(mc['sigma_pull_corrected']))-0.5, \
                    np.max(np.log10(mc['sigma_pull_corrected']))+0.5]"
@@ -243,7 +243,7 @@ settings['2.8'] = OrderedDict([
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.12, 0.18, 7),
+        'bandwidth': np.linspace(0.15, 0.21, 7),
         'nbins': 100,
         'range': "[np.min(mc['log_e'])-0.5, np.max(mc['log_e'])+0.5]"
         })
@@ -252,7 +252,7 @@ settings['2.8'] = OrderedDict([
 settings['2.9'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
-        'bandwidth': np.linspace(0.12, 0.18, 7),
+        'bandwidth': np.linspace(0.16, 0.22, 7),
         'nbins': 100,
         'range': "[np.min(np.log10(mc['sigma_pull_corrected']))-0.5, \
                    np.max(np.log10(mc['sigma_pull_corrected']))+0.5]"
@@ -274,7 +274,7 @@ settings['2.9'] = OrderedDict([
 settings['3.0'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
-        'bandwidth': np.linspace(0.12, 0.18, 7),
+        'bandwidth': np.linspace(0.16, 0.22, 7),
         'nbins': 100,
         'range': "[np.min(np.log10(mc['sigma_pull_corrected']))-0.5, \
                    np.max(np.log10(mc['sigma_pull_corrected']))+0.5]"
