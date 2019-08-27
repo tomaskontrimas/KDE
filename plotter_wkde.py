@@ -48,7 +48,7 @@ def setup(spatial_KDE_path, norm_KDE_path):
                       [bins_logsigma, bins_logpsi, bins_logEr],
                       [1,1,1],[0,0,0],[penalty_order,penalty_order, penalty_order])
 
-    mc = np.load('/home/ge56lag/Data/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy')
+    mc = np.load('/home/ge56lag/Data/diffuse_northern_tracks_MC_KDE/version-001-p00/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy')
 
     return spatial_pdf, mc
 
@@ -195,46 +195,5 @@ def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
     plt.savefig("./temp_output/wkde_cpd_rayleigh_gamma_{:.1f}_lE_{:.2f}_sigma_{:.2f}"\
         ".pdf".format(gamma, logE, sigma_p))
     plt.clf()
-'''
-make_plot(2.0, 0.2)
-make_plot(2.0, 0.5)
-make_plot(2.0, 1.5)
-make_plot(2.5, 0.2)
-make_plot(2.5, 0.5)
-make_plot(2.5, 1.5)
-make_plot(3.0, 0.18)
-make_plot(3.0, 0.38)
-make_plot(3.0, 1.0)
-make_plot(3.5, 0.15)
-make_plot(3.5, 0.25)
-make_plot(3.5, 0.8)
-make_plot(4.0, 0.10)
-make_plot(4.0, 0.2)
-make_plot(4.0, 0.7)
-make_plot(4.5, 0.10)
-make_plot(4.5, 0.15)
-make_plot(4.5, 0.6)
-make_plot(5.0, 0.05)
-make_plot(5.0, 0.12)
-make_plot(5.0, 0.6)
-make_plot(5.5, 0.05)
-make_plot(5.5, 0.12)
-make_plot(5.5, 0.5)
-make_plot(6.0, 0.05)
-make_plot(6.0, 0.12)
-make_plot(6.0, 0.5)
-'''
 
-#make_plot(4.0, 0.13)
-#make_plot(5.0, 0.15)
-#make_plot(5.0, 0.1)
-#make_plot(5.5, 0.1)
 #make_plot(6.0, 0.1)
-
-
-
-
-
-
-
-
