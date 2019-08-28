@@ -10,21 +10,6 @@ import pickle
 
 from scipy.interpolate import RegularGridInterpolator
 
-with open('./output/sig_psi_E/pdf/sig_psi_E.pkl', 'rb') as ifile:
-    spatial_KDE = pickle.load(ifile)
-
-bins_logsigma = spatial_KDE['bins'][0]
-bins_logpsi = spatial_KDE['bins'][1]
-bins_logEr = spatial_KDE['bins'][2]
-
-with open('./output/sig_E/pdf/sig_E.pkl', 'rb') as ifile:
-    norm_KDE = pickle.load(ifile)
-spatial_KDE_vals = spatial_KDE['pdf_vals']/norm_KDE['pdf_vals'][:,np.newaxis,:]
-
-spatial_pdf = RegularGridInterpolator((bins_logsigma, bins_logpsi, bins_logEr),
-                                            spatial_KDE_vals,
-                                            method='linear', bounds_error=False, fill_value=1.e-20)
-
 import logging
 mpl_logger = logging.getLogger('matplotlib')
 mpl_logger.setLevel(logging.WARNING)
@@ -42,11 +27,29 @@ mpl.rcParams['font.sans-serif'] = ['Verdana']
 
 plt.style.use('ggplot')
 
+def setup(base_path, spatial_KDE_path, norm_KDE_path):
 
-mc = np.load('/home/ge56lag/Data/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy')
+    with open(spatial_KDE_path, 'rb') as ifile:
+        spatial_KDE = pickle.load(ifile)
 
-def make_plot(logE, sigma_p, delta_sigma=0.2, show_quantile=False):
-    gamma=2.0
+    bins_logsigma = spatial_KDE['bins'][0]
+    bins_logpsi = spatial_KDE['bins'][1]
+    bins_logEr = spatial_KDE['bins'][2]
+
+    with open(norm_KDE_path, 'rb') as ifile:
+        norm_KDE = pickle.load(ifile)
+    spatial_KDE_vals = spatial_KDE['pdf_vals']/norm_KDE['pdf_vals'][:,np.newaxis,:]
+
+    spatial_pdf = RegularGridInterpolator((bins_logsigma, bins_logpsi, bins_logEr),
+                                                spatial_KDE_vals,
+                                                method='linear', bounds_error=False, fill_value=1.e-20)
+
+    mc = np.load('{base_path}/Data/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy'.format(base_path=base_path))
+
+    return spatial_pdf, mc
+
+def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
+              show_quantile=False):
     sin_dec = np.sin(np.radians(5.693))
     delta_sin_dec = 0.2
     delta_sigma_p = delta_sigma * sigma_p
@@ -166,7 +169,7 @@ def make_plot(logE, sigma_p, delta_sigma=0.2, show_quantile=False):
     plt.xlim([0.0, psi_max])
     #plt.plot([-1,-2],[-1,-1],'k--', label='quantiles (0.1-0.9)')
     plt.ylim(ymin=0)
-    plt.title("$log_{10}E/GeV=%.1f,\,\\sigma_p=%.2f,\,\\Delta\\sigma_p/\\sigma_p=%.2f$" %(logE, sigma_p, delta_sigma))
+    plt.title("$\gamma={:.1f},\,log_{{10}}E/GeV={:.2f},\,\sigma_p={:.2f},\,\Delta\sigma_p/\sigma_p={:.2f}$".format(gamma, logE, sigma_p, delta_sigma))
 
     ax = plt.axes()
     #colors=cm.magma(np.linspace(0.2,0.8,len(fracs)))
@@ -184,43 +187,7 @@ def make_plot(logE, sigma_p, delta_sigma=0.2, show_quantile=False):
     ax.xaxis.label.set_color('0.2')
     ax.yaxis.label.set_color('0.2')
 
-    plt.subplots_adjust( hspace=0 )
+    plt.subplots_adjust(hspace=0)
 
-
-    plt.savefig("./output/wkde_cpd_rayleigh_lE_%.1f_sigma_%.2f.pdf" %(logE, sigma_p))
+    plt.savefig("./output_Hans/RGI/wkde_cpd_rayleigh_gamma_{:.1f}_lE_{:.2f}_sigma_{:.2f}.pdf".format(gamma, logE, sigma_p))
     plt.clf()
-
-'''
-make_plot(2.0, 0.2)
-make_plot(2.0, 0.5)
-make_plot(2.0, 1.5)
-make_plot(2.5, 0.2)
-make_plot(2.5, 0.5)
-make_plot(2.5, 1.5)
-make_plot(3.0, 0.18)
-make_plot(3.0, 0.38)
-make_plot(3.0, 1.0)
-make_plot(3.5, 0.15)
-make_plot(3.5, 0.25)
-make_plot(3.5, 0.8)
-make_plot(4.0, 0.10)
-make_plot(4.0, 0.2)
-make_plot(4.0, 0.7)
-make_plot(4.5, 0.10)
-make_plot(4.5, 0.15)
-make_plot(4.5, 0.6)
-make_plot(5.0, 0.05)
-make_plot(5.0, 0.12)
-make_plot(5.0, 0.6)
-make_plot(5.5, 0.05)
-make_plot(5.5, 0.12)
-make_plot(5.5, 0.5)
-make_plot(6.0, 0.05)
-make_plot(6.0, 0.12)
-make_plot(6.0, 0.5)
-'''
-
-make_plot(2.5, 0.5)
-make_plot(3.5, 0.25)
-make_plot(4.0, 0.2)
-make_plot(5.0, 0.15)
