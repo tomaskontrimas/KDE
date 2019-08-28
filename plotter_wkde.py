@@ -53,7 +53,7 @@ def setup(spatial_KDE_path, norm_KDE_path):
     return spatial_pdf, mc
 
 def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
-              show_quantile=False):
+              show_quantile=False, output_dir='temp_output'):
     sin_dec = np.sin(np.radians(5.693))
     delta_sin_dec = 0.2
     delta_sigma_p = delta_sigma * sigma_p
@@ -192,8 +192,8 @@ def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
 
     plt.subplots_adjust( hspace=0 )
 
-    plt.savefig("./temp_output/wkde_cpd_rayleigh_gamma_{:.1f}_lE_{:.2f}_sigma_{:.2f}"\
-        ".pdf".format(gamma, logE, sigma_p))
+    plt.savefig("./{}/wkde_cpd_rayleigh_gamma_{:.1f}_lE_{:.2f}_sigma_p_{:.2f}"\
+        ".pdf".format(output_dir, gamma, logE, sigma_p))
     plt.clf()
 
 #make_plot(6.0, 0.1)
