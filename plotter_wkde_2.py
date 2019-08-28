@@ -44,7 +44,7 @@ def setup(base_path, spatial_KDE_path, norm_KDE_path):
                                                 spatial_KDE_vals,
                                                 method='linear', bounds_error=False, fill_value=1.e-20)
 
-    mc = np.load('{base_path}/Data/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy'.format(base_path=base_path))
+    mc = np.load('{base_path}/Data/diffuse_northern_tracks_MC_KDE/version-001-p00/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy'.format(base_path=base_path))
 
     return spatial_pdf, mc
 
