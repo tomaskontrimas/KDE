@@ -49,7 +49,7 @@ def setup(base_path, spatial_KDE_path, norm_KDE_path):
     return spatial_pdf, mc
 
 def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
-              show_quantile=False):
+              show_quantile=False, output_dir='temp_output'):
     sin_dec = np.sin(np.radians(5.693))
     delta_sin_dec = 0.2
     delta_sigma_p = delta_sigma * sigma_p
@@ -69,15 +69,15 @@ def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
     selected_weights = weights[idx]
     selected_energies = mc['logE'][idx]
 
-    print "found",len(mc[idx]),"matching events."
+    print("found", len(mc[idx]), "matching events.")
     idx_missing = mc['psi']/np.pi*180>psi_max
-    print len(mc[idx&idx_missing]), "events, or", len(mc[idx&idx_missing])*1.0/len(mc[idx]), "% are out of plotting range"
+    print(len(mc[idx&idx_missing]), "events, or", len(mc[idx&idx_missing])*1.0/len(mc[idx]), "% are out of plotting range")
     idx_missing = mc['psi']/np.pi*180>2*psi_max
-    print len(mc[idx&idx_missing]), "events, or", len(mc[idx&idx_missing])*1.0/len(mc[idx]), "% are out of histogram bounds"
+    print(len(mc[idx&idx_missing]), "events, or", len(mc[idx&idx_missing])*1.0/len(mc[idx]), "% are out of histogram bounds")
 
     idx_missing = selected_psi>2*psi_max
     if len(selected_psi[idx_missing])>0:
-        print sorted(selected_psi[idx_missing].tolist())[::-1]
+        print(sorted(selected_psi[idx_missing].tolist())[::-1])
 
     def eval_kde(logPsi, logE, sigma_p):
         sig_rad = np.radians(sigma_p)
@@ -189,5 +189,5 @@ def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
 
     plt.subplots_adjust(hspace=0)
 
-    plt.savefig("./output_Hans/RGI/wkde_cpd_rayleigh_gamma_{:.1f}_lE_{:.2f}_sigma_{:.2f}.pdf".format(gamma, logE, sigma_p))
+    plt.savefig("./{}/wkde_cpd_rayleigh_gamma_{:.1f}_lE_{:.2f}_sigma_{:.2f}.pdf".format(output_dir, gamma, logE, sigma_p))
     plt.clf()

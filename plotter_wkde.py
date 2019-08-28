@@ -27,7 +27,7 @@ mpl.rcParams['font.sans-serif'] = ['Verdana']
 
 plt.style.use('ggplot')
 
-def setup(spatial_KDE_path, norm_KDE_path):
+def setup(base_path, spatial_KDE_path, norm_KDE_path):
 
     with open(spatial_KDE_path, 'rb') as ifile:
         spatial_KDE = pickle.load(ifile)
@@ -48,7 +48,7 @@ def setup(spatial_KDE_path, norm_KDE_path):
                       [bins_logsigma, bins_logpsi, bins_logEr],
                       [1,1,1],[0,0,0],[penalty_order,penalty_order, penalty_order])
 
-    mc = np.load('/home/ge56lag/Data/diffuse_northern_tracks_MC_KDE/version-001-p00/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy')
+    mc = np.load('/{base_path}/Data/diffuse_northern_tracks_MC_KDE/version-001-p00/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy'.format(base_path=base_path))
 
     return spatial_pdf, mc
 
