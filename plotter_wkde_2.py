@@ -41,12 +41,12 @@ def setup(base_path, spatial_KDE_path, norm_KDE_path):
     spatial_KDE_vals = spatial_KDE['pdf_vals']/norm_KDE['pdf_vals'][:,np.newaxis,:]
 
     spatial_pdf = RegularGridInterpolator((bins_logsigma, bins_logpsi, bins_logEr),
-                                                spatial_KDE_vals,
-                                                method='linear', bounds_error=False, fill_value=1.e-20)
+                                          spatial_KDE_vals,
+                                          method='linear',
+                                          bounds_error=False,
+                                          fill_value=1.e-20)
 
-    mc = np.load('{base_path}/Data/diffuse_northern_tracks_MC_KDE/version-001-p00/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy'.format(base_path=base_path))
-
-    return spatial_pdf, mc
+    return spatial_pdf
 
 def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
               show_quantile=False, output_dir='temp_output'):
