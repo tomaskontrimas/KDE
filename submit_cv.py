@@ -16,43 +16,34 @@ def parseArguments():
         Dictionary containing the command line arguments.
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "model", type=str)
-    parser.add_argument(
-        "--adaptive", action="store_true", default=False)
-    parser.add_argument(
-        "--partition", type=str, default='kta')
-    parser.add_argument(
-        "--time", type=str, default='3:00:00')
-    parser.add_argument(
-        "--weighting", type=str, default=None)
-    parser.add_argument(
-        "--gamma", type=float, default=2.0)
-    parser.add_argument(
-        "--phi0", type=float, default=1.0)
-    parser.add_argument(
-        "--local", action="store_true", default=False)
-    parser.add_argument(
-        "--split", action="store_true", default=False)
-    parser.add_argument(
-        "--seed", action="store_true", default=False)
+    parser.add_argument('model', type=str)
+    parser.add_argument('--adaptive', action='store_true', default=False)
+    parser.add_argument('--partition', type=str, default='kta')
+    parser.add_argument('--time', type=str, default='3:00:00')
+    parser.add_argument('--weighting', type=str, default=None)
+    parser.add_argument('--gamma', type=float, default=2.0)
+    parser.add_argument('--phi0', type=float, default=1.0)
+    parser.add_argument('--local', action='store_true', default=False)
+    parser.add_argument('--split', action='store_true', default=False)
+    parser.add_argument('--seed', action='store_true', default=False)
+    parser.add_argument('--nbins', type=int, default=100)
     args = parser.parse_args()
     return vars(args)
 
 local_draft = """#!/usr/bin/env bash
 
-mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
+mkdir -p {working_directory}/output/{model}/{nbins}/{parameters_dir}/cv
 
 python temp_python_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.py
 
 if {seed}; then
-    mv /var/tmp/binned_kd_{model}_{bw_str}_{n_split}.txt {working_directory}/output/{model}/{parameters_dir}/cv/binned_kd_{model}_{bw_str}_{n_split}.txt
+    mv /var/tmp/binned_kd_{model}_{nbins}_{bw_str}_{n_split}.txt {working_directory}/output/{model}/{nbins}/{parameters_dir}/cv/binned_kd_{model}_{bw_str}_{n_split}.txt
 else
-    mv /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
+    mv /var/tmp/cv_{nbins}_{i}_{n_split}.npy {working_directory}/output/{model}/{nbins}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
 fi
 
-rm temp_python_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.py
-rm temp_local_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.sh
+rm temp_python_{seed_str}{model}_{nbins}_{parameters_dir}_{i}_{n_split}.py
+rm temp_local_{seed_str}{model}_{nbins}_{parameters_dir}_{i}_{n_split}.sh
 """
 
 slurm_draft = """#!/usr/bin/env bash
@@ -63,18 +54,18 @@ slurm_draft = """#!/usr/bin/env bash
 #SBATCH --error={working_directory}/output/slurm/slurm-%j.err
 #SBATCH --output={working_directory}/output/slurm/slurm-%j.out
 
-mkdir -p {working_directory}/output/{model}/{parameters_dir}/cv
+mkdir -p {working_directory}/output/{model}/{nbins}/{parameters_dir}/cv
 
-python temp_python_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.py
+python temp_python_{seed_str}{model}_{nbins}_{parameters_dir}_{i}_{n_split}.py
 
 if {seed}; then
-    mv /var/tmp/binned_kd_{model}_{bw_str}_{n_split}.txt {working_directory}/output/{model}/{parameters_dir}/cv/binned_kd_{model}_{bw_str}_{n_split}.txt
+    mv /var/tmp/binned_kd_{model}_{nbins}_{bw_str}_{n_split}.txt {working_directory}/output/{model}/{nbins}/{parameters_dir}/cv/binned_kd_{model}_{bw_str}_{n_split}.txt
 else
-    mv /var/tmp/cv_{i}_{n_split}.npy {working_directory}/output/{model}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
+    mv /var/tmp/cv_{nbins}_{i}_{n_split}.npy {working_directory}/output/{model}/{nbins}/{parameters_dir}/cv/cv_{bw_str}_{n_split}.npy
 fi
 
-rm temp_python_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.py
-rm temp_slurm_{seed_str}{model}_{parameters_dir}_{i}_{n_split}.sub
+rm temp_python_{seed_str}{model}_{nbins}_{parameters_dir}_{i}_{n_split}.py
+rm temp_slurm_{seed_str}{model}_{nbins}_{parameters_dir}_{i}_{n_split}.sub
 """
 
 python_draft = """# -*- coding: utf-8 -*-
@@ -102,7 +93,7 @@ logger = logging.getLogger('KDE.' + __name__)
 start_time = time.time()
 
 model = Model('{model}', mc=None, weighting='{weighting}',
-              gamma={gamma}, phi0={phi0})
+              gamma={gamma}, phi0={phi0}, nbins={nbins})
 kde = KDE(model)
 
 if {seed}:
@@ -112,9 +103,9 @@ if {seed}:
     else:
         binned_kernel = kde.generate_binned_kd({bandwidth})
 
-    binned_kernel.writeToFile('/var/tmp/binned_kd_{model}_{bw_str}_{n_split}.txt')
+    binned_kernel.writeToFile('/var/tmp/binned_kd_{model}_{nbins}_{bw_str}_{n_split}.txt')
 else:
-    seed_path = '{working_directory}/output/{model}/{parameters_dir}/cv/binned_kd_{model}_{bw_str}_{n_split}.txt'
+    seed_path = '{working_directory}/output/{model}/{nbins}/{parameters_dir}/cv/binned_kd_{model}_{bw_str}_{n_split}.txt'
     if os.path.exists(seed_path):
         logger.debug('Loaded seed from %s', seed_path)
         pdf_seed = BinnedDensity('BinnedKernelDensity', kde.space, seed_path)
@@ -128,7 +119,7 @@ else:
         result = kde.cross_validate({bandwidth}, adaptive={adaptive},
                                     pdf_seed=pdf_seed)
 
-    np.save("/var/tmp/cv_{i}_{n_split}.npy", result)
+    np.save("/var/tmp/cv_{nbins}_{i}_{n_split}.npy", result)
 
 elapsed_time = time.time() - start_time
 logger.debug('Elapsed time %s', timedelta(seconds=elapsed_time))
@@ -146,6 +137,7 @@ phi0 = args['phi0']
 local = args['local']
 split = args['split']
 seed = args['seed']
+nbins = args['nbins']
 
 if seed:
     seed_str = 'seed_'
@@ -169,7 +161,7 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
         n_splits = 1
 
     for n_split in range(n_splits):
-        python_submit = 'temp_python_{seed_str}{model}_{par_dir}_{i}_{n_split}'\
+        python_submit = 'temp_python_{seed_str}{model}_{nbins}_{par_dir}_{i}_{n_split}'\
             '.py'.format(seed_str=seed_str, model=model, par_dir=parameters_dir,
             i=i, n_split=n_split)
         with open(python_submit, "w") as file:
@@ -185,10 +177,11 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
                                            working_directory=working_directory,
                                            parameters_dir=parameters_dir,
                                            n_split=n_split,
-                                           split=split))
+                                           split=split,
+                                           nbins=nbins))
 
         if local:
-            temp_local = 'temp_local_{seed_str}{model}_{par_dir}_{i}_{n_split}'\
+            temp_local = 'temp_local_{seed_str}{model}_{nbins}_{par_dir}_{i}_{n_split}'\
                 '.sh'.format(seed_str=seed_str, model=model,
                              par_dir=parameters_dir, i=i, n_split=n_split)
             with open(temp_local, "w") as file:
@@ -199,11 +192,12 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
                                               working_directory=working_directory,
                                               parameters_dir=parameters_dir,
                                               n_split=n_split,
-                                              bw_str=bw_str))
+                                              bw_str=bw_str,
+                                              nbins=nbins))
 
             os.system("source ./{}".format(temp_local))
         else:
-            temp_slurm = 'temp_slurm_{seed_str}{model}_{par_dir}_{i}_{n_split}'\
+            temp_slurm = 'temp_slurm_{seed_str}{model}_{nbins}_{par_dir}_{i}_{n_split}'\
             '.sub'.format(seed_str=seed_str, model=model,
                           par_dir=parameters_dir, i=i, n_split=n_split)
             with open(temp_slurm, "w") as file:
@@ -216,6 +210,7 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
                                               n_split=n_split,
                                               bw_str=bw_str,
                                               partition=partition,
-                                              time=time))
+                                              time=time,
+                                              nbins=nbins))
 
             os.system("sbatch {}".format(temp_slurm))
