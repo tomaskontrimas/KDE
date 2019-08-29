@@ -50,7 +50,6 @@ def diffuse_cuts(mc):
     mc_dc : numpy record ndarray
         Monte-carlo data after diffuse dataset cuts.
     """
-    log_true_e = np.log10(mc['true_energy'])
     mc_dc = mc[(mc['true_dec'] > np.radians(-5)) &
                (np.log10(mc['true_energy']) < 8.0) &
                (mc['sigmaok'] == 0)]
