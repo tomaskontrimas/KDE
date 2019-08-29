@@ -37,7 +37,7 @@ class Model(object):
     generation.
     """
     def __init__(self, model_module, mc=None, weighting=None, phi0=1.0,
-                 gamma=None):
+                 gamma=None, nbins=None):
         """Creates a new model object.
 
         Parameters
@@ -91,7 +91,10 @@ class Model(object):
         self.values = [eval(settings[key]['values']) for key in settings]
         self.vars = [key for key in settings]
         self.bandwidth_vars = [key + '_bandwidth' for key in settings]
-        self.nbins = [settings[key]['nbins'] for key in settings]
+        if nbins is None:
+            self.nbins = [settings[key]['nbins'] for key in settings]
+        else:
+            self.nbins = [nbins for key in settings]
         self.bandwidths = [settings[key]['bandwidth'] for key in settings]
         self.ranges = [eval(str(settings[key]['range']))
                        if settings[key]['range'] is not None
