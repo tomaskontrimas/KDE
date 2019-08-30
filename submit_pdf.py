@@ -178,7 +178,7 @@ parameters_dir = parameters_dir_format.format(kd='adaptive_kd' if adaptive else
     'binned_kd', weighting=weighting, gamma=gamma, phi0=phi0)
 
 temp_python_ = 'temp_python_{seed_str}{model}_{nbins}_{par_dir}.py'.format(
-    seed_str=seed_str, model=model, par_dir=parameters_dir)
+    seed_str=seed_str, model=model, par_dir=parameters_dir, nbins=nbins)
 
 with open(temp_python_, "w") as file:
     file.write(python_draft.format(seed=seed,
@@ -193,7 +193,7 @@ with open(temp_python_, "w") as file:
                                    nbins=nbins))
 if local:
     temp_local = 'temp_local_{seed_str}{model}_{nbins}_{par_dir}.sh'.format(
-        seed_str=seed_str, model=model, par_dir=parameters_dir)
+        seed_str=seed_str, model=model, par_dir=parameters_dir, nbins=nbins)
     with open(temp_local, "w") as file:
         file.write(local_draft.format(seed=str(seed).lower(),
                                       seed_str=seed_str,
@@ -206,7 +206,7 @@ if local:
     os.system("source ./{}".format(temp_local))
 else:
     temp_slurm = 'temp_slurm_{seed_str}{model}_{nbins}_{par_dir}.sub'.format(
-        seed_str=seed_str, model=model, par_dir=parameters_dir)
+        seed_str=seed_str, model=model, par_dir=parameters_dir, nbins=nbins)
     with open(temp_slurm, "w") as file:
         file.write(slurm_draft.format(seed=str(seed).lower(),
                                       seed_str=seed_str,

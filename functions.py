@@ -45,7 +45,8 @@ def powerlaw(energy, phi0=1.01*1e-18, gamma=2.19):
     pl : numpy ndarray of floats | float
         Powerlaw with `phi0` normalization and `gamma` index.
     '''
-    pl = phi0*(energy/1.e5)**(-gamma)
+    # pl = phi0*(energy/1.e5)**(-gamma)
+    pl = phi0*(energy)**(-gamma)
     return pl
 
 def pl_weighting(mc, phi0, gamma):
