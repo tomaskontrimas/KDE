@@ -55,14 +55,16 @@ class Model(object):
         phi0: float, optional
             Powerlaw normalization, default is 1.0.
         gamma : float, optional
-            Powerlaw index, default is 2.0.
+            Powerlaw index, default is 2.0. Supports one decimal point
+            precision.
         """
         super(Model, self).__init__()
         self.logger = logging.getLogger('KDE.' + __name__ + '.Model')
         model = importlib.import_module('models.{}'.format(model_module))
 
         # Choose settings and grid from model.
-        if str(gamma) not in model.settings.keys():
+        str_gamma = '{:.1f}'.format(gamma)
+        if str_gamma not in model.settings.keys():
             self.logger.info('Using default model settings and setting gamma '
                 'to 2.0.')
             gamma = 2.0
@@ -73,11 +75,11 @@ class Model(object):
                 self.logger.info('Using default model grid.')
                 grid = model.grid['default']
         else:
-            settings = model.settings[str(gamma)]
+            settings = model.settings[str_gamma]
             if model.grid is None:
                 grid = None
-            elif str(gamma) in model.grid.keys():
-                grid = model.grid[str(gamma)]
+            elif str_gamma in model.grid.keys():
+                grid = model.grid[str_gamma]
             else:
                 self.logger.info('Using default model grid.')
                 grid = model.grid['default']
