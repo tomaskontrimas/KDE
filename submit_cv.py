@@ -161,9 +161,10 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
         n_splits = 1
 
     for n_split in range(n_splits):
-        python_submit = 'temp_python_{seed_str}{model}_{nbins}_{par_dir}_{i}_{n_split}'\
-            '.py'.format(seed_str=seed_str, model=model, par_dir=parameters_dir,
-            i=i, n_split=n_split)
+        python_submit = 'temp_python_{seed_str}{model}_{nbins}_{par_dir}_{i}_'\
+            '{n_split}.py'.format(seed_str=seed_str, model=model,
+                                  par_dir=parameters_dir, i=i, n_split=n_split,
+                                  nbins=nbins)
         with open(python_submit, "w") as file:
             file.write(python_draft.format(seed=seed,
                                            model=model,
@@ -181,9 +182,10 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
                                            nbins=nbins))
 
         if local:
-            temp_local = 'temp_local_{seed_str}{model}_{nbins}_{par_dir}_{i}_{n_split}'\
-                '.sh'.format(seed_str=seed_str, model=model,
-                             par_dir=parameters_dir, i=i, n_split=n_split)
+            temp_local = 'temp_local_{seed_str}{model}_{nbins}_{par_dir}_{i}_'\
+                '{n_split}.sh'.format(seed_str=seed_str, model=model,
+                                  par_dir=parameters_dir, i=i, n_split=n_split,
+                                  nbins=nbins)
             with open(temp_local, "w") as file:
                 file.write(local_draft.format(seed=str(seed).lower(),
                                               seed_str=seed_str,
@@ -197,9 +199,10 @@ for i, bandwidth in enumerate(itertools.product(*bandwidths)):
 
             os.system("source ./{}".format(temp_local))
         else:
-            temp_slurm = 'temp_slurm_{seed_str}{model}_{nbins}_{par_dir}_{i}_{n_split}'\
-            '.sub'.format(seed_str=seed_str, model=model,
-                          par_dir=parameters_dir, i=i, n_split=n_split)
+            temp_slurm = 'temp_slurm_{seed_str}{model}_{nbins}_{par_dir}_{i}_'\
+                '{n_split}.sub'.format(seed_str=seed_str, model=model,
+                                       par_dir=parameters_dir, i=i,
+                                       n_split=n_split, nbins=nbins)
             with open(temp_slurm, "w") as file:
                 file.write(slurm_draft.format(seed=str(seed).lower(),
                                               seed_str=seed_str,
