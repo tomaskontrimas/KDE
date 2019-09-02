@@ -37,7 +37,7 @@ class Model(object):
     generation.
     """
     def __init__(self, model_module, mc=None, weighting=None, phi0=1.0,
-                 gamma=None, nbins=None):
+                 gamma=2.0, nbins=None):
         """Creates a new model object.
 
         Parameters
