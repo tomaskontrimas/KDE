@@ -122,4 +122,13 @@ settings['3.0'] = OrderedDict([
         })
 ])
 
+settings['3.5'] = OrderedDict([
+    ('true_dec', {
+        'values': "np.sin(mc['true_dec'])",
+        'bandwidth': np.linspace(0.005, 0.10, 20),
+        'nbins': 100,
+        'range': [np.sin(np.radians(-5)), 1.0]
+        })
+])
+
 grid = None
