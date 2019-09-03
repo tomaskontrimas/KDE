@@ -55,8 +55,12 @@ def pl_weighting(mc, phi0, gamma):
 def conv_weighting(mc, *args):
     return mc['conv']
 
+# Could be wrong!
 def conv_pl_weighting(mc, phi0, gamma):
     return conv_weighting(mc) + pl_weighting(mc, phi0, gamma)
+
+def bg_weighting(mc, phi0, gamma):
+    return conv_weighting(mc) + mc['astro']
 
 def plotter_wkde_weighting(mc, phi0, gamma):
     return mc['orig_OW']*mc['true_energy']**(-gamma)

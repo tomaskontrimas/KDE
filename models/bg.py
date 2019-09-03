@@ -52,19 +52,19 @@ settings['1.5'] = OrderedDict([
 settings['2.0'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
-        'bandwidth': np.linspace(0.15, 0.25, 11),
+        'bandwidth': np.linspace(0.10, 0.30, 11),
         'nbins': 100,
         'range': None
         }),
     ('dec', {
         'values': "np.sin(mc['dec'])",
-        'bandwidth': [0.02],
+        'bandwidth': np.linspace(0.01, 0.05, 5),
         'nbins': 100,
         'range': [np.sin(np.radians(-5)), 1.0]
         }),
     ('log_e', {
         'values': "mc['log_e']",
-        'bandwidth': np.linspace(0.20, 0.30, 11),
+        'bandwidth': np.linspace(0.15, 0.35, 11),
         'nbins': 100,
         'range': None
         })

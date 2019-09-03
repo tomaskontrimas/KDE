@@ -4,7 +4,8 @@ from functions import (
     pl_weighting,
     conv_weighting,
     conv_pl_weighting,
-    plotter_wkde_weighting
+    plotter_wkde_weighting,
+    bg_weighting
 )
 
 CFG = {
@@ -40,6 +41,7 @@ CFG = {
         'pl': pl_weighting,
         'conv': conv_weighting,
         'conv+pl': conv_pl_weighting,
-        'plotter_wkde': plotter_wkde_weighting
+        'plotter_wkde': plotter_wkde_weighting,
+        'bg': bg_weighting
     }
 }
