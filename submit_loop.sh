@@ -17,6 +17,6 @@ do
     #python submit_cv.py --adaptive --split --weighting=plotter_wkde --gamma=$i --phi0=1.0 dec
     #python submit_pdf.py --adaptive --weighting=plotter_wkde --gamma=$i --phi0=1.0 dec
 
-    python submit_cv.py --adaptive --split --nbins=100 --weighting=conv+pl --gamma=$i --phi0=1.0 bg
-    #python submit_pdf.py --adaptive --weighting=conv+pl --gamma=$i --phi0=1.0 bg
+    #python submit_cv.py --adaptive --split --nbins=100 --weighting=conv+pl --gamma=$i --phi0=1.0 bg
+    python submit_pdf.py --adaptive --nbins=100 --weighting=conv+pl --gamma=$i --phi0=1.0 bg
 done

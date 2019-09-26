@@ -162,15 +162,15 @@ def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
     hist.fill_array(selected_psi, weights[idx])
     hist.Scale(1./hist.Integral("width"))
     hist.title="MC simulation"
-    rplt.errorbar(hist, markersize=0, elinewidth=2)
-    plt.plot(xvals, yvals_p, 'r-', label="paraboloid")
-    plt.plot(xvals, yvals_pdf, 'g-', label="KDE PDF")
-    plt.xlabel('$\Psi\,|\,Erec, sin\delta, \sigma_p\,\,\,\,[deg]$', fontsize=20)
-    plt.ylabel('pdf', fontsize=20)
+    rplt.errorbar(hist, markersize=0, elinewidth=3)
+    plt.plot(xvals, yvals_p, 'r-', linewidth=3, label="paraboloid")
+    plt.plot(xvals, yvals_pdf, 'g-', linewidth=3, label="KDE PDF")
+    plt.xlabel('$\Psi\,|\,Erec, \sigma_p\,\,\,\,[deg]$', fontsize=22)
+    plt.ylabel('pdf', fontsize=22)
     plt.xlim([0.0, psi_max])
     #plt.plot([-1,-2],[-1,-1],'k--', label='quantiles (0.1-0.9)')
     plt.ylim(ymin=0)
-    plt.title("$\gamma={:.1f},\,log_{{10}}E/GeV={:.2f},\,\sigma_p={:.2f},\,\Delta\sigma_p/\sigma_p={:.2f}$".format(gamma, logE, sigma_p, delta_sigma))
+    plt.title("$\gamma={:.1f},\,log_{{10}}E/GeV={:.2f},\,\sigma_p={:.2f},\,\Delta\sigma_p/\sigma_p={:.2f}$".format(gamma, logE, sigma_p, delta_sigma), fontsize=26)
 
     ax = plt.axes()
     #colors=cm.magma(np.linspace(0.2,0.8,len(fracs)))
@@ -184,12 +184,12 @@ def make_plot(spatial_pdf, mc, logE, sigma_p, gamma=2.0, delta_sigma=0.2,
 
     ax.tick_params(axis='both', which='both', width=1.5, colors='0.0', labelsize=16)
     ax.yaxis.set_ticks_position('both')
-    plt.legend(prop={'size':16})
+    plt.legend(prop={'size':20})
     ax.xaxis.label.set_color('0.2')
     ax.yaxis.label.set_color('0.2')
 
     plt.subplots_adjust( hspace=0 )
-
+    plt.tight_layout()
     plt.savefig("./{}/wkde_cpd_rayleigh_gamma_{:.1f}_lE_{:.2f}_sigma_p_{:.2f}"\
         ".pdf".format(output_dir, gamma, logE, sigma_p))
     plt.clf()
