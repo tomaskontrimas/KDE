@@ -2,6 +2,40 @@
 
 import numpy as np
 
+def assert_file_exists(pathfilename):
+    """Checks if the given file exists.
+
+    Parameters
+    ----------
+    pathfilenames : str
+        The file name, including path.
+
+    Raises
+    ------
+    RuntimeError
+        If the file does not exist.
+    """
+    if(not os.path.isfile(pathfilename)):
+        raise RuntimeError('The data file "%s" does not exist!'%(pathfilename))
+
+def diffuse_cuts(mc):
+    """Applies diffuse dataset cuts on a given monte-carlo data.
+
+    Parameters
+    ----------
+    mc : str | numpy record ndarray
+        Monte-carlo data.
+
+    Returns
+    -------
+    mc_dc : numpy record ndarray
+        Monte-carlo data after diffuse dataset cuts.
+    """
+    mc_dc = mc[(mc['true_dec'] > np.radians(-5)) &
+               (np.log10(mc['true_energy']) < 8.0) &
+               (mc['sigmaok'] == 0)]
+    return mc_dc
+
 def great_circle_distance(ra_1, dec_1, ra_2, dec_2):
     '''Computes the great circle distance between two events.
 
