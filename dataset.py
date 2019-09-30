@@ -2,7 +2,6 @@
 
 import numpy as np
 from numpy.lib import recfunctions as np_rfn
-import os.path
 
 from config import CFG
 from functions import assert_file_exists
@@ -15,7 +14,7 @@ class Dataset(object):
         self.pathfilenames = pathfilenames
 
         self.mc_field_name_renaming_dict = dict()
-        self.data_preparation_functions = list()
+        self._data_preparation_functions = list()
 
     def load_data(self):
         """Loads the data, which is described by the dataset.
@@ -28,8 +27,11 @@ class Dataset(object):
         data : numpy record ndarray
             A numpy record ndarray holding the monte-carlo data.
         """
+        pathfilenames = self.pathfilenames
+
         if isinstance(pathfilenames, basestring):
             pathfilenames = [pathfilenames]
+
         pathfilename = pathfilenames[0]
         assert_file_exists(pathfilename)
         data = np.load(pathfilename)
@@ -52,7 +54,9 @@ class Dataset(object):
             The DatasetData instance holding the data.
         """
         for data_prep_func in self._data_preparation_functions:
-            data_prep_func(data)
+            data = data_prep_func(data)
+
+        return data
 
     def load_and_prepare_data(self):
         """Loads the data file(s), renames fields and applies diffuse dataset cuts.
@@ -63,7 +67,7 @@ class Dataset(object):
             Loaded and prepared monte-carlo data.
         """
         data = self.load_data()
-        self.prepare_data(data)
+        data = self.prepare_data(data)
 
         # # Rename fields based on MC_keys dictionary.
         # data = np_rfn.rename_fields(data, CFG['MC_keys'])

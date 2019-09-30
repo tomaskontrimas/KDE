@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import os.path
 
 def assert_file_exists(pathfilename):
     """Checks if the given file exists.
