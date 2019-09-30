@@ -38,6 +38,8 @@ class Dataset(object):
             assert_file_exists(pathfilename)
             data = np.append(data, np.load(pathfilename))
 
+        data = np_rfn.rename_fields(data, self._mc_field_name_renaming_dict)
+
         return data
 
     def prepare_data(self, data):
@@ -52,26 +54,22 @@ class Dataset(object):
         for data_prep_func in self._data_preparation_functions:
             data_prep_func(data)
 
-    def load_and_prepare_data(pathfilenames):
+    def load_and_prepare_data(self):
         """Loads the data file(s), renames fields and applies diffuse dataset cuts.
-
-        Parameters
-        ----------
-        pathfilenames : str | sequence of str
-            The file name(s), including path(s), of the monte-carlo data file(s).
 
         Returns
         -------
         data : numpy record ndarray
             Loaded and prepared monte-carlo data.
         """
-        data = load_data()
+        data = self.load_data()
+        self.prepare_data(data)
 
-        # Rename fields based on MC_keys dictionary.
-        data = np_rfn.rename_fields(data, CFG['MC_keys'])
+        # # Rename fields based on MC_keys dictionary.
+        # data = np_rfn.rename_fields(data, CFG['MC_keys'])
 
-        # Apply diffuse dataset cuts.
-        data = diffuse_cuts(data)
+        # # Apply diffuse dataset cuts.
+        # data = diffuse_cuts(data)
 
         return data
 
