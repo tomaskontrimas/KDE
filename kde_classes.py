@@ -10,7 +10,8 @@ from sklearn.model_selection import KFold
 from scipy.interpolate import RegularGridInterpolator
 
 from config import CFG
-from dataset import load_and_prepare_data
+from dataset import Dataset
+from functions import diffuse_cuts
 
 # ROOT imports.
 os.environ["ROOT_INCLUDE_PATH"] = os.pathsep + CFG['paths']['meerkat_root']
@@ -36,7 +37,7 @@ class Model(object):
     model module and given parameters. It is used for the KDE instance
     generation.
     """
-    def __init__(self, model_module, mc=None, weighting=None, phi0=1.0,
+    def __init__(self, model_module, dataset=None, weighting=None, phi0=1.0,
                  gamma=2.0, nbins=None):
         """Creates a new model object.
 
@@ -44,9 +45,9 @@ class Model(object):
         ----------
         model_module : str
             Name of model file inside models directory.
-        mc : numpy record ndarray, optional
-            Monte-carlo data. If not provided the default `IC_mc` dataset from
-            configuration is used.
+        dataset : Dataset, optional
+            Instance of `Dataset` class containing Monte-carlo data. If not
+            provided the default `IC_mc` dataset from configuration is used.
         weighting : function | str | sequence of floats, optional
             The function is called with `mc`, `phi0` and `gamma` arguments.
             String is looked for in config `weighting_dict`. Sequence of weights
@@ -84,11 +85,17 @@ class Model(object):
                 self.logger.info('Using default model grid.')
                 grid = model.grid['default']
 
-        if mc is None:
+        if dataset is None:
             if CFG['paths']['IC_mc'] is not None:
-                mc = load_and_prepare_data(CFG['paths']['IC_mc'])
+                dataset = Dataset(CFG['paths']['IC_mc'])
+                dataset.mc_field_name_renaming_dict(CFG['paths']['MC_keys'])
+                dataset.add_data_preparation(diffuse_cuts)
+
+                # mc = load_and_prepare_data(CFG['paths']['IC_mc'])
             else:
-                raise ValueError('No suitable Monte Carlo provided.')
+                raise ValueError('No suitable dataset provided.')
+
+        mc = dataset.load_and_prepare_data()
 
         self.values = [eval(settings[key]['values']) for key in settings]
         self.vars = [key for key in settings]
