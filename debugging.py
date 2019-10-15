@@ -4,7 +4,7 @@ import logging
 import os.path
 import sys
 
-from config import CFG
+from .config import CFG
 
 def setup_logger(name, log_level):
     """Initializes logger with a given name and a log level.

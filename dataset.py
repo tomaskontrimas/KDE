@@ -3,8 +3,8 @@
 import numpy as np
 from numpy.lib import recfunctions as np_rfn
 
-from config import CFG
-from functions import assert_file_exists
+from .config import CFG
+from .functions import assert_file_exists
 
 
 class Dataset(object):
@@ -29,7 +29,7 @@ class Dataset(object):
         """
         pathfilenames = self.pathfilenames
 
-        if isinstance(pathfilenames, basestring):
+        if isinstance(pathfilenames, str):
             pathfilenames = [pathfilenames]
 
         pathfilename = pathfilenames[0]

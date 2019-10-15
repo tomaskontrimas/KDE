@@ -3,7 +3,7 @@
 import argparse
 import os
 
-from config import CFG
+from .config import CFG
 
 def parseArguments():
     """Parse the command line arguments.

@@ -5,13 +5,14 @@ import itertools
 import logging
 import numpy as np
 import os
+from functools import reduce
 
 from sklearn.model_selection import KFold
 from scipy.interpolate import RegularGridInterpolator
 
-from config import CFG
-from dataset import Dataset
-from functions import diffuse_cuts
+from .config import CFG
+from .dataset import Dataset
+from .functions import diffuse_cuts
 
 # ROOT imports.
 os.environ["ROOT_INCLUDE_PATH"] = os.pathsep + CFG['paths']['meerkat_root']
@@ -97,7 +98,8 @@ class Model(object):
 
         mc = dataset.load_and_prepare_data()
 
-        self.values = [eval(settings[key]['values']) for key in settings]
+        self.values = [eval(settings[key]['values'], None, {'mc': mc})
+                       for key in settings]
         self.vars = [key for key in settings]
         self.bandwidth_vars = [key + '_bandwidth' for key in settings]
         if nbins is None:
@@ -282,7 +284,7 @@ class KDE(object):
         args.extend(bandwidth)  # Kernel widths.
         args.extend([pdf_seed,  # PDF for kernel width scaling.
                      pdf_seed,  # Approximation PDF (0 for flat approximation).
-                     0])  # Sample size for MC convolution (0 for binned convolution)
+                     0])  # Sample size for MC convolution (0 for binned convolution), self.tree.GetEntries()
 
         self.adaptive_kernel = AdaptiveKernelDensity(*args)
 

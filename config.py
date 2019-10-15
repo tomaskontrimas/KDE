@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from functions import (
+from .functions import (
     pl_weighting,
     conv_weighting,
     conv_pl_weighting,
@@ -14,10 +14,10 @@ CFG = {
             '%(message)s')  # The default log format.
     },
     'paths': {
-        'meerkat_root': '/home/ge56lag/Software/Meerkat/inc',
-        'meerkat_lib': '/home/ge56lag/Software/Meerkat/lib/libMeerkat.so',
-        # 'meerkat_root': '/home/tomas/Software/Meerkat/inc',
-        # 'meerkat_lib': '/home/tomas/Software/Meerkat/lib/libMeerkat.so',
+        # 'meerkat_root': '/home/ge56lag/Software/Meerkat/inc',
+        # 'meerkat_lib': '/home/ge56lag/Software/Meerkat/lib/libMeerkat.so',
+        'meerkat_root': '/home/tomas/Software/Meerkat/inc',
+        'meerkat_lib': '/home/tomas/Software/Meerkat/lib/libMeerkat.so',
         #'IC_mc': '/home/ge56lag/Data/diffuse_mc_wBDT.npy',
         'IC_mc': '/home/ge56lag/Data/diffuse_northern_tracks_MC_KDE/version-001-p00/dataset_8yr_fit_IC86_2012_16_MC_2017_09_29_more_fields.npy'
     },
