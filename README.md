@@ -4,4 +4,4 @@ Easy to use Python wrapper around [Meerkat](https://meerkat.hepforge.org/) - mul
 
 ## Usage
 
-Add `KDE` location to the PYTHONPATH and copy supplied models directory with config file example to your working directory.
+Add `KDE` containing folder to the PYTHONPATH and copy supplied models directory with config file example to your working directory.
