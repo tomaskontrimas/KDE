@@ -65,7 +65,7 @@ class Model(object):
         model = importlib.import_module('models.{}'.format(model_module))
 
         # Choose settings and grid from model.
-        str_gamma = '{:.1f}'.format(gamma)
+        str_gamma = '{:.2f}'.format(gamma)
         if str_gamma not in model.settings.keys():
             self.logger.info('Using default model settings and setting gamma '
                 'to 2.0.')
@@ -106,7 +106,8 @@ class Model(object):
             self.nbins = [settings[key]['nbins'] for key in settings]
         else:
             self.nbins = [nbins for key in settings]
-        self.bandwidths = [settings[key]['bandwidth'] for key in settings]
+        self.bandwidths_adaptive = [settings[key]['bandwidth_adaptive'] for key in settings]
+        self.bandwidths_binned = [settings[key]['bandwidth_binned'] for key in settings]
         self.ranges = [eval(str(settings[key]['range']))
                        if settings[key]['range'] is not None
                        else [min(self.values[i]), max(self.values[i])]
@@ -444,7 +445,11 @@ class KDE(object):
         """
         cv_results = np.array([], dtype=self.cv_result_dtype)
         if bandwidths is None:
-            bandwidths = self.model.bandwidths
+            if adaptive:
+                bandwidths = self.model.bandwidths_adaptive
+            else:
+                bandwidths = self.model.bandwidths_binned
+
         for bandwidth in itertools.product(*bandwidths):
             self.logger.info('Bandwidth: %s', bandwidth)
             result = self.cross_validate(bandwidth, adaptive)
