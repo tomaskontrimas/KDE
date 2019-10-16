@@ -29,7 +29,7 @@ settings['default'] = OrderedDict([
         })
 ])
 
-settings['1.5'] = OrderedDict([
+settings['1.50'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth_binned': np.linspace(0.10, 0.20, 11),
@@ -53,7 +53,7 @@ settings['1.5'] = OrderedDict([
         })
 ])
 
-settings['2.0'] = OrderedDict([
+settings['2.00'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth_binned': np.linspace(0.10, 0.30, 21),
@@ -77,7 +77,7 @@ settings['2.0'] = OrderedDict([
         })
 ])
 
-settings['2.1'] = OrderedDict([
+settings['2.10'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth_binned': np.linspace(0.15, 0.25, 11),
@@ -101,7 +101,7 @@ settings['2.1'] = OrderedDict([
         })
 ])
 
-settings['2.2'] = OrderedDict([
+settings['2.20'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth_binned': np.linspace(0.15, 0.25, 11),
@@ -125,7 +125,7 @@ settings['2.2'] = OrderedDict([
         })
 ])
 
-settings['2.3'] = OrderedDict([
+settings['2.30'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth_binned': np.linspace(0.15, 0.25, 11),
@@ -149,7 +149,7 @@ settings['2.3'] = OrderedDict([
         })
 ])
 
-settings['2.4'] = OrderedDict([
+settings['2.40'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth_binned': np.linspace(0.15, 0.25, 11),
@@ -173,7 +173,7 @@ settings['2.4'] = OrderedDict([
         })
 ])
 
-settings['2.5'] = OrderedDict([
+settings['2.50'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth_binned': np.linspace(0.15, 0.25, 11),
@@ -197,7 +197,7 @@ settings['2.5'] = OrderedDict([
         })
 ])
 
-settings['2.6'] = OrderedDict([
+settings['2.60'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth_binned': np.linspace(0.15, 0.25, 11),
@@ -221,7 +221,7 @@ settings['2.6'] = OrderedDict([
         })
 ])
 
-settings['2.7'] = OrderedDict([
+settings['2.70'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth_binned': np.linspace(0.15, 0.25, 11),
@@ -245,7 +245,7 @@ settings['2.7'] = OrderedDict([
         })
 ])
 
-settings['2.8'] = OrderedDict([
+settings['2.80'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth_binned': np.linspace(0.15, 0.25, 11),
@@ -269,7 +269,7 @@ settings['2.8'] = OrderedDict([
         })
 ])
 
-settings['2.9'] = OrderedDict([
+settings['2.90'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth_binned': np.linspace(0.15, 0.25, 11),
@@ -293,7 +293,7 @@ settings['2.9'] = OrderedDict([
         })
 ])
 
-settings['3.0'] = OrderedDict([
+settings['3.00'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth_binned': np.linspace(0.15, 0.25, 11),
@@ -317,7 +317,7 @@ settings['3.0'] = OrderedDict([
         })
 ])
 
-settings['3.5'] = OrderedDict([
+settings['3.50'] = OrderedDict([
     ('sigma_pull_corrected', {
         'values': "np.log10(mc['sigma_pull_corrected'])",
         'bandwidth_binned': np.linspace(0.01, 0.11, 11),
