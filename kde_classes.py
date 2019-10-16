@@ -376,7 +376,7 @@ class KDE(object):
             mc_validation_values.append(
                 self.model.values[i][validation_index])
 
-        likelihood = rgi_pdf(zip(*mc_validation_values))
+        likelihood = rgi_pdf(list(zip(*mc_validation_values)))
         inds = likelihood > 0.
 
         weights = self.model.weights[validation_index]
